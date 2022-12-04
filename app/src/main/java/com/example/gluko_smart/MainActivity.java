@@ -25,6 +25,13 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE}, 5);
         }
 
+        if (ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT) ==
+                PackageManager.PERMISSION_GRANTED) {
+
+        } else {
+            requestPermissions(new String[]{ Manifest.permission.BLUETOOTH_CONNECT}, 10);
+        }
+
 
         new Handler().postDelayed(new Runnable() {
             @Override
