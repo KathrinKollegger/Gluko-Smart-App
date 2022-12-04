@@ -10,7 +10,7 @@
 
     <TextView
         android:id="@+id/text_startseite"
-        android:layout_width="442dp"
+        android:layout_width="479dp"
         android:layout_height="130dp"
         android:background="#C60CB56C"
         android:gravity="center_horizontal"
@@ -32,10 +32,10 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.027"
+        app:layout_constraintHorizontal_bias="0.025"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.141" />
+        app:layout_constraintVertical_bias="0.12" />
 
     <Button
         android:id="@+id/button_gereateKoppeln"
@@ -67,7 +67,7 @@
         android:layout_width="325dp"
         android:layout_height="67dp"
         android:backgroundTint="#4C74AF"
-        android:text="Werte manuel einfügen"
+        android:text="Werte manuell einfügen"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

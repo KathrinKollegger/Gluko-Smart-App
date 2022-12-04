@@ -1,5 +1,6 @@
 package com.example.gluko_smart;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +10,9 @@ import android.widget.Button;
 public class WerteEinfuegen extends Activity {
 
     Button button_homeWerte;
+    Button button_WerteEingabe;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,6 +20,7 @@ public class WerteEinfuegen extends Activity {
 
 
         button_homeWerte = (Button) findViewById(R.id.button_homeWerte);
+        button_WerteEingabe =(Button) findViewById(R.id.button_WerteEingabe);
 
         button_homeWerte.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -25,4 +29,13 @@ public class WerteEinfuegen extends Activity {
                 startActivity(intent8);
             }
         });
+
+        button_WerteEingabe.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent11 = new Intent(WerteEinfuegen.this, WerteEingabe.class);
+                startActivity(intent11);
+            }
+        });
+
     }}

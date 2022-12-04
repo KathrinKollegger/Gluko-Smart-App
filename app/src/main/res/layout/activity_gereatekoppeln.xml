@@ -1,21 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#3CB882">
 
     <Button
         android:id="@+id/button_homeKoppeln"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back Home"
         android:backgroundTint="#4C74AF"
+        android:text="Back Home"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.976" />
+
+    <TextView
+        android:id="@+id/geraeteinrichten"
+        android:layout_width="300dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="561dp"
+        android:background="#5BCF99"
+        android:gravity="center"
+        android:text="Geräteeinrichtung"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/button_homeKoppeln"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/anleitung1"
+        android:layout_width="324dp"
+        android:layout_height="160dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="62dp"
+        android:layout_marginEnd="83dp"
+        android:layout_marginBottom="449dp"
+        android:gravity="center"
+        android:text="Führe jetzt eine Messung durch. \n\n Nimm einen Teststreifen aus dem Teststreifen-Container und führe ihn in das Gerät ein. \n\n Verwende die Stechhilfe um einen Blutstropfen zu erzeugen und trage das Blut vorsichtig auf die Teststreifen auf."
+        android:textStyle="bold"
+        android:textSize="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_homeKoppeln"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.593"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/geraeteinrichten"
+        app:layout_constraintVertical_bias="0.29" />
+
+    <TextView
+        android:id="@+id/anleitung2"
+        android:layout_width="302dp"
+        android:layout_height="90dp"
+        android:layout_marginStart="54dp"
+        android:layout_marginTop="208dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="40dp"
+        android:gravity="center"
+        android:text="Nach erfolgreicher Messung erscheint die Meldung bt (Bluetooth) auf dem Display und die Übertragung der Daten startet automatisch "
+        android:textSize="15dp"
+        android:textStyle="bold"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/anleitung1" />
+
+    <ImageView
+        android:id="@+id/imageglukogeraet"
+        android:layout_width="269dp"
+        android:layout_height="169dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="71dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/anleitung2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/anleitung1"
+        app:srcCompat="@drawable/glukogeraet"
+        android:src="@drawable/glukogeraet"/>
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="49dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="70dp"
+        app:layout_constraintBottom_toTopOf="@+id/imageglukogeraet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageglukogeraet"
+        app:layout_constraintTop_toBottomOf="@+id/anleitung1"
+        app:srcCompat="@android:drawable/stat_sys_data_bluetooth"
+        android:src="@android:drawable/stat_sys_data_bluetooth" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

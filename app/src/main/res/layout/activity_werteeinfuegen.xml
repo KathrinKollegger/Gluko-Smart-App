@@ -1,9 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#3CB882">
+
+    <TextView
+        android:id="@+id/manuelleEingabe"
+        android:layout_width="306dp"
+        android:layout_height="90dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="561dp"
+        android:background="#5BCF99"
+        android:gravity="center"
+        android:text="Manuelle Dateneingabe"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+
+    <TextView
+        android:id="@+id/textEingabe1"
+        android:layout_width="302dp"
+        android:layout_height="90dp"
+        android:layout_marginStart="54dp"
+        android:layout_marginTop="63dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginBottom="384dp"
+
+        android:gravity="center"
+        android:text="Hier kannst Du manuell deine Blutzuckerwerte speichern. \n \n Klicke unten auf den Button \n WERTE EINGEBEN um fortzufahren!"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/button_homeWerte"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/manuelleEingabe" />
 
     <Button
         android:id="@+id/button_homeWerte"
@@ -18,6 +58,36 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.976" />
 
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="231dp"
+        android:layout_height="205dp"
+        android:layout_marginStart="91dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="90dp"
+        android:layout_marginBottom="80dp"
+        android:src="@drawable/bluttropfen"
+        app:layout_constraintBottom_toTopOf="@+id/button_homeWerte"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_WerteEingabe"
+        app:srcCompat="@drawable/bluttropfen" />
+
+    <Button
+        android:id="@+id/button_WerteEingabe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="137dp"
+        android:layout_marginTop="47dp"
+        android:layout_marginEnd="136dp"
+        android:layout_marginBottom="48dp"
+        android:backgroundTint="#4C74AF"
+        android:text="Werte eingeben"
+        app:layout_constraintBottom_toTopOf="@+id/imageView3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textEingabe1" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
