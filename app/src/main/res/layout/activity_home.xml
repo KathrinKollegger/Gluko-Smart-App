@@ -114,8 +114,7 @@
         android:layout_width="74dp"
         android:layout_height="94dp"
         app:srcCompat="@drawable/logo_ohne"
-        tools:layout_editor_absoluteX="7dp"
-        tools:layout_editor_absoluteY="0dp" />
+        tools:ignore="MissingConstraints" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
