@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#3CB882">
+    android:background="@color/backgroundGreen">
 
     <TextView
         android:id="@+id/tv_titleBTact"
@@ -14,7 +14,7 @@
         android:layout_marginTop="40dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="561dp"
-        android:background="#5BCF99"
+        android:background="@color/TvBackgroundLightgreen"
         android:gravity="center"
         android:text="Gerät verbinden"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:text="Get Paired Devices"
         android:textSize="15dp"
-        android:backgroundTint="#4C74AF"
+        android:backgroundTint="@color/buttonBlue"
         app:layout_constraintBottom_toTopOf="@+id/tv_pairedDevsTV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -66,7 +66,7 @@
         android:layout_marginRight="20dp"
         android:layout_height="wrap_content"
         android:text=""
-        android:textColor="#000"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -85,9 +85,10 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:checked="false"
-        android:text="Turn Bluetooth on"
-        android:textOff="Bluetooth OFF"
-        android:textOn="Bluetooth ON"
+        android:showText="false"
+        android:thumbTextPadding="5dp"
+        android:text=""
+        android:switchMinWidth="70dp"
         app:layout_constraintBottom_toTopOf="@+id/button_homeKoppeln"
         android:layout_marginBottom="20dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -101,7 +102,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Back Home"
-        android:backgroundTint="#4C74AF"
+        android:backgroundTint="@color/buttonBlue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

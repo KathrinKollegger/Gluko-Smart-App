@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
+    <color name="backgroundGreen">#3CB882</color>
+    <color name="TvBackgroundLightgreen">#5BCF99</color>
+    <color name="buttonBlue">#4C74AF</color>
+    <color name="white">#000</color>
+
+    <!--Switch Color-->
+
+
 </resources>

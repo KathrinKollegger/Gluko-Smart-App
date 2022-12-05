@@ -35,28 +35,32 @@ public class GereateKoppeln extends Activity {
         setContentView(R.layout.activity_gereatekoppeln);
 
         button_homeKoppeln = (Button) findViewById(R.id.button_homeKoppeln);
-       button_getDevices = (Button) findViewById(R.id.button_getBtDevices);
-       switch_Bt = (Switch) findViewById(R.id.switch_BT);
+        button_getDevices = (Button) findViewById(R.id.button_getBtDevices);
+        switch_Bt = (Switch) findViewById(R.id.switch_BT);
         img_BtIcon = (ImageView) findViewById(R.id.iv_bluetooth);
-       tv_pairedDev = (TextView) findViewById(R.id.tv_pairedDevsTV);
+        tv_pairedDev = (TextView) findViewById(R.id.tv_pairedDevsTV);
         tv_BtStatus = (TextView) findViewById(R.id.tv_statusBluetooth);
 
-
-        //adapter
+        //BTadapter of Smartphone
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
 
         //check if bt is available or not and update status
        if(bluetoothCheck(mBtAdapter)==true) {
            switch_Bt.setChecked(true);
-       };
+           switch_Bt.setText("ON");
+       }
+       else {
+           switch_Bt.setText("OFF");
+       }
 
         //on switch clickListener
         switch_Bt.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Toast.makeText(GereateKoppeln.this, "Turning on Bluetooth...", Toast.LENGTH_SHORT).show();
-                    //BT Disabled
+                    switch_Bt.setText("ON");
+                    Toast.makeText(GereateKoppeln.this, "Bluetooth wird aktiviert...", Toast.LENGTH_SHORT).show();
+                    //BT is disabled otherwise switch (isChecked) = false
                     if (!mBtAdapter.isEnabled()) {
                         //Intent to turn on Bluetooth
                         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -66,23 +70,22 @@ public class GereateKoppeln extends Activity {
                             return;
                         }
                         startActivityForResult(intent, REQUEST_ENABLE_BT);
+
+
+                        //if switch is unchecked but bluetooth is already enabled
                     } else {
-                        Toast.makeText(GereateKoppeln.this, "Bluetooth turned ON", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GereateKoppeln.this, "Bluetooth wurde aktiviert", Toast.LENGTH_SHORT).show();
                         bluetoothCheck(mBtAdapter);
                     }
                 }
                 else {
-                    Toast.makeText(GereateKoppeln.this, "Bluetooth turned OFF!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GereateKoppeln.this, "Bluetooth wurde deaktiviert!", Toast.LENGTH_SHORT).show();
+                    switch_Bt.setText("OFF");
                     mBtAdapter.disable();
-                    bluetoothCheck(mBtAdapter);
-
-                }
-                if (mBtAdapter == null && !mBtAdapter.isEnabled()) {
-                    tv_BtStatus.setText("Bluetooth is not available");
                     img_BtIcon.setImageResource(R.drawable.ic_action_off);
-                } else {
-                    tv_BtStatus.setText("Bluetooth is available");
-                    img_BtIcon.setImageResource(R.drawable.ic_action_on);
+                    tv_BtStatus.setText("Bluetooth nicht verfügbar oder deaktiviert");
+
+
                 }
             }
         });
@@ -108,17 +111,36 @@ public class GereateKoppeln extends Activity {
             }
         });
 }
-public boolean bluetoothCheck (BluetoothAdapter mBtAdapter){
 
-    if (mBtAdapter !=null && mBtAdapter.isEnabled()) {
-        tv_BtStatus.setText("Bluetooth is available and turned on");
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_ENABLE_BT:
+                if (resultCode == RESULT_OK) {
+                    //bluetooth is on
+                    bluetoothCheck(mBtAdapter);
+                    Toast.makeText(this, "Bluetooth wurde aktiviert", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    //user denied/cancelled turn on
+                    Toast.makeText(this, "Bluetooth Aktivierung fehlgeschlagen", Toast.LENGTH_SHORT).show();
+                    switch_Bt.setChecked(false);
+                }
+                break;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public boolean bluetoothCheck (BluetoothAdapter mBtAdapter){
+        if (mBtAdapter !=null && mBtAdapter.isEnabled()) {
+        tv_BtStatus.setText("Bluetooth ist verfügbar und aktiviert");
         img_BtIcon.setImageResource(R.drawable.ic_action_on);
         return true;
-    } else {
-        tv_BtStatus.setText("Bluetooth is not available or turned of");
+        } else {
+        tv_BtStatus.setText("Bluetooth nicht verfügbar oder deaktiviert");
         img_BtIcon.setImageResource(R.drawable.ic_action_off);
-
-    }
-    return false;
+        }
+        return false;
     }
 }
