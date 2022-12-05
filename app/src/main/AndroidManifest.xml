@@ -32,6 +32,9 @@
             android:name=".WerteEinfuegen"
             android:exported="false" />
         <activity
+            android:name=".WerteEingabe"
+            android:exported="false" />
+        <activity
             android:name=".Persoenliches"
             android:exported="false" />
         <activity

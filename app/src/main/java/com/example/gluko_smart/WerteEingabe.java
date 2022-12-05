@@ -11,7 +11,7 @@ public class WerteEingabe extends Activity {
 
     Button button_homeVerlauf;
 
-    @SuppressLint("MissingInflatedId")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

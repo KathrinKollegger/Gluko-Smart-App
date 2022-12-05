@@ -35,10 +35,10 @@ public class GereateKoppeln extends Activity {
         setContentView(R.layout.activity_gereatekoppeln);
 
         button_homeKoppeln = (Button) findViewById(R.id.button_homeKoppeln);
-        button_getDevices = (Button) findViewById(R.id.button_getBtDevices);
-        switch_Bt = (Switch) findViewById(R.id.switch_BT);
+       button_getDevices = (Button) findViewById(R.id.button_getBtDevices);
+       switch_Bt = (Switch) findViewById(R.id.switch_BT);
         img_BtIcon = (ImageView) findViewById(R.id.iv_bluetooth);
-        tv_pairedDev = (TextView) findViewById(R.id.tv_pairedDevsTV);
+       tv_pairedDev = (TextView) findViewById(R.id.tv_pairedDevsTV);
         tv_BtStatus = (TextView) findViewById(R.id.tv_statusBluetooth);
 
 

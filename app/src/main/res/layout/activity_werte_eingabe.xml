@@ -57,13 +57,13 @@
         android:ems="10"
         android:gravity="center"
         android:inputType="numberDecimal"
-        android:textColor="@color/black"
         android:textSize="@dimen/app_bar_height"
+        android:hint="Gemessener Blutzuckerwert"
         app:layout_constraintBottom_toTopOf="@+id/button_homeVerlauf"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+        />
 
     <Button
     android:id="@+id/button_homeVerlauf"
