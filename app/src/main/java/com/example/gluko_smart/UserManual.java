@@ -10,6 +10,7 @@ public class UserManual extends Activity {
 
 
     Button button_homeUser;
+    Button button_weiter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,12 +18,21 @@ public class UserManual extends Activity {
         setContentView(R.layout.activity_usermanual);
 
         button_homeUser = (Button) findViewById(R.id.button_homeUser);
+        button_weiter = (Button) findViewById(R.id.button_weiter);
 
         button_homeUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent9 = new Intent(UserManual.this, Home.class);
-                startActivity(intent9);
+                Intent intent14 = new Intent(UserManual.this, Home.class);
+                startActivity(intent14);
+            }
+        });
+
+        button_weiter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent15 = new Intent(UserManual.this, UserManual2.class);
+                startActivity(intent15);
             }
         });
     }}
