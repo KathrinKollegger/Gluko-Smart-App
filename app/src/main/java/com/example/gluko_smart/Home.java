@@ -33,7 +33,7 @@ public class Home extends AppCompatActivity {
         button_gereateKoppeln.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Home.this, GereateKoppeln.class);
+                Intent intent = new Intent(Home.this, GereateKoppeln2.class);
                 startActivity(intent);
             }
         });
