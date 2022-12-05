@@ -19,6 +19,7 @@
         android:text="Manuelle Dateneingabe"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textStyle="bold"
+        android:textSize="25dp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.489"
@@ -36,14 +37,14 @@
         android:layout_marginEnd="55dp"
         android:gravity="center"
         android:text="Gib unten deinen gemessenen Wert ein!"
-        android:textSize="15dp"
+        android:textSize="20dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/manuelleEingabe2"
-        app:layout_constraintVertical_bias="0.143" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/eingabe_Blutzuckerwert"
@@ -62,20 +63,85 @@
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.566" />
+        app:layout_constraintVertical_bias="0.584" />
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/ed_infoessen"
+        android:layout_width="294dp"
+        android:layout_height="56dp"
+        android:layout_margin="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="55dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="168dp"
+        android:background="#5BCF99"
+        android:gravity="center"
+        android:hint="Vor- oder nach dem Essen gemessen?"
+        android:padding="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_homeVerlauf"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.527"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eingabe_Blutzuckerwert"
+        app:layout_constraintVertical_bias="0.842"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <Button
-    android:id="@+id/button_homeVerlauf"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:backgroundTint="#4C74AF"
-    android:text="Back Home"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.498"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.976" />
+        android:id="@+id/button_homeVerlauf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#4C74AF"
+        android:text="Back Home"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.12"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976" />
+
+    <ImageView
+        android:id="@+id/imageView_bluttropfen"
+        android:layout_width="109dp"
+        android:layout_height="85dp"
+        android:layout_marginStart="154dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="148dp"
+        android:layout_marginBottom="11dp"
+        app:layout_constraintBottom_toTopOf="@+id/eingabe_Blutzuckerwert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textEingabe1"
+        app:srcCompat="@drawable/bluttropfen"
+        android:src ="@drawable/bluttropfen"/>
+
+    <ImageView
+        android:id="@+id/imageView_mahlzeit"
+        android:layout_width="109dp"
+        android:layout_height="97dp"
+        android:layout_marginStart="152dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="151dp"
+        android:layout_marginBottom="13dp"
+        app:layout_constraintBottom_toTopOf="@+id/ed_infoessen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eingabe_Blutzuckerwert"
+        app:srcCompat="@drawable/mahlzeit"
+        android:src="@drawable/mahlzeit"/>
+
+    <Button
+        android:id="@+id/button_speichern1"
+        android:layout_width="162dp"
+        android:layout_height="51dp"
+        android:backgroundTint="#4C74AF"
+        android:text="Speichern"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.879"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976"
+        android:textStyle="bold"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
