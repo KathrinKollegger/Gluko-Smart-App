@@ -68,7 +68,7 @@
         android:layout_marginTop="204dp"
         android:layout_marginEnd="55dp"
         android:gravity="center"
-        android:text="Nach erfolgreicher Messung erscheint die Meldung bt (Bluetooth) auf dem Display und die Übertragung der Daten beginnt bei Klick auf WERTE BEKOMMEN. "
+        android:text="Nach erfolgreicher Messung erscheint die Meldung bt (Bluetooth) auf dem Display und die Übertragung der Daten beginnt bei Klick auf WERTE ERHALTEN. "
         android:textSize="15dp"
         android:textStyle="bold"
 
@@ -109,7 +109,7 @@
         android:id="@+id/button"
         android:layout_width="196dp"
         android:layout_height="50dp"
-        android:text="Werte bekommen"
+        android:text="Werte erhalten"
         tools:layout_editor_absoluteX="107dp"
         tools:layout_editor_absoluteY="602dp"
         android:backgroundTint="#4C74AF"/>
