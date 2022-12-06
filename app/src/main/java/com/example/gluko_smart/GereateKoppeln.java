@@ -1,33 +1,81 @@
 package com.example.gluko_smart;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.BluetoothLeAdvertiser;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.loader.content.AsyncTaskLoader;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class GereateKoppeln extends Activity {
 
+    //Global Variables
+    private static final String TAG = "BLE_Connection";
+
     private static final int REQUEST_ENABLE_BT = 0;
     private static final int REQUEST_DISCOVER_BT = 1;
+    private static final int REQUEST_SCAN_BT = 2;
+    private static final int REQUEST_LOCATION =3;
+    private static final long INTERVAL = 5000;
 
-    Button button_homeKoppeln, button_getDevices;
+    //Views UI
+    Button button_homeKoppeln, button_getDevices, button_btSync;
     Switch switch_Bt;
     ImageView img_BtIcon;
     TextView tv_pairedDev, tv_BtStatus;
+    ProgressBar pb_BleScan;
 
-    BluetoothAdapter mBtAdapter;
+    private BluetoothAdapter mBtAdapter;
+    private BluetoothLeScanner bleScanner;
+    private Handler handler = new Handler();
+
+    private int deviceCounter = 1;
+    private Map<Integer, String> devicesDescription = new HashMap<>();
+    private Map<Integer, BluetoothDevice> devices = new HashMap<>();
+
+    private ScanCallback bleScanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            BluetoothDevice device = result.getDevice();
+
+
+            if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_ENABLE_BT);
+                return;
+            }
+            String text = String.format("%d - %s, %s\r\n", deviceCounter, device.getName(), device.getAddress());
+            tv_pairedDev.setText(tv_pairedDev.getText().toString().concat(text));
+
+            devices.put(deviceCounter, device);
+            deviceCounter++;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,22 +84,35 @@ public class GereateKoppeln extends Activity {
 
         button_homeKoppeln = (Button) findViewById(R.id.button_homeKoppeln);
         button_getDevices = (Button) findViewById(R.id.button_getBtDevices);
+        button_btSync = (Button) findViewById(R.id.button_sync);
         switch_Bt = (Switch) findViewById(R.id.switch_BT);
         img_BtIcon = (ImageView) findViewById(R.id.iv_bluetooth);
         tv_pairedDev = (TextView) findViewById(R.id.tv_pairedDevsTV);
         tv_BtStatus = (TextView) findViewById(R.id.tv_statusBluetooth);
+        pb_BleScan = (ProgressBar) findViewById(R.id.progressBarBLEscan);
 
         //BTadapter of Smartphone
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        bleScanner = mBtAdapter.getBluetoothLeScanner();
+
+        tv_pairedDev.setMovementMethod(new ScrollingMovementMethod());
+
+        //Permission Management ala https://draeger-it.blog/android-app-programmierung-bluetooth-low-energy-connection-ble/
+
+        if (!hasRequiredPermissions()) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, PackageManager.PERMISSION_GRANTED);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PackageManager.PERMISSION_GRANTED);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+        }
+
 
         //check if bt is available or not and update status
-       if(bluetoothCheck(mBtAdapter)==true) {
-           switch_Bt.setChecked(true);
-           switch_Bt.setText("ON");
-       }
-       else {
-           switch_Bt.setText("OFF");
-       }
+        if (bluetoothCheck(mBtAdapter) == true) {
+            switch_Bt.setChecked(true);
+            switch_Bt.setText("ON");
+        } else {
+            switch_Bt.setText("OFF");
+        }
 
         //on switch clickListener
         switch_Bt.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -77,31 +138,88 @@ public class GereateKoppeln extends Activity {
                         Toast.makeText(GereateKoppeln.this, "Bluetooth wurde aktiviert", Toast.LENGTH_SHORT).show();
                         bluetoothCheck(mBtAdapter);
                     }
-                }
-                else {
+                } else {
                     Toast.makeText(GereateKoppeln.this, "Bluetooth wurde deaktiviert!", Toast.LENGTH_SHORT).show();
                     switch_Bt.setText("OFF");
                     mBtAdapter.disable();
                     img_BtIcon.setImageResource(R.drawable.ic_action_off);
                     tv_BtStatus.setText("Bluetooth nicht verfügbar oder deaktiviert");
-
-
                 }
             }
         });
-
-        ;
 
         button_getDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-            }
+                if (mBtAdapter.isEnabled()) {
+                    //               tv_pairedDev.setText("Paired Devices");
+                    if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(GereateKoppeln.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_LOCATION);
+
+                        return;
+                    } else {
+                        resetFoundDevices();
+                        Log.i(TAG, "suche nach BLE Devices > beginn");
+                        button_getDevices.setEnabled(false);
+                        pb_BleScan.setVisibility(View.VISIBLE);
+
+
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                                    requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN},REQUEST_SCAN_BT);
+
+
+                                    return;
+                                }
+                                bleScanner.startScan(bleScanCallback);
+                            }
+                        });
+
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.i(TAG,"Suche nach BLE Devices > ende");
+                                button_getDevices.setEnabled(true);
+                                AsyncTask.execute(new Runnable() {
+                                    @SuppressLint("MissingPermission")
+                                    @Override
+                                    public void run() {
+                                        bleScanner.stopScan(bleScanCallback);
+                                    }
+                                });
+                            }
+                        }, INTERVAL);
+
+
+          /*             Set<BluetoothDevice> devices = mBtAdapter.getBondedDevices();
+                        for (BluetoothDevice device: devices) {
+                            tv_pairedDev.append ("\nDevice"+device.getName()+ "," + device);
+          */              }
+                    }else {
+                    //bluetooth is off
+                    Toast.makeText(GereateKoppeln.this, "Turn on Bluetooth first", Toast.LENGTH_SHORT).show();
+                }
+                }
         });
 
-
-
-
+        button_btSync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN}, REQUEST_DISCOVER_BT);
+                    return;
+                }
+                if (!mBtAdapter.isDiscovering()) {
+                    Toast.makeText(GereateKoppeln.this, "Starting to sync", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                    startActivityForResult(intent, REQUEST_DISCOVER_BT);
+                }
+            }
+        });
 
         button_homeKoppeln.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +229,6 @@ public class GereateKoppeln extends Activity {
             }
         });
 }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -128,8 +245,26 @@ public class GereateKoppeln extends Activity {
                 }
                 break;
         }
-
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private boolean hasRequiredPermissions() {
+        boolean hasBluetoothPermission = hasPermission(Manifest.permission.BLUETOOTH);
+        boolean hasBluetoothAdminPermission = hasPermission(Manifest.permission.BLUETOOTH_ADMIN);
+        boolean hasLocationPermission = hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        return hasBluetoothPermission && hasBluetoothAdminPermission && hasLocationPermission;
+    }
+
+    private void resetFoundDevices() {
+        tv_pairedDev.setText("");
+        devices.clear();
+        deviceCounter = 0;
+    }
+
+
+    private boolean hasPermission(String permission){
+        return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     public boolean bluetoothCheck (BluetoothAdapter mBtAdapter){
