@@ -81,7 +81,6 @@
         android:layout_marginRight="20dp"
         android:layout_height="wrap_content"
         android:text="Geräte in Reichweite"
-        android:textAppearance="@style/GrayText"
         android:textAlignment="center"
         android:background="@color/TvBackgroundLightgreen"
         app:layout_constraintBottom_toBottomOf="parent"
