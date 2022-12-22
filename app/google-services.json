@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "480034610963",
+    "project_id": "gluko-smart",
+    "storage_bucket": "gluko-smart.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:480034610963:android:0b068adc3f239333e244e6",
+        "android_client_info": {
+          "package_name": "com.example.gluko_smart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "480034610963-638h2ov01o5p2fto86j0ckhtjhbavc42.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6BbnyaXM92Dukv_R5i7-DTdjnc2d7zeA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "480034610963-638h2ov01o5p2fto86j0ckhtjhbavc42.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
