@@ -12,6 +12,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     TextView alreadyHaveaccount;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
