@@ -5,15 +5,18 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.le.BluetoothLeAdvertiser;
+import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ParcelUuid;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -26,12 +29,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.loader.content.AsyncTaskLoader;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class GereateKoppeln extends Activity {
 
@@ -42,7 +43,7 @@ public class GereateKoppeln extends Activity {
     private static final int REQUEST_DISCOVER_BT = 1;
     private static final int REQUEST_SCAN_BT = 2;
     private static final int REQUEST_LOCATION =3;
-    private static final long INTERVAL = 5000;
+    private static final long SCAN_INTERVAL = 5000;
 
     //Views UI
     Button button_homeKoppeln, button_getDevices, button_btSync;
@@ -61,21 +62,35 @@ public class GereateKoppeln extends Activity {
 
     private ScanCallback bleScanCallback = new ScanCallback() {
         @Override
+        
         public void onScanResult(int callbackType, ScanResult result) {
             BluetoothDevice device = result.getDevice();
-
 
             if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_ENABLE_BT);
                 return;
             }
+
+            // if (device.getAddress().equals("F4:04:4C:0E:7C:0D")) {}
             String text = String.format("%d - %s, %s\r\n", deviceCounter, device.getName(), device.getAddress());
             tv_pairedDev.setText(tv_pairedDev.getText().toString().concat(text));
 
             devices.put(deviceCounter, device);
             deviceCounter++;
+
+        }
+
+        @Override
+        public void onScanFailed(int errorCode) {
+            super.onScanFailed(errorCode);
+            Toast.makeText(GereateKoppeln.this, "Scan Failed", Toast.LENGTH_SHORT).show();
+            
         }
     };
+
+    //Decleration of ScanFilterArray
+    private ArrayList<ScanFilter> scanFilters;
+    private ScanSettings scanSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,20 +106,20 @@ public class GereateKoppeln extends Activity {
         tv_BtStatus = (TextView) findViewById(R.id.tv_statusBluetooth);
         pb_BleScan = (ProgressBar) findViewById(R.id.progressBarBLEscan);
 
-        //BTadapter of Smartphone
-        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-        bleScanner = mBtAdapter.getBluetoothLeScanner();
-
         tv_pairedDev.setMovementMethod(new ScrollingMovementMethod());
 
-        //Permission Management ala https://draeger-it.blog/android-app-programmierung-bluetooth-low-energy-connection-ble/
+        //Initialize BTadapter of Smartphone and BLEscanner
+        BluetoothManager mbtManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+        mBtAdapter = mbtManager.getAdapter();
+        bleScanner = mBtAdapter.getBluetoothLeScanner();
 
+        //Permission Management ala https://draeger-it.blog/android-app-programmierung-bluetooth-low-energy-connection-ble/
+        //Requests Bluetooth, BTAdmin, CoarseLocation Permission
         if (!hasRequiredPermissions()) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, PackageManager.PERMISSION_GRANTED);
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PackageManager.PERMISSION_GRANTED);
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
-        }
-
+            }
 
         //check if bt is available or not and update status
         if (bluetoothCheck(mBtAdapter) == true) {
@@ -114,7 +129,7 @@ public class GereateKoppeln extends Activity {
             switch_Bt.setText("OFF");
         }
 
-        //on switch clickListener
+        //Bluetooth switch Listener
         switch_Bt.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -132,8 +147,7 @@ public class GereateKoppeln extends Activity {
                         }
                         startActivityForResult(intent, REQUEST_ENABLE_BT);
 
-
-                        //if switch is unchecked but bluetooth is already enabled
+                    //BTAdapter already enabled
                     } else {
                         Toast.makeText(GereateKoppeln.this, "Bluetooth wurde aktiviert", Toast.LENGTH_SHORT).show();
                         bluetoothCheck(mBtAdapter);
@@ -148,6 +162,21 @@ public class GereateKoppeln extends Activity {
             }
         });
 
+        //STOPPED HERE - SF for bt dev
+
+        String devAdress = "F4:04:4C:0E:7C:0D";
+
+        scanSettings = new ScanSettings.Builder()
+                .setScanMode(ScanSettings.CALLBACK_TYPE_ALL_MATCHES).build();
+
+        ScanFilter scanFilter1 = new ScanFilter.Builder()
+                .setDeviceAddress(devAdress)
+                .build();
+        try {
+            scanFilters.add(scanFilter1);
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "ScanFilter - NullpointerEx", Toast.LENGTH_SHORT).show();
+        }
         button_getDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -155,30 +184,38 @@ public class GereateKoppeln extends Activity {
                 if (mBtAdapter.isEnabled()) {
                     //               tv_pairedDev.setText("Paired Devices");
                     if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(GereateKoppeln.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        && ActivityCompat.checkSelfPermission(GereateKoppeln.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                    {
                         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_LOCATION);
-
                         return;
+
+                        //Scan is starting
                     } else {
+
                         resetFoundDevices();
-                        Log.i(TAG, "suche nach BLE Devices > beginn");
+                        Log.i(TAG, "suche nach BLE Devices - Start");
                         button_getDevices.setEnabled(false);
                         pb_BleScan.setVisibility(View.VISIBLE);
-
 
                         AsyncTask.execute(new Runnable() {
                             @Override
                             public void run() {
                                 if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
                                     requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN},REQUEST_SCAN_BT);
-
-
                                     return;
                                 }
-                                bleScanner.startScan(bleScanCallback);
+
+                                try {
+                                    //bleScanner.startScan(bleScanCallback);
+                                    bleScanner.startScan(scanFilters,scanSettings,bleScanCallback);
+                                } catch (NullPointerException e) {
+                                    tv_pairedDev.setText("NoProperDev");
+                                }
+
                             }
                         });
 
+                        //handler stops scan after predefined Scan_Interval (5000 ms)
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -192,20 +229,21 @@ public class GereateKoppeln extends Activity {
                                     }
                                 });
                             }
-                        }, INTERVAL);
+                        }, SCAN_INTERVAL);
 
 
-          /*             Set<BluetoothDevice> devices = mBtAdapter.getBondedDevices();
+          /*            Set<BluetoothDevice> devices = mBtAdapter.getBondedDevices();
                         for (BluetoothDevice device: devices) {
                             tv_pairedDev.append ("\nDevice"+device.getName()+ "," + device);
           */              }
-                    }else {
+                    } else {
                     //bluetooth is off
                     Toast.makeText(GereateKoppeln.this, "Turn on Bluetooth first", Toast.LENGTH_SHORT).show();
                 }
-                }
+            }
         });
 
+        //Falsche Bluetooth Funktion bis jetzt
         button_btSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,6 +267,11 @@ public class GereateKoppeln extends Activity {
             }
         });
 }
+
+    public void scanForDevicesByAddress (final String [] deviceAddresses) {
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -248,6 +291,8 @@ public class GereateKoppeln extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+
+    //Part of Permission Management
     private boolean hasRequiredPermissions() {
         boolean hasBluetoothPermission = hasPermission(Manifest.permission.BLUETOOTH);
         boolean hasBluetoothAdminPermission = hasPermission(Manifest.permission.BLUETOOTH_ADMIN);
@@ -256,15 +301,16 @@ public class GereateKoppeln extends Activity {
         return hasBluetoothPermission && hasBluetoothAdminPermission && hasLocationPermission;
     }
 
+
+    private boolean hasPermission(String permission){
+        return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+
     private void resetFoundDevices() {
         tv_pairedDev.setText("");
         devices.clear();
         deviceCounter = 0;
-    }
-
-
-    private boolean hasPermission(String permission){
-        return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     public boolean bluetoothCheck (BluetoothAdapter mBtAdapter){
