@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GereateKoppeln extends Activity {
+public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanCallback {
 
     //Global Variables
     private static final String TAG = "BLE_Connection";
@@ -323,5 +323,10 @@ public class GereateKoppeln extends Activity {
         img_BtIcon.setImageResource(R.drawable.ic_action_off);
         }
         return false;
+    }
+
+    @Override
+    public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
+
     }
 }

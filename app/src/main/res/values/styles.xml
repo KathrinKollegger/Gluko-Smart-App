@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="GrayText" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@color/gray</item>
+    </style>
+</resources>
