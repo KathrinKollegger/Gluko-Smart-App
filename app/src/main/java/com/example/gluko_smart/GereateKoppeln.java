@@ -32,6 +32,7 @@ import androidx.core.app.ActivityCompat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanCallback {
@@ -60,37 +61,9 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
     private Map<Integer, String> devicesDescription = new HashMap<>();
     private Map<Integer, BluetoothDevice> devices = new HashMap<>();
 
-    private ScanCallback bleScanCallback = new ScanCallback() {
-        @Override
-        
-        public void onScanResult(int callbackType, ScanResult result) {
-            BluetoothDevice device = result.getDevice();
-
-            if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_ENABLE_BT);
-                return;
-            }
-
-            // if (device.getAddress().equals("F4:04:4C:0E:7C:0D")) {}
-            String text = String.format("%d - %s, %s\r\n", deviceCounter, device.getName(), device.getAddress());
-            tv_pairedDev.setText(tv_pairedDev.getText().toString().concat(text));
-
-            devices.put(deviceCounter, device);
-            deviceCounter++;
-
-        }
-
-        @Override
-        public void onScanFailed(int errorCode) {
-            super.onScanFailed(errorCode);
-            Toast.makeText(GereateKoppeln.this, "Scan Failed", Toast.LENGTH_SHORT).show();
-            
-        }
-    };
-
     //Decleration of ScanFilterArray
-    private ArrayList<ScanFilter> scanFilters;
-    private ScanSettings scanSettings;
+    /*private ArrayList<ScanFilter> scanFilters;
+    private ScanSettings scanSettings;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,21 +135,20 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
             }
         });
 
-        //STOPPED HERE - SF for bt dev
+        //Scanfilter implementation
 
         String devAdress = "F4:04:4C:0E:7C:0D";
 
-        scanSettings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.CALLBACK_TYPE_ALL_MATCHES).build();
-
+        List<ScanFilter> scanFilters = new ArrayList<>();
         ScanFilter scanFilter1 = new ScanFilter.Builder()
                 .setDeviceAddress(devAdress)
                 .build();
-        try {
-            scanFilters.add(scanFilter1);
-        } catch (NullPointerException e) {
-            Toast.makeText(this, "ScanFilter - NullpointerEx", Toast.LENGTH_SHORT).show();
-        }
+        scanFilters.add(scanFilter1);
+
+        ScanSettings scanSettings = new ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                .build();
+
         button_getDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -328,5 +300,33 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
 
+
     }
+
+    private ScanCallback bleScanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            BluetoothDevice device = result.getDevice();
+
+            if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_ENABLE_BT);
+                return;
+            }
+
+            // if (device.getAddress().equals("F4:04:4C:0E:7C:0D")) {}
+            String text = String.format("%d - %s, %s\r\n", deviceCounter, device.getName(), device.getAddress());
+            tv_pairedDev.setText(tv_pairedDev.getText().toString().concat(text));
+
+            devices.put(deviceCounter, device);
+            deviceCounter++;
+
+        }
+
+        @Override
+        public void onScanFailed(int errorCode) {
+            super.onScanFailed(errorCode);
+            Toast.makeText(GereateKoppeln.this, "Scan Failed", Toast.LENGTH_SHORT).show();
+
+        }
+    };
 }
