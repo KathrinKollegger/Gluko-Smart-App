@@ -106,4 +106,9 @@
     <string name="login_failed">"Login failed"</string>
     <string name="confirm_password">confirm Password</string>
     <string name="registrierung_activityTitle">Registrierung</string>
+    <string name="TitleTVgeräteKoppeln">Gerät verbinden</string>
+    <string name="BTIconDescription">Icon für Bluetooth-Status</string>
+    <string name="btStatus">Bluetooth Status</string>
+    <string name="btText_startScan">Scan starten</string>
+    <string name="btText_connect">Verbinden</string>
 </resources>

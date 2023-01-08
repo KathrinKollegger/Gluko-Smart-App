@@ -34,11 +34,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanCallback {
 
     //Global Variables
     private static final String TAG = "BLE_Connection";
+
+    //Glucose Meter Device information
+    private static final String MEDITOUCH_DEVICE_ADRESS = "F4:04:4C:0E:7C:0D";
+    private static final String GLUCOSE_SERVICE_UUID = "00001808-0000-1000-8000-00805f9b34fb";
+    byte [] serviceData = new byte[] {
+            0x18
+    };
 
     private static final int REQUEST_ENABLE_BT = 0;
     private static final int REQUEST_DISCOVER_BT = 1;
@@ -58,12 +66,9 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
     private Handler handler = new Handler();
 
     private int deviceCounter = 1;
+    //deviceDescription Map is not needed yet
     private Map<Integer, String> devicesDescription = new HashMap<>();
     private Map<Integer, BluetoothDevice> devices = new HashMap<>();
-
-    //Decleration of ScanFilterArray
-    /*private ArrayList<ScanFilter> scanFilters;
-    private ScanSettings scanSettings;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,12 +141,9 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
         });
 
         //Scanfilter implementation
-
-        String devAdress = "F4:04:4C:0E:7C:0D";
-
         List<ScanFilter> scanFilters = new ArrayList<>();
         ScanFilter scanFilter1 = new ScanFilter.Builder()
-                .setDeviceAddress(devAdress)
+                .setServiceUuid(new ParcelUuid(UUID.fromString(GLUCOSE_SERVICE_UUID)))
                 .build();
         scanFilters.add(scanFilter1);
 
@@ -202,12 +204,8 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
                                 });
                             }
                         }, SCAN_INTERVAL);
+                        }
 
-
-          /*            Set<BluetoothDevice> devices = mBtAdapter.getBondedDevices();
-                        for (BluetoothDevice device: devices) {
-                            tv_pairedDev.append ("\nDevice"+device.getName()+ "," + device);
-          */              }
                     } else {
                     //bluetooth is off
                     Toast.makeText(GereateKoppeln.this, "Turn on Bluetooth first", Toast.LENGTH_SHORT).show();
@@ -303,6 +301,7 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
 
     }
 
+    //BLE ScanCallback
     private ScanCallback bleScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -313,9 +312,9 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
                 return;
             }
 
-            // if (device.getAddress().equals("F4:04:4C:0E:7C:0D")) {}
-            String text = String.format("%d - %s, %s\r\n", deviceCounter, device.getName(), device.getAddress());
-            tv_pairedDev.setText(tv_pairedDev.getText().toString().concat(text));
+
+            String textDevName = String.format("%d - %s, %s\r\n", deviceCounter, device.getName(), device.getAddress());
+            tv_pairedDev.setText(tv_pairedDev.getText().toString().concat(textDevName));
 
             devices.put(deviceCounter, device);
             deviceCounter++;
@@ -326,7 +325,9 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
         public void onScanFailed(int errorCode) {
             super.onScanFailed(errorCode);
             Toast.makeText(GereateKoppeln.this, "Scan Failed", Toast.LENGTH_SHORT).show();
+            tv_pairedDev.setText("No suitable dvices can be found!");
 
         }
+
     };
 }

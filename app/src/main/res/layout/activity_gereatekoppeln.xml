@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/backgroundGreen">
+    android:background="@color/DarkblueBG">
 
     <TextView
         android:id="@+id/tv_titleBTact"
@@ -14,12 +13,13 @@
         android:layout_marginTop="40dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="561dp"
-        android:background="@color/TvBackgroundLightgreen"
+        android:background="@color/green_TVbg"
         android:gravity="center"
-        android:text="Gerät verbinden"
+        android:text="@string/TitleTVgeräteKoppeln"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textStyle="bold"
-        android:visibility="visible"
+        android:textColor="@color/Tiara"
+        app:circularflow_defaultRadius="@dimen/cardview_default_radius"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,14 +35,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_titleBTact" />
+        app:layout_constraintTop_toBottomOf="@id/tv_titleBTact"
+        android:contentDescription="@string/BTIconDescription" />
 
     <TextView
         android:id="@+id/tv_statusBluetooth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Status"
-        android:textSize="15dp"
+        android:text="@string/btStatus"
+        android:textSize="15sp"
         app:layout_constraintTop_toBottomOf="@+id/iv_bluetooth"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -51,9 +52,9 @@
         android:id="@+id/button_getBtDevices"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="BLE Suche"
-        android:textSize="15dp"
-        android:backgroundTint="@color/buttonBlue"
+        android:text="@string/btText_startScan"
+        android:textSize="15sp"
+        android:backgroundTint="@color/Nepal"
         app:layout_constraintTop_toBottomOf="@+id/tv_pairedDevsTV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -63,14 +64,14 @@
         android:id="@+id/button_sync"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/buttonBlue"
-        android:text="Sync"
-        android:textSize="15dp"
+        android:backgroundTint="@color/Nepal"
+        android:text="@string/btText_connect"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/textView3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_pairedDevsTV"
+        app:layout_constraintTop_toBottomOf="@+id/button_getBtDevices"
         app:layout_constraintVertical_bias="0.721" />
 
 
@@ -81,12 +82,14 @@
         android:layout_marginRight="20dp"
         android:layout_height="wrap_content"
         android:text="Geräte in Reichweite"
+        android:textSize="15sp"
+            android:padding="2.5dp"
         android:textAlignment="center"
-        android:background="@color/TvBackgroundLightgreen"
+        android:background="@color/green_TVbg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:maxHeight="150dp"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical" />
 
 
 
@@ -139,7 +142,7 @@
         app:layout_constraintEnd_toStartOf="@+id/iv_bluetooth"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.284"
+        app:layout_constraintVertical_bias="0.235"
         android:visibility="invisible"/>
 
 
