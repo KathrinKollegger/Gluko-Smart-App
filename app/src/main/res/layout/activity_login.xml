@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="casual"
-        android:text="@string/registrierung_activityTitle"
+        android:text="Login"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textSize="50sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -30,7 +30,9 @@
         android:id="@+id/tv_loginStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Erstelle einen GlukoSmart-Account"
+        android:text="Anmeldung mit deinem GlukoSmart-Account"
+        android:lineSpacingExtra="3sp"
+        android:gravity="center"
         android:textSize="20sp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,28 +66,10 @@
         android:imeOptions="actionDone"
         android:inputType="textPassword"
         android:selectAllOnFocus="true"
-        app:layout_constraintBottom_toTopOf="@+id/passwordConfirm"
+        app:layout_constraintBottom_toTopOf="@+id/bt_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_email" />
-
-    <EditText
-        android:id="@+id/passwordConfirm"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:autofillHints="@string/confirm_password"
-        android:hint="@string/confirm_password"
-        android:imeActionLabel="@string/action_sign_in_short"
-        android:imeOptions="actionDone"
-        android:inputType="textPassword"
-        android:selectAllOnFocus="true"
-        android:drawableLeft="@drawable/ic_baseline_lock_24"
-        android:drawablePadding="5dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
-
 
 
     <Button
@@ -95,18 +79,18 @@
         android:layout_gravity="start"
         android:layout_marginTop="25dp"
         android:enabled="true"
-        android:text="@string/action_sign_in"
+        android:text="@string/bt_signIn"
         android:textSize="15dp"
         android:backgroundTint="@color/buttonBlue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/passwordConfirm" />
+        app:layout_constraintTop_toBottomOf="@id/password" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Du hast dich schon registriert?"
+        android:text="Du hast noch keinen Account registriert?"
         android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_accCreation"
         app:layout_constraintEnd_toEndOf="parent"
@@ -119,7 +103,7 @@
         android:id="@+id/tv_accCreation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tippe hier für Login!"
+        android:text="Tippe hier für Registrierung!"
         android:textSize="15sp"
         android:textColor="@color/white"
         android:background="#126816"

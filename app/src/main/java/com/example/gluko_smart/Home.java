@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,7 +16,7 @@ public class Home extends AppCompatActivity {
     Button button_persoenliches;
     Button button_userManual;
     Button button_abmelden;
-
+    TextView textView_userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,8 @@ public class Home extends AppCompatActivity {
         button_persoenliches = (Button) findViewById(R.id.button_persoenliches);
         button_userManual = (Button) findViewById(R.id.button_userManual);
         button_abmelden = (Button) findViewById(R.id.button_abmelden);
+        textView_userName = (TextView) findViewById(R.id.tv_UserName);
+        textView_userName.setText(getIntent().getStringExtra("UserName"));
 
 
         button_gereateKoppeln.setOnClickListener(new View.OnClickListener() {

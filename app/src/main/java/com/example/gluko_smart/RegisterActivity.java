@@ -1,8 +1,5 @@
 package com.example.gluko_smart;
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,11 +13,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.regex.Pattern;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -36,6 +36,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     String emailPattern ="[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
+    FirebaseAuth mAuth;
+    FirebaseUser mUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -43,7 +46,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        alreadyHaveAccount = findViewById(R.id.tv_accAlreadyExists);
+        alreadyHaveAccount = findViewById(R.id.tv_accCreation);
         loginStatus = findViewById(R.id.tv_loginStatus);
 
         inputEmail = findViewById(R.id.et_email);
@@ -55,11 +58,14 @@ public class RegisterActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.pb_loading);
         progressBar.setVisibility(View.VISIBLE);
 
+        mAuth=FirebaseAuth.getInstance();
+        mUser=mAuth.getCurrentUser();
+
         alreadyHaveAccount.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick (View v){
-                startActivity(new Intent(RegisterActivity.this, Home.class));
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             }
         });
 
@@ -129,7 +135,11 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private void setProg() {
-        progressBar.setProgress(15);
+        progressBar.setProgress(5);
+        if (inputEmail.getText().toString().matches(emailPattern)) {
+            email_boolean = true;
+        } else
+            email_boolean = false;
         if (inputPassword.getText().length()>6) {
             pw_boolean = true;
         } else
@@ -138,45 +148,66 @@ public class RegisterActivity extends AppCompatActivity {
             pwConf_boolean = true;
         } else
             pwConf_boolean = false;
-        if (inputEmail.getText().toString().matches(emailPattern)) {
-            email_boolean = true;
-        } else
-            email_boolean = false;
-        if (pw_boolean) {
+        if (email_boolean) {
             progressBar.setProgress(30);
         }
-        if (pwConf_boolean) {
+        if (pw_boolean) {
             progressBar.setProgress(60);
         }
-        if (email_boolean) {
+        if (pwConf_boolean) {
             progressBar.setProgress(100);
         }
     }
 
     private void performAuth() {
         String email = inputEmail.getText().toString();
+        String [] split_output = email.split("@");
+        String userNameShort = split_output[0];
         String password = inputPassword.getText().toString();
         String confirmPassword = inputConfirmPassword.getText().toString();
 
         if (!email.matches(emailPattern))
         {
-            inputEmail.setError("Enter an existing E-mail");
+            inputEmail.setError(getString(R.string.invalid_username));
         } else if(password.isEmpty() || password.length()<6 )
         {
-            inputPassword.setError("Enter a proper password");
+            inputPassword.setError(getString(R.string.invalid_passwortReg));
         } else if(!password.equals(confirmPassword))
         {
-            inputConfirmPassword.setError("Passwords do not match");
+            inputConfirmPassword.setError(getString(R.string.notmaching_passwords));
         }else
         {
             openDialog();
+            mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        openDialog().dismiss();
+                        sendUserToNextActivity(userNameShort);
+                        Toast.makeText(RegisterActivity.this, R.string.registration_successful, Toast.LENGTH_SHORT).show();
+                        
+                    } else {
+                        openDialog().dismiss();
+                        Toast.makeText(RegisterActivity.this, ""+task.getException(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
     }
 
-    private void openDialog() {
+    private void sendUserToNextActivity(String userName) {
+        Intent intent=new Intent(RegisterActivity.this,Home.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("UserName",userName);
+        startActivity(intent);
+    }
+
+    private RegisterDialog openDialog() {
         RegisterDialog regDial1 = new RegisterDialog();
         regDial1.show(getSupportFragmentManager(),"regDialog1");
+        return regDial1;
     }
+
 }
 
 
