@@ -29,7 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
-
+import static com.example.gluko_smart.ConstantVariables.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,12 +47,6 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
     byte [] serviceData = new byte[] {
             0x18
     };
-
-    private static final int REQUEST_ENABLE_BT = 0;
-    private static final int REQUEST_DISCOVER_BT = 1;
-    private static final int REQUEST_SCAN_BT = 2;
-    private static final int REQUEST_LOCATION =3;
-    private static final long SCAN_INTERVAL = 5000;
 
     //Views UI
     Button button_homeKoppeln, button_getDevices, button_btSync;
@@ -300,34 +294,4 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
 
 
     }
-
-    //BLE ScanCallback
-    private ScanCallback bleScanCallback = new ScanCallback() {
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            BluetoothDevice device = result.getDevice();
-
-            if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_ENABLE_BT);
-                return;
-            }
-
-
-            String textDevName = String.format("%d - %s, %s\r\n", deviceCounter, device.getName(), device.getAddress());
-            tv_pairedDev.setText(tv_pairedDev.getText().toString().concat(textDevName));
-
-            devices.put(deviceCounter, device);
-            deviceCounter++;
-
-        }
-
-        @Override
-        public void onScanFailed(int errorCode) {
-            super.onScanFailed(errorCode);
-            Toast.makeText(GereateKoppeln.this, "Scan Failed", Toast.LENGTH_SHORT).show();
-            tv_pairedDev.setText("No suitable dvices can be found!");
-
-        }
-
-    };
 }
