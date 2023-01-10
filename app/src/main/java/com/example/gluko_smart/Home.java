@@ -5,8 +5,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class Home extends AppCompatActivity {
 
@@ -17,6 +20,7 @@ public class Home extends AppCompatActivity {
     Button button_userManual;
     Button button_abmelden;
     TextView textView_userName;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,7 @@ public class Home extends AppCompatActivity {
         textView_userName = (TextView) findViewById(R.id.tv_UserName);
         textView_userName.setText(getIntent().getStringExtra("UserName"));
 
+        mAuth= FirebaseAuth.getInstance();
 
         button_gereateKoppeln.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,8 +81,11 @@ public class Home extends AppCompatActivity {
         button_abmelden.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent5 = new Intent(Home.this, Abmelden.class);
+                mAuth.signOut();
+                Intent intent5 = new Intent(Home.this, RegisterActivity.class);
                 startActivity(intent5);
+                finish();
+                Toast.makeText(Home.this, "Abmelden erfolreich!", Toast.LENGTH_SHORT).show();
             }
         });
 
