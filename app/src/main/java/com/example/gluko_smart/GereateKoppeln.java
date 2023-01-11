@@ -1,5 +1,9 @@
 package com.example.gluko_smart;
 
+import static com.example.gluko_smart.GlobalVariable.*;
+
+import com.example.gluko_smart.GlobalVariable.*;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -37,22 +41,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanCallback {
-
-    //Global Variables
-    private static final String TAG = "BLE_Connection";
-
-    //Glucose Meter Device information
-    private static final String MEDITOUCH_DEVICE_ADRESS = "F4:04:4C:0E:7C:0D";
-    private static final String GLUCOSE_SERVICE_UUID = "00001808-0000-1000-8000-00805f9b34fb";
-    byte [] serviceData = new byte[] {
-            0x18
-    };
-
-    private static final int REQUEST_ENABLE_BT = 0;
-    private static final int REQUEST_DISCOVER_BT = 1;
-    private static final int REQUEST_SCAN_BT = 2;
-    private static final int REQUEST_LOCATION =3;
-    private static final long SCAN_INTERVAL = 5000;
 
     //Views UI
     Button button_homeKoppeln, button_getDevices, button_btSync;
@@ -92,14 +80,14 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
         bleScanner = mBtAdapter.getBluetoothLeScanner();
 
         //Permission Management ala https://draeger-it.blog/android-app-programmierung-bluetooth-low-energy-connection-ble/
-        //Requests Bluetooth, BTAdmin, CoarseLocation Permission
+        //Requests Bluetooth, BTAdmin, CoarseLocation Permission if not already granted
         if (!hasRequiredPermissions()) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, PackageManager.PERMISSION_GRANTED);
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PackageManager.PERMISSION_GRANTED);
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
             }
 
-        //check if bt is available or not and update status
+        //check if bt is available or not and updates switch state and text
         if (bluetoothCheck(mBtAdapter) == true) {
             switch_Bt.setChecked(true);
             switch_Bt.setText("ON");
@@ -107,7 +95,7 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
             switch_Bt.setText("OFF");
         }
 
-        //Bluetooth switch Listener
+        //Bluetooth-Switch Listener
         switch_Bt.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -116,6 +104,7 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
                     Toast.makeText(GereateKoppeln.this, "Bluetooth wird aktiviert...", Toast.LENGTH_SHORT).show();
                     //BT is disabled otherwise switch (isChecked) = false
                     if (!mBtAdapter.isEnabled()) {
+
                         //Intent to turn on Bluetooth
                         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 
@@ -200,6 +189,7 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
                                     @Override
                                     public void run() {
                                         bleScanner.stopScan(bleScanCallback);
+                                        pb_BleScan.setVisibility(View.INVISIBLE);
                                     }
                                 });
                             }
@@ -238,10 +228,6 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
         });
 }
 
-    public void scanForDevicesByAddress (final String [] deviceAddresses) {
-
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -258,31 +244,33 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
                 }
                 break;
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
 
-    //Part of Permission Management
+    //Part of Permission Management - First Perm Check
     private boolean hasRequiredPermissions() {
         boolean hasBluetoothPermission = hasPermission(Manifest.permission.BLUETOOTH);
         boolean hasBluetoothAdminPermission = hasPermission(Manifest.permission.BLUETOOTH_ADMIN);
         boolean hasLocationPermission = hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
 
+        //true if all permissions are granted, false otherwise
         return hasBluetoothPermission && hasBluetoothAdminPermission && hasLocationPermission;
     }
 
-
+    //checks for single perission if granted
     private boolean hasPermission(String permission){
         return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
 
+    //clears DeviceList and related View
     private void resetFoundDevices() {
         tv_pairedDev.setText("");
         devices.clear();
         deviceCounter = 0;
     }
 
+    //checks if BT is turned on and updates related Views
     public boolean bluetoothCheck (BluetoothAdapter mBtAdapter){
         if (mBtAdapter !=null && mBtAdapter.isEnabled()) {
         tv_BtStatus.setText("Bluetooth ist verfügbar und aktiviert");
@@ -297,8 +285,7 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
 
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-
-
+        //EMPTY
     }
 
     //BLE ScanCallback
