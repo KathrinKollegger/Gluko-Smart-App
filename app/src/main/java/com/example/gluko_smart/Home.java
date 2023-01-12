@@ -78,6 +78,7 @@ public class Home extends AppCompatActivity {
             }
         });
 
+        //abmelden mit signout() Methode
         button_abmelden.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,7 +86,7 @@ public class Home extends AppCompatActivity {
                 Intent intent5 = new Intent(Home.this, RegisterActivity.class);
                 startActivity(intent5);
                 finish();
-                Toast.makeText(Home.this, "Abmelden erfolreich!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Home.this, "Abmelden erfolreich!!", Toast.LENGTH_SHORT).show();
             }
         });
 

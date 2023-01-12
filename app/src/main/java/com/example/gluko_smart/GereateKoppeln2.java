@@ -24,7 +24,7 @@ public class GereateKoppeln2 extends AppCompatActivity {
         button_wertebekommen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent13 = new Intent(GereateKoppeln2.this, GereateKoppeln.class);
+                Intent intent13 = new Intent(GereateKoppeln2.this, GereateKoppelnActivity.class);
                 startActivity(intent13);
             }
         });

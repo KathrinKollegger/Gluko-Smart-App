@@ -1,26 +1,19 @@
 package com.example.gluko_smart;
 
 
-import android.Manifest;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
-import android.content.pm.PackageManager;
 import android.widget.TextView;
 import android.widget.Toast;
-import static com.example.gluko_smart.ConstantVariables.*;
-
-import androidx.core.app.ActivityCompat;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class BleScanner(TextView tv_pariedDev, ScanFilter) implements BluetoothAdapter.LeScanCallback {
 
-    public BleScanner
+    public BleScanner BleScanner;
 
     private int deviceCounter = 1;
     private Map<Integer, BluetoothDevice> devices = new HashMap<>();
@@ -46,7 +39,7 @@ public class BleScanner(TextView tv_pariedDev, ScanFilter) implements BluetoothA
         @Override
         public void onScanFailed(int errorCode) {
             super.onScanFailed(errorCode);
-            Toast.makeText(GereateKoppeln.this, "Scan Failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(GereateKoppelnActivity.this, "Scan Failed", Toast.LENGTH_SHORT).show();
             tv_pairedDev.setText("No suitable dvices can be found!");
 
 

@@ -2,8 +2,6 @@ package com.example.gluko_smart;
 
 import static com.example.gluko_smart.GlobalVariable.*;
 
-import com.example.gluko_smart.GlobalVariable.*;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -40,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanCallback {
+public class GereateKoppelnActivity extends Activity implements BluetoothAdapter.LeScanCallback {
 
     //Views UI
     Button button_homeKoppeln, button_getDevices, button_btSync;
@@ -101,14 +99,14 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     switch_Bt.setText("ON");
-                    Toast.makeText(GereateKoppeln.this, "Bluetooth wird aktiviert...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GereateKoppelnActivity.this, "Bluetooth wird aktiviert...", Toast.LENGTH_SHORT).show();
                     //BT is disabled otherwise switch (isChecked) = false
                     if (!mBtAdapter.isEnabled()) {
 
                         //Intent to turn on Bluetooth
                         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 
-                        if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                        if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                             requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_ENABLE_BT);
                             return;
                         }
@@ -116,11 +114,11 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
 
                     //BTAdapter already enabled
                     } else {
-                        Toast.makeText(GereateKoppeln.this, "Bluetooth wurde aktiviert", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GereateKoppelnActivity.this, "Bluetooth wurde aktiviert", Toast.LENGTH_SHORT).show();
                         bluetoothCheck(mBtAdapter);
                     }
                 } else {
-                    Toast.makeText(GereateKoppeln.this, "Bluetooth wurde deaktiviert!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GereateKoppelnActivity.this, "Bluetooth wurde deaktiviert!", Toast.LENGTH_SHORT).show();
                     switch_Bt.setText("OFF");
                     mBtAdapter.disable();
                     img_BtIcon.setImageResource(R.drawable.ic_action_off);
@@ -146,8 +144,8 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
 
                 if (mBtAdapter.isEnabled()) {
                     //               tv_pairedDev.setText("Paired Devices");
-                    if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(GereateKoppeln.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                    if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                     {
                         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_LOCATION);
                         return;
@@ -163,7 +161,7 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
                         AsyncTask.execute(new Runnable() {
                             @Override
                             public void run() {
-                                if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                                if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
                                     requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN},REQUEST_SCAN_BT);
                                     return;
                                 }
@@ -198,7 +196,7 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
 
                     } else {
                     //bluetooth is off
-                    Toast.makeText(GereateKoppeln.this, "Turn on Bluetooth first", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GereateKoppelnActivity.this, "Turn on Bluetooth first", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -207,12 +205,12 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
         button_btSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN}, REQUEST_DISCOVER_BT);
                     return;
                 }
                 if (!mBtAdapter.isDiscovering()) {
-                    Toast.makeText(GereateKoppeln.this, "Starting to sync", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GereateKoppelnActivity.this, "Starting to sync", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
                     startActivityForResult(intent, REQUEST_DISCOVER_BT);
                 }
@@ -222,7 +220,7 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
         button_homeKoppeln.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent6 = new Intent(GereateKoppeln.this, Home.class);
+                Intent intent6 = new Intent(GereateKoppelnActivity.this, Home.class);
                 startActivity(intent6);
             }
         });
@@ -294,7 +292,7 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
         public void onScanResult(int callbackType, ScanResult result) {
             BluetoothDevice device = result.getDevice();
 
-            if (ActivityCompat.checkSelfPermission(GereateKoppeln.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_ENABLE_BT);
                 return;
             }
@@ -311,7 +309,7 @@ public class GereateKoppeln extends Activity implements BluetoothAdapter.LeScanC
         @Override
         public void onScanFailed(int errorCode) {
             super.onScanFailed(errorCode);
-            Toast.makeText(GereateKoppeln.this, "Scan Failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(GereateKoppelnActivity.this, "Scan Failed", Toast.LENGTH_SHORT).show();
             tv_pairedDev.setText("No suitable dvices can be found!");
 
         }
