@@ -100,11 +100,13 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    //wird nur beim ersten Mal auf dem Home gezeigt; müsste immer gezeigt werden!
     private void sendUserToNextActivity(String userNameShort) {
         Intent intent=new Intent(LoginActivity.this,Home.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("UserName",userNameShort);
         startActivity(intent);
+
     }
 
     private LoginDialog openDialog() {

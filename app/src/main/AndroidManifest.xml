@@ -55,7 +55,7 @@
             android:name=".Home"
             android:exported="false" />
         <activity
-            android:name=".GereateKoppeln"
+            android:name=".GereateKoppelnActivity"
             android:exported="false" />
         <activity
             android:name=".Verlauf"
