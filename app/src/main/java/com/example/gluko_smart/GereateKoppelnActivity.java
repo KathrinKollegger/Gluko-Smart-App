@@ -284,9 +284,7 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
         //EMPTY
-    }
-
-    //BLE ScanCallback
+    }//BLE ScanCallback
     private ScanCallback bleScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -311,6 +309,8 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
             super.onScanFailed(errorCode);
             Toast.makeText(GereateKoppelnActivity.this, "Scan Failed", Toast.LENGTH_SHORT).show();
             tv_pairedDev.setText("No suitable dvices can be found!");
+
+
 
         }
 
