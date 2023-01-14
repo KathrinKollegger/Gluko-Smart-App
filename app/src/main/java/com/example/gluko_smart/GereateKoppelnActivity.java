@@ -82,7 +82,8 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
         if (!hasRequiredPermissions()) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, PackageManager.PERMISSION_GRANTED);
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PackageManager.PERMISSION_GRANTED);
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},PackageManager.PERMISSION_GRANTED);
             }
 
         //check if bt is available or not and updates switch state and text
@@ -106,8 +107,8 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
                         //Intent to turn on Bluetooth
                         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 
-                        if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                            requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_ENABLE_BT);
+                        if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission.BLUETOOTH}, REQUEST_ENABLE_BT);
                             return;
                         }
                         startActivityForResult(intent, REQUEST_ENABLE_BT);
@@ -144,10 +145,12 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
 
                 if (mBtAdapter.isEnabled()) {
                     //               tv_pairedDev.setText("Paired Devices");
-                    if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                    if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this,Manifest.permission.ACCESS_BACKGROUND_LOCATION)!= PackageManager.PERMISSION_GRANTED)
                     {
                         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_LOCATION);
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},REQUEST_LOCATION);
                         return;
 
                         //Scan is starting
@@ -161,13 +164,15 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
                         AsyncTask.execute(new Runnable() {
                             @Override
                             public void run() {
-                                if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                                    requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN},REQUEST_SCAN_BT);
+                                if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                                    requestPermissions(new String[]{Manifest.permission.BLUETOOTH},REQUEST_SCAN_BT);
                                     return;
                                 }
 
                                 try {
+                                    //BLE Sanner ohne Filterung nach Gerät
                                     //bleScanner.startScan(bleScanCallback);
+                                    //BLE Scanner mit Filterung auf Glukosegerät
                                     bleScanner.startScan(scanFilters,scanSettings,bleScanCallback);
                                 } catch (NullPointerException e) {
                                     tv_pairedDev.setText("NoProperDev");
@@ -205,8 +210,8 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
         button_btSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN}, REQUEST_DISCOVER_BT);
+                if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.BLUETOOTH}, REQUEST_DISCOVER_BT);
                     return;
                 }
                 if (!mBtAdapter.isDiscovering()) {
@@ -249,10 +254,11 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
     private boolean hasRequiredPermissions() {
         boolean hasBluetoothPermission = hasPermission(Manifest.permission.BLUETOOTH);
         boolean hasBluetoothAdminPermission = hasPermission(Manifest.permission.BLUETOOTH_ADMIN);
-        boolean hasLocationPermission = hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
+        boolean hasLocationPermission = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        boolean hasLocationPermissionBackground = hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
 
         //true if all permissions are granted, false otherwise
-        return hasBluetoothPermission && hasBluetoothAdminPermission && hasLocationPermission;
+        return hasBluetoothPermission && hasBluetoothAdminPermission && hasLocationPermission && hasLocationPermissionBackground;
     }
 
     //checks for single perission if granted
@@ -290,8 +296,8 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
         public void onScanResult(int callbackType, ScanResult result) {
             BluetoothDevice device = result.getDevice();
 
-            if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_ENABLE_BT);
+            if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.BLUETOOTH}, REQUEST_ENABLE_BT);
                 return;
             }
 
