@@ -46,24 +46,42 @@
         app:layout_constraintTop_toBottomOf="@+id/manuelleEingabe2"
         app:layout_constraintVertical_bias="0.0" />
 
+
     <EditText
         android:id="@+id/eingabe_Blutzuckerwert"
-        android:layout_width="258dp"
-        android:layout_height="48dp"
+        android:layout_width="140dp"
+        android:layout_height="52dp"
         android:layout_margin="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="9dp"
         android:background="#5BCF99"
-        android:hint="Gemessener Blutzuckerwert"
+        android:hint="Blutzuckerwert"
         android:inputType="number"
         android:minHeight="48dp"
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintHorizontal_bias="0.448"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.584" />
+        app:layout_constraintVertical_bias="0.6" />
+
+    <TextView
+        android:id="@+id/einheit"
+        android:layout_width="79dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="54dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="55dp"
+        android:gravity="center"
+        android:text="mg/dl"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.928"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/manuelleEingabe2"
+        app:layout_constraintVertical_bias="0.429" />
 
     <androidx.appcompat.widget.AppCompatSpinner
         android:id="@+id/ed_infoessen"
