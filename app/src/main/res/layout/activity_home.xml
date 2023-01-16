@@ -15,6 +15,7 @@
         android:background="#C60CB56C"
         android:gravity="center_horizontal"
         android:text="Home"
+        android:fontFamily="casual"
         android:textColor="@color/black"
         android:textSize="32sp"
         app:layout_constraintBottom_toBottomOf="parent"

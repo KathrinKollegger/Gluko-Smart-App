@@ -29,6 +29,7 @@
         android:background="#5BCF99"
         android:gravity="center"
         android:text="Geräteeinrichtung"
+        android:fontFamily="casual"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textStyle="bold"
         android:visibility="visible"

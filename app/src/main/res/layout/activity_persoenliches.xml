@@ -15,6 +15,7 @@
         android:background="#5BCF99"
         android:padding="15dp"
         android:text="Persönliche Daten aktualisieren:"
+        android:fontFamily="casual"
         android:textAlignment="center"
         android:textSize="22sp"
         android:textStyle="bold"

@@ -16,6 +16,7 @@
         android:background="@color/green_TVbg"
         android:gravity="center"
         android:text="@string/TitleTVgeräteKoppeln"
+        android:fontFamily="casual"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textStyle="bold"
         android:textColor="@color/Tiara"
