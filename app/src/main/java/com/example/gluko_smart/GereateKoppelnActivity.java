@@ -16,6 +16,7 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelUuid;
@@ -113,10 +114,12 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
                         //Intent to turn on Bluetooth
                         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 
-                        if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED)  {
+                        if (Build.VERSION.SDK_INT <= 30 && ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED)  {
                             requestPermissions(new String[]{Manifest.permission.BLUETOOTH}, REQUEST_ENABLE_BT);
                             return;
                         }
+                        //andere SDK abfrage
+                        else if ()
                         startActivityForResult(intent, REQUEST_ENABLE_BT);
 
                     //BTAdapter already enabled
