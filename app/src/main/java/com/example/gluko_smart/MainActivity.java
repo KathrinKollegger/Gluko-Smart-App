@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        //Starts RegisterActivity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

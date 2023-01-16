@@ -78,6 +78,7 @@ public class Home extends AppCompatActivity {
             }
         });
 
+        //abmelden mit signout() Methode
         button_abmelden.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -35,7 +35,7 @@
         android:layout_marginEnd="9dp"
         android:layout_marginBottom="70dp"
         android:background="#5BCF99"
-        android:hint="Name"
+        android:hint="Username"
         android:inputType="text"
         android:minHeight="48dp"
         android:padding="10dp"
