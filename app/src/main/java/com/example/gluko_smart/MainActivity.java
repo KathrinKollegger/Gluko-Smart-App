@@ -11,29 +11,41 @@ import android.os.Handler;
 
 public class MainActivity extends AppCompatActivity {
     public final int LOAD_TIME = 3000;
+    boolean ok = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) ==
-                PackageManager.PERMISSION_GRANTED) {
-            // You can use the API that requires the permission.
+        while(ok) {
 
-        } else {
-            requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE}, 5);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                startApplication();
+                ok= false;
+
+
+            } else {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 5);
+                ok=true;
+            }
         }
 
-        if (ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT) ==
-                PackageManager.PERMISSION_GRANTED) {
 
-        } else {
-            requestPermissions(new String[]{ Manifest.permission.BLUETOOTH_CONNECT}, 10);
-        }
+
+        //if (ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT) ==
+        // PackageManager.PERMISSION_GRANTED) {
+
+        // } else {
+        // requestPermissions(new String[]{ Manifest.permission.BLUETOOTH_CONNECT}, 10);
+        //}
+    }
 
 
         //Starts RegisterActivity
+        public void startApplication(){
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

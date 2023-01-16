@@ -267,10 +267,11 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
 
     //Part of Permission Management - First Perm Check
     private boolean hasRequiredPermissions() {
-        boolean hasBluetoothPermission = hasPermission(Manifest.permission.BLUETOOTH);
-        boolean hasBluetoothAdminPermission = hasPermission(Manifest.permission.BLUETOOTH_ADMIN);
-        boolean hasLocationPermission = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
-        boolean hasLocationPermissionBackground = hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+            boolean hasBluetoothPermission = hasPermission(Manifest.permission.BLUETOOTH);
+            boolean hasBluetoothAdminPermission = hasPermission(Manifest.permission.BLUETOOTH_ADMIN);
+            boolean hasLocationPermission = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+            boolean hasLocationPermissionBackground = hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+
 
         //true if all permissions are granted, false otherwise
         return hasBluetoothPermission && hasBluetoothAdminPermission && hasLocationPermission && hasLocationPermissionBackground;
