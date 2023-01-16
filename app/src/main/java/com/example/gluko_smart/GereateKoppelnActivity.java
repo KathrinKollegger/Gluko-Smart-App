@@ -114,12 +114,18 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
                         //Intent to turn on Bluetooth
                         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 
-                        if (Build.VERSION.SDK_INT <= 30 && ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED)  {
+                        //SDK 30 and lower
+                        if (Build.VERSION.SDK_INT <= 30 && ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED)
+                        {
                             requestPermissions(new String[]{Manifest.permission.BLUETOOTH}, REQUEST_ENABLE_BT);
                             return;
                         }
-                        //andere SDK abfrage
-                        else if ()
+                        //ab SDK 31
+                        else if (Build.VERSION.SDK_INT > 30 && ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED)
+                        {
+                            requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_ENABLE_BT);
+                            return;
+                        }
                         startActivityForResult(intent, REQUEST_ENABLE_BT);
 
                     //BTAdapter already enabled
