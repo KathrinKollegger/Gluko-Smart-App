@@ -103,7 +103,7 @@
         android:layout_width="325dp"
         android:layout_height="67dp"
         android:backgroundTint="#AF4C4C"
-        android:text="Abmelden"
+        android:text="Gluko-Smart beenden"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

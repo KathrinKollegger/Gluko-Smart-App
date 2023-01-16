@@ -83,10 +83,12 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mAuth.signOut();
-                Intent intent5 = new Intent(Home.this, RegisterActivity.class);
-                startActivity(intent5);
-                finish();
-                Toast.makeText(Home.this, "Abmelden erfolreich!", Toast.LENGTH_SHORT).show();
+               Intent intent5 = new Intent(Home.this, RegisterActivity.class);
+               startActivity(intent5);
+               Toast.makeText(Home.this, "Abmelden erfolreich!", Toast.LENGTH_SHORT).show();
+                //finish(); nur finish() beendet nur letzte Activity; Benutzer kann mittels Pfeiltasten zurücknavigieren
+                finishAffinity(); //Beendet nun auch die im StackTrace unterhalb befindlichen Activitys und Benutzer kann nicht mehr zurück navigieren
+
             }
         });
 
