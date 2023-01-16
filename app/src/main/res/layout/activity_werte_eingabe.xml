@@ -50,7 +50,7 @@
 
 
     <EditText
-        android:id="@+id/eingabe_Blutzuckerwert"
+        android:id="@+id/edit_bzWert"
         android:layout_width="140dp"
         android:layout_height="52dp"
         android:layout_margin="10dp"
@@ -103,7 +103,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.527"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/eingabe_Blutzuckerwert"
+        app:layout_constraintTop_toBottomOf="@+id/edit_bzWert"
         app:layout_constraintVertical_bias="0.842"
         tools:ignore="SpeakableTextPresentCheck" />
 
@@ -128,7 +128,7 @@
         android:layout_marginTop="9dp"
         android:layout_marginEnd="148dp"
         android:layout_marginBottom="11dp"
-        app:layout_constraintBottom_toTopOf="@+id/eingabe_Blutzuckerwert"
+        app:layout_constraintBottom_toTopOf="@+id/edit_bzWert"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textEingabe1"
@@ -146,7 +146,7 @@
         app:layout_constraintBottom_toTopOf="@+id/ed_infoessen"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/eingabe_Blutzuckerwert"
+        app:layout_constraintTop_toBottomOf="@+id/edit_bzWert"
         app:srcCompat="@drawable/mahlzeit"
         android:src="@drawable/mahlzeit"/>
 
