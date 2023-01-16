@@ -26,7 +26,7 @@ public class WerteEingabe extends Activity {
     private EditText eingabe_Blutzuckerwert;
     private Button button_speichern1;
     private DatabaseReference rootDatabaseref;
-    //test
+    //test/
 
 
     @SuppressLint("MissingInflatedId")
