@@ -16,6 +16,7 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelUuid;
@@ -80,10 +81,16 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
         //Permission Management ala https://draeger-it.blog/android-app-programmierung-bluetooth-low-energy-connection-ble/
         //Requests Bluetooth, BTAdmin, CoarseLocation Permission if not already granted
         if (!hasRequiredPermissions()) {
+            //für Android 11 and lower
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, PackageManager.PERMISSION_GRANTED);
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PackageManager.PERMISSION_GRANTED);
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},PackageManager.PERMISSION_GRANTED);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PackageManager.PERMISSION_GRANTED);
+
+            //für Android 12 und higher
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_SCAN},PackageManager.PERMISSION_GRANTED);
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PackageManager.PERMISSION_GRANTED);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},PackageManager.PERMISSION_GRANTED);
             }
 
         //check if bt is available or not and updates switch state and text
@@ -107,8 +114,16 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
                         //Intent to turn on Bluetooth
                         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 
-                        if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                        //SDK 30 and lower
+                        if (Build.VERSION.SDK_INT <= 30 && ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED)
+                        {
                             requestPermissions(new String[]{Manifest.permission.BLUETOOTH}, REQUEST_ENABLE_BT);
+                            return;
+                        }
+                        //ab SDK 31
+                        else if (Build.VERSION.SDK_INT > 30 && ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED)
+                        {
+                            requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_ENABLE_BT);
                             return;
                         }
                         startActivityForResult(intent, REQUEST_ENABLE_BT);
@@ -171,9 +186,9 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
 
                                 try {
                                     //BLE Sanner ohne Filterung nach Gerät
-                                    //bleScanner.startScan(bleScanCallback);
+                                    bleScanner.startScan(bleScanCallback);
                                     //BLE Scanner mit Filterung auf Glukosegerät
-                                    bleScanner.startScan(scanFilters,scanSettings,bleScanCallback);
+                                    //bleScanner.startScan(scanFilters,scanSettings,bleScanCallback);
                                 } catch (NullPointerException e) {
                                     tv_pairedDev.setText("NoProperDev");
                                 }
