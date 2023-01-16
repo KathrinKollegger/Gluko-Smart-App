@@ -156,6 +156,7 @@
         android:layout_height="51dp"
         android:backgroundTint="#4C74AF"
         android:text="Speichern"
+        android:onClick="sendWerte"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.879"

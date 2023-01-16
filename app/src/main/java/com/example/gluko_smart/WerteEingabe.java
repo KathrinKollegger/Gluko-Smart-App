@@ -8,24 +8,19 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.appcompat.widget.AppCompatSpinner;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WerteEingabe extends Activity {
 
+
     Button button_homeVerlauf;
     AppCompatSpinner ed_infoessen;
     private String selectedEssen;
-    private EditText eingabe_Blutzuckerwert;
-    private Button button_speichern1;
-    private DatabaseReference rootDatabaseref;
 
 
     @SuppressLint("MissingInflatedId")
@@ -34,19 +29,6 @@ public class WerteEingabe extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_werte_eingabe);
 
-        eingabe_Blutzuckerwert = findViewById(R.id.eingabe_Blutzuckerwert);
-        button_speichern1 = findViewById(R.id.button_speichern1);
-
-        rootDatabaseref = FirebaseDatabase.getInstance().getReference().child("Wert");
-
-        button_speichern1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String data = eingabe_Blutzuckerwert.getText().toString();
-
-                rootDatabaseref.setValue(data);
-            }
-        });
 
         button_homeVerlauf = (Button) findViewById(R.id.button_homeVerlauf);
         ed_infoessen = (AppCompatSpinner) findViewById(R.id.ed_infoessen);
@@ -90,5 +72,9 @@ public class WerteEingabe extends Activity {
             }
         });
     }
+
+
+
+
 
 }
