@@ -33,6 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
     boolean email_boolean;
     int pb_counter = 0;
     private Handler handler = new Handler();
+    String userNameShort;
 
     String emailPattern ="[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
@@ -162,7 +163,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void performAuth() {
         String email = inputEmail.getText().toString();
         String [] split_output = email.split("@");
-        String userNameShort = split_output[0];
+        userNameShort = split_output[0];
         String password = inputPassword.getText().toString();
         String confirmPassword = inputConfirmPassword.getText().toString();
 

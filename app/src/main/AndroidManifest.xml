@@ -3,25 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.gluko_smart">
 
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
 
+<!--General Application Permissions-->
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+
+    <!--Legacy Bluetooth Permissions - for API <=30 -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
-        <!--tools:targetApi="s" -->
-    <!--android:usesPermissionFlags="neverForLocation" - hab ich rausegtan, weil es die access-fine-location teilweise blokeiet-->
-
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+<!--Bluetooth Permissions - for API > 30-->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
 
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
 
@@ -75,6 +73,9 @@
             android:exported="false" />
         <activity
             android:name=".UserManual"
+            android:exported="false" />
+        <activity
+            android:name=".Abmelden"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
