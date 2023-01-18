@@ -10,12 +10,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatSpinner;
 
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class WerteEingabe extends Activity {
@@ -32,6 +35,13 @@ public class WerteEingabe extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_werte_eingabe);
 
+        Calendar calender = Calendar.getInstance();
+        String currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calender.getTime());
+
+        TextView textViewDate = findViewById(R.id.textView_date);
+        textViewDate.setText(currentDate);
+
+        final TextView textViewDate = findViewById(R.id.textView_date);
         final EditText edit_bzWert = findViewById(R.id.edit_bzWert);
         final Spinner edit_infoessen = findViewById(R.id.ed_infoessen);
         Button button_speichern1 = findViewById(R.id.button_speichern1);
@@ -39,7 +49,7 @@ public class WerteEingabe extends Activity {
 
         button_speichern1.setOnClickListener(v-> {
 
-            GlucoseValues glucoseValues = new GlucoseValues(edit_bzWert.getText().toString(), edit_infoessen.getSelectedItem().toString());
+            GlucoseValues glucoseValues = new GlucoseValues(edit_bzWert.getText().toString(), edit_infoessen.getSelectedItem().toString(), textView_date.getText.toString());
             daoGlucoseValue.add(glucoseValues).addOnSuccessListener(suc->{
                 Toast.makeText(this, "Blutzuckerwert wurde gespeichert", Toast.LENGTH_SHORT).show();
             }).addOnFailureListener(er->{
