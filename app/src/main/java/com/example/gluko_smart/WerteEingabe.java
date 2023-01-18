@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatSpinner;
@@ -32,12 +33,13 @@ public class WerteEingabe extends Activity {
         setContentView(R.layout.activity_werte_eingabe);
 
         final EditText edit_bzWert = findViewById(R.id.edit_bzWert);
+        final Spinner edit_infoessen = findViewById(R.id.ed_infoessen);
         Button button_speichern1 = findViewById(R.id.button_speichern1);
         DAOGlucoseValue daoGlucoseValue = new DAOGlucoseValue();
 
         button_speichern1.setOnClickListener(v-> {
 
-            GlucoseValues glucoseValues = new GlucoseValues(edit_bzWert.getText().toString());
+            GlucoseValues glucoseValues = new GlucoseValues(edit_bzWert.getText().toString(), edit_infoessen.getSelectedItem().toString());
             daoGlucoseValue.add(glucoseValues).addOnSuccessListener(suc->{
                 Toast.makeText(this, "Blutzuckerwert wurde gespeichert", Toast.LENGTH_SHORT).show();
             }).addOnFailureListener(er->{

@@ -16,6 +16,10 @@ public class DAOGlucoseValue {
 
     public Task<Void> add(GlucoseValues glucoseValues){
 
+        if (glucoseValues == null){
+            throw new RuntimeException();
+        } //throw exception
+
        return databaseReference.push().setValue(glucoseValues);
 
 
