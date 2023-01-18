@@ -36,18 +36,17 @@
         android:layout_marginStart="54dp"
         android:layout_marginTop="72dp"
         android:layout_marginEnd="55dp"
+        android:fontFamily="casual"
         android:gravity="center"
         android:text="Gib unten deinen gemessenen Wert ein!"
         android:textSize="20dp"
-        android:fontFamily="casual"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/manuelleEingabe2"
-        app:layout_constraintVertical_bias="0.0" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.21" />
 
     <EditText
         android:id="@+id/edit_bzWert"
@@ -164,6 +163,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.976"
         android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/textView_date"
+        android:layout_width="59dp"
+        android:layout_height="28dp"
+        android:text="Datum"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.145"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.172" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
