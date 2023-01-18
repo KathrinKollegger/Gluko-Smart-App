@@ -10,7 +10,7 @@ public class DAOGlucoseValue {
 
     public DAOGlucoseValue(){
 
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        FirebaseDatabase db = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
         databaseReference = db.getReference(GlucoseValues.class.getSimpleName());
     }
 
