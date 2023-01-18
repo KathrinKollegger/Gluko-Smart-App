@@ -166,15 +166,15 @@
 
     <TextView
         android:id="@+id/textView_date"
-        android:layout_width="59dp"
-        android:layout_height="28dp"
+        android:layout_width="309dp"
+        android:layout_height="27dp"
         android:text="Datum"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.145"
+        app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.172" />
+        app:layout_constraintVertical_bias="0.173" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
