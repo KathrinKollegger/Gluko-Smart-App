@@ -46,7 +46,7 @@ public class WerteEingabe extends Activity {
         textView_date.setText(dateTime);
 
 
-        //final TextView textViewDate = findViewById(R.id.textView_date);
+        final TextView textViewDate = findViewById(R.id.textView_date);
         final EditText edit_bzWert = findViewById(R.id.edit_bzWert);
         final Spinner edit_infoessen = findViewById(R.id.ed_infoessen);
         Button button_speichern1 = findViewById(R.id.button_speichern1);
@@ -54,7 +54,7 @@ public class WerteEingabe extends Activity {
 
         button_speichern1.setOnClickListener(v-> {
 
-            GlucoseValues glucoseValues = new GlucoseValues(edit_bzWert.getText().toString(), edit_infoessen.getSelectedItem().toString());
+            GlucoseValues glucoseValues = new GlucoseValues(edit_bzWert.getText().toString(), edit_infoessen.getSelectedItem().toString(), textViewDate.getText().toString());
             daoGlucoseValue.add(glucoseValues).addOnSuccessListener(suc->{
                 Toast.makeText(this, "Blutzuckerwert wurde gespeichert", Toast.LENGTH_SHORT).show();
             }).addOnFailureListener(er->{

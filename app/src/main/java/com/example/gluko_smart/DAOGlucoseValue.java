@@ -16,9 +16,9 @@ public class DAOGlucoseValue {
 
         FirebaseDatabase db = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
         databaseReference = db.getReference(GlucoseValues.class.getSimpleName());
-        Map map = new HashMap();
+        /*Map map = new HashMap();
         map.put("timestamp", ServerValue.TIMESTAMP);
-        db.getReference().child("GlucoseValues").updateChildren(map);
+        db.getReference().child("GlucoseValues").updateChildren(map);*/
     }
 
     public Task<Void> add(GlucoseValues glucoseValues) {

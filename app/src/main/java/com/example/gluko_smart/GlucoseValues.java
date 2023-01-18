@@ -5,14 +5,16 @@ public class GlucoseValues {
 
     private String bzWert;
     private String vorNachMahlzeit;
+    private String date;
 
     public GlucoseValues(){}
 
 
-    public GlucoseValues(String bzWert, String vorNachMahlzeit) {
+    public GlucoseValues(String bzWert, String vorNachMahlzeit, String date) {
 
         this.bzWert = bzWert;
         this.vorNachMahlzeit = vorNachMahlzeit;
+        this.date = date;
     }
 
     public String getBzWert(){
@@ -34,4 +36,16 @@ public class GlucoseValues {
 
         this.vorNachMahlzeit = vorNachMahlzeit;
     }
+
+    public String getDate(){
+
+        return date;
+    }
+
+    public void setDate(String date){
+
+        this.date = date;
+    }
+
+
 }
