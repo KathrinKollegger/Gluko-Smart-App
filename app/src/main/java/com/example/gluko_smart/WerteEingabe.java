@@ -44,6 +44,7 @@ public class WerteEingabe extends Activity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE, dd. MMMM yyyy / hh:mm a" );
         String dateTime = simpleDateFormat.format(calender.getTime());
         textView_date.setText(dateTime);
+        //Vielleicht sollte Datum und Zeit manuell eingegeben werden bevor Wert hinzugefügt wird
 
 
         final TextView textViewDate = findViewById(R.id.textView_date);
@@ -88,7 +89,7 @@ public class WerteEingabe extends Activity {
         ed_infoessen.setAdapter(dataAdapter);
 
         ed_infoessen.setSelection(0);
-        selectedEssen="Vor dem Essen";
+        //selectedEssen="Vor dem Essen";
         ed_infoessen.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * Methode wenn Geschlecht gewählt wurde. Änderung des Begriffs in der View.
@@ -98,7 +99,7 @@ public class WerteEingabe extends Activity {
                 selectedEssen=adapterView.getItemAtPosition(position).toString();
             }
             /**
-             * Methode wenn kein Geschlecht gewählt wurde.
+             * Methode wenn keine Auswahl getroffen wurde.
              * Die View bleibt so wie sie ist.
              */
             @Override

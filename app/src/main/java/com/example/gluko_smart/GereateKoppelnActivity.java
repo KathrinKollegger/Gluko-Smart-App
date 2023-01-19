@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.List;
 import java.util.Map;
 
 public class GereateKoppelnActivity extends Activity implements BluetoothAdapter.LeScanCallback {
@@ -39,7 +41,7 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
     private Switch switch_Bt;
     private ImageView img_BtIcon;
     private TextView tv_BtStatus;
-    private TextView tv_pairedDev;
+    private ListView tv_pairedDev;
     private ProgressBar pb_BleScan;
 
     private Handler handler = new Handler();
@@ -72,13 +74,14 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
         button_btSync = (Button) findViewById(R.id.button_sync);
         switch_Bt = (Switch) findViewById(R.id.switch_BT);
         img_BtIcon = (ImageView) findViewById(R.id.iv_bluetooth);
-        tv_pairedDev = (TextView) findViewById(R.id.tv_pairedDevsTV);
-        tv_pairedDev.setMovementMethod(new ScrollingMovementMethod());
+        tv_pairedDev = (ListView) findViewById(R.id.tv_pairedDevsTV);
+        //tv_pairedDev.setMovementMethod(new ScrollingMovementMethod());
         tv_BtStatus = (TextView) findViewById(R.id.tv_statusBluetooth);
         pb_BleScan = (ProgressBar) findViewById(R.id.progressBarBLEscan);
 
         devHandler = new DeviceHandler();
         btHandler = new BluetoothHandler(this, devHandler);
+        tv_pairedDev.setAdapter(btHandler.getLeDeviceListAdapter());
 
 
         //Requests Permissions depending on SDK Version if PermissionRequest is needed
@@ -164,12 +167,14 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
                             @Override
                             public void run() {
 
+                                //Strukturierte Ausgabe - lineBreak
                                 StringBuilder sb = new StringBuilder();
                                 for (Map.Entry<Integer, String> entry : devHandler.getDevicesDescription().entrySet()) {
                                     sb.append(entry.getValue());
                                     sb.append("\n");
                                 }
-                                tv_pairedDev.setText(sb.toString());
+                                tv_pairedDev.setAdapter(btHandler.getLeDeviceListAdapter());
+                                //tv_pairedDev.setText(sb.toString());
                                 handler.postDelayed(this, 1000);
                             }
                         };
@@ -188,7 +193,7 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
                                     Log.i(TAG, "HandlerMethod startScaning");
 
                                 } catch (NullPointerException e) {
-                                    tv_pairedDev.setText("Scan funktioniert nicht richtig");
+                                    Log.i(TAG, "Scan funktioniert nicht richtig");
                                 }
                                 textUpdater.post(texUpdaterRunnable);
                             }
@@ -219,7 +224,8 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
                     //bluetooth is off
                     Toast.makeText(GereateKoppelnActivity.this, "Turn on Bluetooth first", Toast.LENGTH_SHORT).show();
                 }
-                tv_pairedDev.setText(devHandler.getDevicesDescription().toString());
+
+                //tv_pairedDev.setText(devHandler.getDevicesDescription().toString());
             }
         });
 
@@ -316,7 +322,7 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
 
     //clears DeviceList and related View
     private void resetFoundDevices() {
-        tv_pairedDev.setText("");
+        //tv_pairedDev.clear;
         devHandler.clearDevices();
 
     }
@@ -333,6 +339,11 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
 
         }
         return false;
+    }
+
+    public static class ViewHolder {
+        TextView deviceName;
+        TextView deviceAddress;
     }
 
     @Override

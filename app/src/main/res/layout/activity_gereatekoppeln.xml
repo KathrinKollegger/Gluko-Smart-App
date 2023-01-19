@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -49,18 +50,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!--Displays Connected Device-->
     <Button
         android:id="@+id/button_getBtDevices"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/Nepal"
         android:text="@string/btText_startScan"
         android:textSize="15sp"
-        android:backgroundTint="@color/Nepal"
-        app:layout_constraintTop_toBottomOf="@+id/tv_pairedDevsTV"
+        app:layout_constraintBottom_toTopOf="@+id/textView3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_statusBluetooth"
+        app:layout_constraintVertical_bias="0.672" />
 
-    <!--Displays Connected Device-->
+    <ListView
+        android:id="@+id/tv_pairedDevsTV"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:background="@color/green_TVbg"
+        android:padding="2.5dp"
+        android:scrollbars="vertical"
+        android:text="Geräte in Reichweite"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/button_getBtDevices"
+        app:layout_constraintTop_toBottomOf="@+id/tv_statusBluetooth"
+        tools:layout_editor_absoluteX="20dp" />
+
     <Button
         android:id="@+id/button_sync"
         android:layout_width="wrap_content"
@@ -74,23 +91,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_getBtDevices"
         app:layout_constraintVertical_bias="0.721" />
-
-
-        <TextView
-        android:id="@+id/tv_pairedDevsTV"
-        android:layout_width="match_parent"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_height="wrap_content"
-        android:text="Geräte in Reichweite"
-        android:textSize="15sp"
-            android:padding="2.5dp"
-        android:textAlignment="center"
-        android:background="@color/green_TVbg"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:maxHeight="150dp"
-        android:scrollbars="vertical" />
 
 
 

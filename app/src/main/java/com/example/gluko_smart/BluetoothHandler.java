@@ -3,6 +3,7 @@ package com.example.gluko_smart;
 import static android.content.Context.BLUETOOTH_SERVICE;
 
 import static com.example.gluko_smart.GlobalVariable.*;
+import static com.example.gluko_smart.GereateKoppelnActivity.ViewHolder.*;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
@@ -20,6 +21,12 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +47,7 @@ public class BluetoothHandler {
     private BluetoothLeScanner bleScanner;
     private Handler handler;
     private DeviceHandler deviceHandler;
+    private LeDeviceListAdapter leDeviceListAdapter ;
 
 
     public BluetoothHandler(Context context, DeviceHandler devHandler) {
@@ -50,6 +58,7 @@ public class BluetoothHandler {
         bleScanner = mBtAdapter.getBluetoothLeScanner();
         handler = new Handler();
         this.deviceHandler = devHandler;
+
     }
 
     @SuppressLint("MissingPermission")
@@ -66,9 +75,10 @@ public class BluetoothHandler {
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                 .build();
 
-        //bleScanner.startScan(bleScanCallback);
+        bleScanner.startScan(bleScanCallback);
         Log.i(TAG,"Scan has actually started!");
-        bleScanner.startScan(scanFilters, scanSettings, bleScanCallback);
+        leDeviceListAdapter = new LeDeviceListAdapter(context);
+        //bleScanner.startScan(scanFilters, scanSettings, bleScanCallback);
     }
 
     @SuppressLint("MissingPermission")
@@ -113,11 +123,19 @@ public class BluetoothHandler {
             //checking for duplicate devices
             if (!deviceHandler.getDevices().containsValue(device)) {
                 deviceHandler.addDevice(device);
-            }
-            //device.connectGatt(context,true, mGattCallback);
-        }
-    };
 
+                if (!leDeviceListAdapter.getDevices().contains(device)){
+                    leDeviceListAdapter.addDevice(device);
+                    leDeviceListAdapter.notifyDataSetChanged();
+                    leDeviceListAdapter.addDevice(device);
+                    Log.i(TAG,"Dev added to leDevAdapter");
+                }
+                //device.connectGatt(context,true, mGattCallback);
+            }
+        }
+
+        ;
+    };
     //Wird dann für die Connection benötigt
 
    /* private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
@@ -136,6 +154,76 @@ public class BluetoothHandler {
 */
     public BluetoothAdapter getmBtAdapter() {
         return mBtAdapter;
+    }
+
+    public LeDeviceListAdapter getLeDeviceListAdapter() {
+        return leDeviceListAdapter;
+    }
+
+    private class LeDeviceListAdapter extends BaseAdapter {
+        private ArrayList<BluetoothDevice> mLeDevices;
+        private LayoutInflater mInflator;
+
+        public LeDeviceListAdapter(Context context) {
+            super();
+            mLeDevices = new ArrayList<BluetoothDevice>();
+            mInflator = LayoutInflater.from(context);
+        }
+
+        public void addDevice(BluetoothDevice device) {
+            if (!mLeDevices.contains(device)) {
+                mLeDevices.add(device);
+            }
+        }
+
+        public ArrayList getDevices() {
+            return mLeDevices;
+        }
+
+        public void clear() {
+            mLeDevices.clear();
+        }
+
+        @Override
+        public int getCount() {
+            return mLeDevices.size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return mLeDevices.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            //Inflate the layout for the listview and set the device name as the text
+            GereateKoppelnActivity.ViewHolder viewHolder;
+            if (view == null) {
+                view = mInflator.inflate(R.layout.listitem_device, null);
+                viewHolder = new GereateKoppelnActivity.ViewHolder();
+                viewHolder.deviceName = (TextView) view.findViewById(R.id.device_name);
+                viewHolder.deviceAddress = (TextView) view.findViewById(R.id.device_address);
+                view.setTag(viewHolder);
+            } else {
+                viewHolder = (GereateKoppelnActivity.ViewHolder) view.getTag();
+            }
+
+
+            BluetoothDevice device = mLeDevices.get(i);
+            @SuppressLint("MissingPermission")
+             final String deviceName = device.getName();
+            if (deviceName != null && deviceName.length() > 0)
+                viewHolder.deviceName.setText(deviceName);
+            else
+                viewHolder.deviceName.setText("Unknown device");
+
+            return view;
+        }
     }
 
 
