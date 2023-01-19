@@ -76,9 +76,10 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/button_getBtDevices"
         app:layout_constraintTop_toBottomOf="@+id/tv_statusBluetooth"
-        tools:layout_editor_absoluteX="20dp" />
+        tools:layout_editor_absoluteX="20dp"/>
 
-    <Button
+    <!--Nicht mehr gebraucht-->
+    <!--<Button
         android:id="@+id/button_sync"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -90,11 +91,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_getBtDevices"
-        app:layout_constraintVertical_bias="0.721" />
-
-
-
-
+        app:layout_constraintVertical_bias="0.721" />-->
 
     <TextView
         android:id="@+id/textView3"

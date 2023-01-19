@@ -1,7 +1,7 @@
 package com.example.gluko_smart;
 
 import static com.example.gluko_smart.GlobalVariable.*;
-
+import static com.example.gluko_smart.BluetoothHandler.*;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -71,7 +72,7 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
 
         button_homeKoppeln = (Button) findViewById(R.id.button_homeKoppeln);
         button_getDevices = (Button) findViewById(R.id.button_getBtDevices);
-        button_btSync = (Button) findViewById(R.id.button_sync);
+        //button_btSync = (Button) findViewById(R.id.button_sync);
         switch_Bt = (Switch) findViewById(R.id.switch_BT);
         img_BtIcon = (ImageView) findViewById(R.id.iv_bluetooth);
         tv_pairedDev = (ListView) findViewById(R.id.tv_pairedDevsTV);
@@ -83,6 +84,14 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
         btHandler = new BluetoothHandler(this, devHandler);
         tv_pairedDev.setAdapter(btHandler.getLeDeviceListAdapter());
 
+        tv_pairedDev.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                BluetoothDevice device = btHandler.getLeDeviceListAdapter().getDevice(position);
+                btHandler.connectToDevice(device);
+
+            }
+        });
 
         //Requests Permissions depending on SDK Version if PermissionRequest is needed
         if (!hasRequiredPermissions()) {
@@ -224,23 +233,7 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
                     //bluetooth is off
                     Toast.makeText(GereateKoppelnActivity.this, "Turn on Bluetooth first", Toast.LENGTH_SHORT).show();
                 }
-
                 //tv_pairedDev.setText(devHandler.getDevicesDescription().toString());
-            }
-        });
-
-        //Falsche Bluetooth Funktion bis jetzt
-        button_btSync.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(GereateKoppelnActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN}, REQUEST_DISCOVER_BT);
-                    return;
-                }
-                if (!btHandler.getmBtAdapter().isDiscovering()) {
-                    Toast.makeText(GereateKoppelnActivity.this, "Starting to sync", Toast.LENGTH_SHORT).show();
-
-                }
             }
         });
 
@@ -252,6 +245,7 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
             }
         });
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

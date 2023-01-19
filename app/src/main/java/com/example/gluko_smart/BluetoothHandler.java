@@ -9,7 +9,11 @@ import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
@@ -26,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -47,7 +52,7 @@ public class BluetoothHandler {
     private BluetoothLeScanner bleScanner;
     private Handler handler;
     private DeviceHandler deviceHandler;
-    private LeDeviceListAdapter leDeviceListAdapter ;
+    public LeDeviceListAdapter leDeviceListAdapter ;
 
 
     public BluetoothHandler(Context context, DeviceHandler devHandler) {
@@ -75,10 +80,10 @@ public class BluetoothHandler {
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                 .build();
 
-        bleScanner.startScan(bleScanCallback);
+        //bleScanner.startScan(bleScanCallback);
         Log.i(TAG,"Scan has actually started!");
         leDeviceListAdapter = new LeDeviceListAdapter(context);
-        //bleScanner.startScan(scanFilters, scanSettings, bleScanCallback);
+        bleScanner.startScan(scanFilters, scanSettings, bleScanCallback);
     }
 
     @SuppressLint("MissingPermission")
@@ -93,16 +98,21 @@ public class BluetoothHandler {
         return (List<BluetoothDevice>) mBtAdapter.getBondedDevices();
     }
 
-   /* public void connectToDevice(BluetoothDevice device) {
+    @SuppressLint("MissingPermission")
+    public void connectToDevice(BluetoothDevice device) {
         if (device == null) {
             Log.w(TAG_NOCONNECT, "Device not found.  Unable to connect.");
             return;
         }
+
         //connect to device
         @SuppressLint("MissingPermission")
-        BluetoothGatt mbluetoothGatt = device.connectGatt(context, false, mGattCallback);
+        BluetoothGatt mbluetoothGatt = device.connectGatt(context, true, mGattCallback);
         Log.d(TAG_CONNECTING, "Trying to create a new connection.");
-    }*/
+        Toast.makeText(context, "Verbindung wird hergestellt", Toast.LENGTH_SHORT).show();
+
+    }
+
 
     @SuppressLint("MissingPermission")
     public void disconnect(BluetoothGatt mBluetoothGatt) {
@@ -112,6 +122,8 @@ public class BluetoothHandler {
             mBluetoothGatt = null;
         }
     }
+
+
 
 
     private ScanCallback bleScanCallback = new ScanCallback() {
@@ -130,28 +142,58 @@ public class BluetoothHandler {
                     leDeviceListAdapter.addDevice(device);
                     Log.i(TAG,"Dev added to leDevAdapter");
                 }
-                //device.connectGatt(context,true, mGattCallback);
+                /*//Variante ohne Klick auf Device
+                device.connectGatt(context,true, mGattCallback);*/
             }
         }
 
         ;
     };
     //Wird dann für die Connection benötigt
-
-   /* private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+    private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+        @SuppressLint("MissingPermission")
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
-            //Handle ConnectionState change here
+
+            if(newState== BluetoothProfile.STATE_CONNECTED) {
+                gatt.discoverServices();
+
+            }
         }
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
-            //Handle Glucose-Service here
+            if(status==BluetoothGatt.GATT_SUCCESS) {
+
+
+                BluetoothGattService glucoseService =
+                        gatt.getService(ParcelUuid.fromString(GLUCOSE_SERVICE_UUID).getUuid());
+
+                List<BluetoothGattService>gattServices;
+                gattServices=gatt.getServices();
+                for (BluetoothGattService gattService : gattServices) {
+                    String uuid = gattService.getUuid().toString();
+                    Log.d("Services", "UUID: " + uuid);
+                }
+
+                List<BluetoothGattCharacteristic>glucoCharakters;
+                glucoCharakters=glucoseService.getCharacteristics();
+                for (BluetoothGattCharacteristic gattCharacteristic : glucoCharakters) {
+                    String uuid = gattCharacteristic.getUuid().toString();
+                    BluetoothGattDescriptor descriptor =
+                    gattCharacteristic.getDescriptor(gattCharacteristic.getUuid());
+                    Log.d("GlucoCharakters", "UUID: " + uuid);
+                    Log.d("Descriptor", "UUID: " + descriptor);
+                    //STOPPED HERE
+                }
+
+            }
+
         }
     };
-*/
+
     public BluetoothAdapter getmBtAdapter() {
         return mBtAdapter;
     }
@@ -160,7 +202,7 @@ public class BluetoothHandler {
         return leDeviceListAdapter;
     }
 
-    private class LeDeviceListAdapter extends BaseAdapter {
+    public class LeDeviceListAdapter extends BaseAdapter {
         private ArrayList<BluetoothDevice> mLeDevices;
         private LayoutInflater mInflator;
 
@@ -223,6 +265,10 @@ public class BluetoothHandler {
                 viewHolder.deviceName.setText("Unknown device");
 
             return view;
+        }
+
+        public BluetoothDevice getDevice(int position) {
+            return mLeDevices.get(position);
         }
     }
 
