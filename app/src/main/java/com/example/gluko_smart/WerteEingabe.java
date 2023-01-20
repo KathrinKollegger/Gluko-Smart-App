@@ -16,8 +16,17 @@ import android.widget.Toast;
 import androidx.appcompat.widget.AppCompatSpinner;
 
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -30,6 +39,9 @@ public class WerteEingabe extends Activity {
     AppCompatSpinner ed_infoessen;
     private String selectedEssen;
     TextView textView_date;
+    FirebaseUser user;
+
+
 
 
     @SuppressLint("MissingInflatedId")
@@ -39,6 +51,8 @@ public class WerteEingabe extends Activity {
         setContentView(R.layout.activity_werte_eingabe);
 
         textView_date = findViewById(R.id.textView_date);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
 
         Calendar calender = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE, dd. MMMM yyyy / hh:mm a" );
@@ -47,21 +61,30 @@ public class WerteEingabe extends Activity {
         //Vielleicht sollte Datum und Zeit manuell eingegeben werden bevor Wert hinzugefügt wird
 
 
-        final TextView textViewDate = findViewById(R.id.textView_date);
+        //final TextView textViewDate = findViewById(R.id.textView_date);
         final EditText edit_bzWert = findViewById(R.id.edit_bzWert);
         final Spinner edit_infoessen = findViewById(R.id.ed_infoessen);
+
+
         Button button_speichern1 = findViewById(R.id.button_speichern1);
         DAOGlucoseValue daoGlucoseValue = new DAOGlucoseValue();
 
         button_speichern1.setOnClickListener(v-> {
 
-            GlucoseValues glucoseValues = new GlucoseValues(edit_bzWert.getText().toString(), edit_infoessen.getSelectedItem().toString(), textViewDate.getText().toString());
-            daoGlucoseValue.add(glucoseValues).addOnSuccessListener(suc->{
-                Toast.makeText(this, "Blutzuckerwert wurde gespeichert", Toast.LENGTH_SHORT).show();
-            }).addOnFailureListener(er->{
+            if(edit_bzWert == null ||  edit_bzWert.getText().toString().equals("") || edit_bzWert.getText().toString().equals("0") ){
 
-                Toast.makeText(this, ""+er.getMessage(), Toast.LENGTH_SHORT).show();
-            });
+                Toast.makeText(this, "Bitte geben Sie einen gültigen Wert ein!", Toast.LENGTH_SHORT).show();
+
+            }else{
+
+                GlucoseValues glucoseValues = new GlucoseValues(edit_bzWert.getText().toString(), edit_infoessen.getSelectedItem().toString(), LocalDateTime.now(), user.toString());
+                daoGlucoseValue.add(glucoseValues).addOnSuccessListener(suc->{
+                    Toast.makeText(this, "Blutzuckerwert wurde gespeichert", Toast.LENGTH_SHORT).show();
+                }).addOnFailureListener(er->{
+
+                    Toast.makeText(this, ""+er.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            }
 
         });
 
@@ -79,6 +102,7 @@ public class WerteEingabe extends Activity {
 
         setupSpinner();
     }
+
     private void setupSpinner() {
         List<String> categories = new ArrayList<String>();
         categories.add("Vor dem Essen");
@@ -108,9 +132,4 @@ public class WerteEingabe extends Activity {
             }
         });
     }
-
-
-
-
-
 }

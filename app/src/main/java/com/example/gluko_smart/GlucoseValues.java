@@ -1,20 +1,26 @@
 package com.example.gluko_smart;
 
+import java.time.LocalDateTime;
+
 public class GlucoseValues {
 
 
     private String bzWert;
     private String vorNachMahlzeit;
-    private String date;
+    private LocalDateTime timestamp;
+    private String user;
+    //private String date;
 
     public GlucoseValues(){}
 
 
-    public GlucoseValues(String bzWert, String vorNachMahlzeit, String date) {
+    public GlucoseValues(String bzWert, String vorNachMahlzeit, LocalDateTime timestamp, String user) {
 
         this.bzWert = bzWert;
         this.vorNachMahlzeit = vorNachMahlzeit;
-        this.date = date;
+        this.timestamp = timestamp;
+        this.user = user;
+        //this.date = date;
     }
 
     public String getBzWert(){
@@ -37,7 +43,24 @@ public class GlucoseValues {
         this.vorNachMahlzeit = vorNachMahlzeit;
     }
 
-    public String getDate(){
+    public LocalDateTime getTimestamp(){
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp){
+        this.timestamp = timestamp;
+    }
+
+    public String getUser(){
+        return user;
+    }
+
+    public void setUser(String user){
+
+        this.user = user;
+    }
+
+   /* public String getDate(){
 
         return date;
     }
@@ -45,7 +68,7 @@ public class GlucoseValues {
     public void setDate(String date){
 
         this.date = date;
-    }
+    }*/
 
 
 }
