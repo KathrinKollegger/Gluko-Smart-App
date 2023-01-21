@@ -117,4 +117,6 @@
     <string name="bt_signIn">Anmelden</string>
     <string name="title_activity_Login">Login</string>
     <string name="login_successful">Login erfolgreich!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

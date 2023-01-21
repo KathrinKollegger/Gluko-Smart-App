@@ -6,6 +6,34 @@
     android:layout_height="match_parent"
     android:background="#3CB882">
 
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/fragmentTagbtn"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="#4C74AF"
+        android:text="Tag"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintEnd_toStartOf="@id/button_homeVerlauf"
+        app:layout_constraintBottom_toBottomOf="@id/frameLayout"/>
+
+    <Button
+        android:id="@+id/fragmentWochebtn"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:layout_alignParentRight="true"
+        android:backgroundTint="#4C74AF"
+        android:text="Woche"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintStart_toEndOf="@id/button_homeVerlauf"
+        app:layout_constraintBottom_toBottomOf="@id/frameLayout"/>
+
     <Button
         android:id="@+id/button_homeVerlauf"
         android:layout_width="wrap_content"
