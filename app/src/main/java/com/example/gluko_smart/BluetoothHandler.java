@@ -156,121 +156,189 @@ public class BluetoothHandler {
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
 
-            if(newState== BluetoothProfile.STATE_CONNECTED) {
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
                 gatt.discoverServices();
 
             }
         }
 
+        @SuppressLint("MissingPermission")
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
-            if(status==BluetoothGatt.GATT_SUCCESS) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
 
-
+                //Service discovered
                 BluetoothGattService glucoseService =
                         gatt.getService(ParcelUuid.fromString(GLUCOSE_SERVICE_UUID).getUuid());
 
-                List<BluetoothGattService>gattServices;
-                gattServices=gatt.getServices();
+                //Get the GLUCOSE Measurement Charactersitics
+                //BluetoothGattCharacteristic GLUCOSE_MEASUREMENT_Characteristic =
+                //gatt.getService(ParcelUuid.fromString(GLUCOSE_SERVICE_UUID).getUuid()).getCharacteristic(GLUCOSE_MEASUREMENT);
+
+                // gatt.readCharacteristic(GLUCOSE_MEASUREMENT_Characteristic);
+
+
+                List<BluetoothGattService> gattServices;
+                gattServices = gatt.getServices();
                 for (BluetoothGattService gattService : gattServices) {
                     String uuid = gattService.getUuid().toString();
                     Log.d("Services", "UUID: " + uuid);
                 }
 
-                List<BluetoothGattCharacteristic>glucoCharakters;
-                glucoCharakters=glucoseService.getCharacteristics();
+
+                List<BluetoothGattCharacteristic> glucoCharakters;
+                glucoCharakters = glucoseService.getCharacteristics();
                 for (BluetoothGattCharacteristic gattCharacteristic : glucoCharakters) {
                     String uuid = gattCharacteristic.getUuid().toString();
-                    BluetoothGattDescriptor descriptor =
-                    gattCharacteristic.getDescriptor(gattCharacteristic.getUuid());
+                    BluetoothGattDescriptor descriptor = gattCharacteristic.getDescriptor(gattCharacteristic.getUuid());
                     Log.d("GlucoCharakters", "UUID: " + uuid);
                     Log.d("Descriptor", "UUID: " + descriptor);
                     //STOPPED HERE
                 }
-
             }
-
         }
+
+
+                /*public void onCharacteristicRead (BluetoothGatt gatt, BluetoothGattCharacteristic
+                characteristic,int status){
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                        if (GLUCOSE_MEASUREMENT.equals(characteristic.getUuid())) {
+
+                            byte[] glucoseValue = characteristic.getValue();
+                            //parse glucoseValue to get glucose value
+                            double glucose = parseGlucoseValue(glucoseValue);
+                            Log.i("Glucose", "Glucose: " + glucose + "mg/dL");
+
+
+                        }
+
+                    }
+
+                }**/
+
+
+
     };
 
-    public BluetoothAdapter getmBtAdapter() {
-        return mBtAdapter;
-    }
+            public double parseGlucoseValue ( byte[] glucoseValue){
+                // extract glucose measurement flags
+                int offset = 0;
+                int flags = glucoseValue[offset] & 0xFF;
+                boolean timeOffsetPresent = (flags & 0x01) > 0;
+                boolean typeAndLocationPresent = (flags & 0x02) > 0;
+                boolean sensorStatusAnnunciationPresent = (flags & 0x04) > 0;
+                boolean contextInfoFollows = (flags & 0x08) > 0;
 
-    public LeDeviceListAdapter getLeDeviceListAdapter() {
-        return leDeviceListAdapter;
-    }
+                // extract glucose concentration
+                offset++;
+                int concentration = (glucoseValue[offset] & 0xFF)
+                        | ((glucoseValue[offset + 1] & 0xFF) << 8);
+                double glucose = concentration * 0.1;
 
-    public class LeDeviceListAdapter extends BaseAdapter {
-        private ArrayList<BluetoothDevice> mLeDevices;
-        private LayoutInflater mInflator;
+                // extract glucose measurement date and time
+                offset += 2;
+                if (timeOffsetPresent) {
+                    // time offset is present, extract it
+                    int timeOffset = (glucoseValue[offset] & 0xFF)
+                            | ((glucoseValue[offset + 1] & 0xFF) << 8);
+                }
 
-        public LeDeviceListAdapter(Context context) {
-            super();
-            mLeDevices = new ArrayList<BluetoothDevice>();
-            mInflator = LayoutInflater.from(context);
-        }
+                // extract type and location
+                offset += 2;
+                if (typeAndLocationPresent) {
+                    // type and location are present, extract them
+                    int typeAndLocation = glucoseValue[offset] & 0xFF;
+                }
 
-        public void addDevice(BluetoothDevice device) {
-            if (!mLeDevices.contains(device)) {
-                mLeDevices.add(device);
+                // extract sensor status annunciation
+                offset++;
+                if (sensorStatusAnnunciationPresent) {
+                    // sensor status annunciation is present, extract it
+                    int sensorStatusAnnunciation = (glucoseValue[offset] & 0xFF)
+                            | ((glucoseValue[offset + 1] & 0xFF) << 8);
+                }
+                return glucose;
+
             }
-        }
-
-        public ArrayList getDevices() {
-            return mLeDevices;
-        }
-
-        public void clear() {
-            mLeDevices.clear();
-        }
-
-        @Override
-        public int getCount() {
-            return mLeDevices.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return mLeDevices.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            //Inflate the layout for the listview and set the device name as the text
-            GereateKoppelnActivity.ViewHolder viewHolder;
-            if (view == null) {
-                view = mInflator.inflate(R.layout.listitem_device, null);
-                viewHolder = new GereateKoppelnActivity.ViewHolder();
-                viewHolder.deviceName = (TextView) view.findViewById(R.id.device_name);
-                viewHolder.deviceAddress = (TextView) view.findViewById(R.id.device_address);
-                view.setTag(viewHolder);
-            } else {
-                viewHolder = (GereateKoppelnActivity.ViewHolder) view.getTag();
+            public BluetoothAdapter getmBtAdapter () {
+                return mBtAdapter;
             }
 
+            public LeDeviceListAdapter getLeDeviceListAdapter () {
+                return leDeviceListAdapter;
+            }
 
-            BluetoothDevice device = mLeDevices.get(i);
-            @SuppressLint("MissingPermission")
-             final String deviceName = device.getName();
-            if (deviceName != null && deviceName.length() > 0)
-                viewHolder.deviceName.setText(deviceName);
-            else
-                viewHolder.deviceName.setText("Unknown device");
+            public class LeDeviceListAdapter extends BaseAdapter {
+                private ArrayList<BluetoothDevice> mLeDevices;
+                private LayoutInflater mInflator;
 
-            return view;
-        }
+                public LeDeviceListAdapter(Context context) {
+                    super();
+                    mLeDevices = new ArrayList<BluetoothDevice>();
+                    mInflator = LayoutInflater.from(context);
+                }
 
-        public BluetoothDevice getDevice(int position) {
-            return mLeDevices.get(position);
-        }
+                public void addDevice(BluetoothDevice device) {
+                    if (!mLeDevices.contains(device)) {
+                        mLeDevices.add(device);
+                    }
+                }
+
+                public ArrayList getDevices() {
+                    return mLeDevices;
+                }
+
+                public void clear() {
+                    mLeDevices.clear();
+                }
+
+                @Override
+                public int getCount() {
+                    return mLeDevices.size();
+                }
+
+                @Override
+                public Object getItem(int i) {
+                    return mLeDevices.get(i);
+                }
+
+                @Override
+                public long getItemId(int i) {
+                    return i;
+                }
+
+                @Override
+                public View getView(int i, View view, ViewGroup viewGroup) {
+                    //Inflate the layout for the listview and set the device name as the text
+                    GereateKoppelnActivity.ViewHolder viewHolder;
+                    if (view == null) {
+                        view = mInflator.inflate(R.layout.listitem_device, null);
+                        viewHolder = new GereateKoppelnActivity.ViewHolder();
+                        viewHolder.deviceName = (TextView) view.findViewById(R.id.device_name);
+                        viewHolder.deviceAddress = (TextView) view.findViewById(R.id.device_address);
+                        view.setTag(viewHolder);
+                    } else {
+                        viewHolder = (GereateKoppelnActivity.ViewHolder) view.getTag();
+                    }
+
+
+                    BluetoothDevice device = mLeDevices.get(i);
+                    @SuppressLint("MissingPermission") final String deviceName = device.getName();
+                    if (deviceName != null && deviceName.length() > 0)
+                        viewHolder.deviceName.setText(deviceName);
+                    else
+                        viewHolder.deviceName.setText("Unknown device");
+
+                    return view;
+                }
+
+                public BluetoothDevice getDevice(int position) {
+                    return mLeDevices.get(position);
+                }
+            }
+
+
+
+
     }
-
-
-}
