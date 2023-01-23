@@ -10,7 +10,7 @@ public class GlobalVariable {
     //private static final String MEDITOUCH_DEVICE_ADRESS = "F4:04:4C:0E:7C:0D";
 
     //SERVICE UUID für Glucose
-    public static final String GLUCOSE_SERVICE_UUID =("00001808-0000-1000-8000-00805f9b34fb");
+    public static final UUID GLUCOSE_SERVICE_UUID = UUID.fromString("00001808-0000-1000-8000-00805f9b34fb");
     //Characteristics UUID für GLUCOSE service
     public static final UUID GLUCOSE_MEASUREMENT = UUID.fromString("00002a18-0000-1000-8000-00805f9b34fb");
     public static final UUID GLUCOSE_MEASUREMENT_CONTEXT = UUID.fromString("00002a34-0000-1000-8000-00805f9b34fb");

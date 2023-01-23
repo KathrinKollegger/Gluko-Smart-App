@@ -3,7 +3,6 @@ package com.example.gluko_smart;
 import static android.content.Context.BLUETOOTH_SERVICE;
 
 import static com.example.gluko_smart.GlobalVariable.*;
-import static com.example.gluko_smart.GereateKoppelnActivity.ViewHolder.*;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
@@ -21,7 +20,7 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.bluetooth.BluetoothGatt;
 import android.content.Context;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
@@ -33,16 +32,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 public class BluetoothHandler {
     private static final String TAG_NOCONNECT = "Verbindung nicht möglich";
@@ -53,7 +45,23 @@ public class BluetoothHandler {
     private Handler handler;
     private DeviceHandler deviceHandler;
     public LeDeviceListAdapter leDeviceListAdapter ;
+    private BluetoothGatt mbluetoothGatt;
 
+    private int mConnectionState = STATE_DISCONNECTED;
+
+    private static final int STATE_DISCONNECTED = 0;
+    private static final int STATE_CONNECTING = 1;
+    private static final int STATE_CONNECTED = 2;
+    public final static String ACTION_GATT_CONNECTED =
+            "com.example.bluetooth.le.ACTION_GATT_CONNECTED";
+    public final static String ACTION_GATT_DISCONNECTED =
+            "com.example.bluetooth.le.ACTION_GATT_DISCONNECTED";
+    public final static String ACTION_GATT_SERVICES_DISCOVERED =
+            "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED";
+    public final static String ACTION_DATA_AVAILABLE =
+            "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
+    public final static String EXTRA_DATA =
+            "com.example.bluetooth.le.EXTRA_DATA";
 
     public BluetoothHandler(Context context, DeviceHandler devHandler) {
         //Initialize BTadapter of Smartphone and BLEscanner
@@ -72,7 +80,7 @@ public class BluetoothHandler {
         //ScanFilter Implementation
         List<ScanFilter> scanFilters = new ArrayList<>();
         ScanFilter scanFilter1 = new ScanFilter.Builder()
-                .setServiceUuid(new ParcelUuid(UUID.fromString(GLUCOSE_SERVICE_UUID)))
+                .setServiceUuid(new ParcelUuid(GLUCOSE_SERVICE_UUID))
                 .build();
         scanFilters.add(scanFilter1);
 
@@ -106,13 +114,19 @@ public class BluetoothHandler {
         }
 
         //connect to device
-        @SuppressLint("MissingPermission")
-        BluetoothGatt mbluetoothGatt = device.connectGatt(context, true, mGattCallback);
+        mbluetoothGatt = device.connectGatt(context, false, mGattCallback);
         Log.d(TAG_CONNECTING, "Trying to create a new connection.");
         Toast.makeText(context, "Verbindung wird hergestellt", Toast.LENGTH_SHORT).show();
 
     }
 
+    public BluetoothGattCallback getmGattCallback() {
+        return mGattCallback;
+    }
+
+    public BluetoothGatt getmbluetoothGatt() {
+        return mbluetoothGatt;
+    }
 
     @SuppressLint("MissingPermission")
     public void disconnect(BluetoothGatt mBluetoothGatt) {
@@ -149,6 +163,7 @@ public class BluetoothHandler {
 
         ;
     };
+
     //Wird dann für die Connection benötigt
     private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @SuppressLint("MissingPermission")
@@ -157,9 +172,18 @@ public class BluetoothHandler {
             super.onConnectionStateChange(gatt, status, newState);
 
             if (newState == BluetoothProfile.STATE_CONNECTED) {
+
                 gatt.discoverServices();
 
+
             }
+            if (newState == BluetoothProfile.STATE_CONNECTING) {
+                gatt.discoverServices();
+            }
+            if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                gatt.disconnect();
+            }
+
         }
 
         @SuppressLint("MissingPermission")
@@ -168,17 +192,7 @@ public class BluetoothHandler {
             super.onServicesDiscovered(gatt, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
 
-                //Service discovered
-                BluetoothGattService glucoseService =
-                        gatt.getService(ParcelUuid.fromString(GLUCOSE_SERVICE_UUID).getUuid());
-
-                //Get the GLUCOSE Measurement Charactersitics
-                //BluetoothGattCharacteristic GLUCOSE_MEASUREMENT_Characteristic =
-                //gatt.getService(ParcelUuid.fromString(GLUCOSE_SERVICE_UUID).getUuid()).getCharacteristic(GLUCOSE_MEASUREMENT);
-
-                // gatt.readCharacteristic(GLUCOSE_MEASUREMENT_Characteristic);
-
-
+                //All Services
                 List<BluetoothGattService> gattServices;
                 gattServices = gatt.getServices();
                 for (BluetoothGattService gattService : gattServices) {
@@ -186,42 +200,152 @@ public class BluetoothHandler {
                     Log.d("Services", "UUID: " + uuid);
                 }
 
+                //Glucose-Service discovered
+                BluetoothGattService glucoseService =
+                        gatt.getService(GLUCOSE_SERVICE_UUID);
+                if (glucoseService != null) {
+                    Log.d("GlucsoeService", "discovered");
+
+                } else {
+                    Log.d("Glucoservice", "notFound");
+                }
+                //CUSTOM
+                //readCharacteristics(glucoseService);
 
                 List<BluetoothGattCharacteristic> glucoCharakters;
                 glucoCharakters = glucoseService.getCharacteristics();
-                for (BluetoothGattCharacteristic gattCharacteristic : glucoCharakters) {
-                    String uuid = gattCharacteristic.getUuid().toString();
+
+
+                for (BluetoothGattCharacteristic characteristic : glucoCharakters) {
+                    if (GLUCOSE_MEASUREMENT.equals(characteristic.getUuid())) {
+
+
+                    if ((characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) != 0) {
+                        // characteristic is readable
+                        gatt.readCharacteristic(characteristic);
+                        Log.i("CharacterProps"+characteristic.getUuid(),"="+characteristic.getProperties());
+                        }
+                    }
+                }
+                  /*  String uuid = gattCharacteristic.getUuid().toString();
+                    byte[] value = gattCharacteristic.getValue();
                     BluetoothGattDescriptor descriptor = gattCharacteristic.getDescriptor(gattCharacteristic.getUuid());
                     Log.d("GlucoCharakters", "UUID: " + uuid);
-                    Log.d("Descriptor", "UUID: " + descriptor);
+                    //Log.d("Descriptor", "UUID: " + descriptor);
+                    Log.d("ValueInByte",":" + Arrays.toString(value));
                     //STOPPED HERE
-                }
+                    //Get the GLUCOSE Measurement Charactersitics
+                    BluetoothGattCharacteristic GLUCOSE_MEASUREMENT_Characteristic =
+                            gatt.getService(GLUCOSE_SERVICE_UUID).getCharacteristic(GLUCOSE_MEASUREMENT);
+
+                    gatt.readCharacteristic(GLUCOSE_MEASUREMENT_Characteristic);*/
+
+
+
             }
         }
 
+        @SuppressLint("MissingPermission")
+        @Override
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic
+                characteristic, int status) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.d("OnCharacterRead","entered"+characteristic.getUuid().toString());
 
-                /*public void onCharacteristicRead (BluetoothGatt gatt, BluetoothGattCharacteristic
-                characteristic,int status){
-                    if (status == BluetoothGatt.GATT_SUCCESS) {
-                        if (GLUCOSE_MEASUREMENT.equals(characteristic.getUuid())) {
+               /* byte [] charakterValue = characteristic.getValue();
+                Log.d("CharakterValue", "is" + Arrays.toString(charakterValue));*/
 
-                            byte[] glucoseValue = characteristic.getValue();
-                            //parse glucoseValue to get glucose value
-                            double glucose = parseGlucoseValue(glucoseValue);
-                            Log.i("Glucose", "Glucose: " + glucose + "mg/dL");
+                if (GLUCOSE_MEASUREMENT.equals(characteristic.getUuid())) {
+                    Log.i("GlucoMeasureTrue","entered");
+                    byte[] glucoseValueBytes = characteristic.getValue();
+                    int flags = glucoseValueBytes[0];
+                    boolean timeOffsetPresent = (flags & 0x01) > 0;
+                    boolean typeAndSampleLocationPresent = (flags & 0x02) > 0;
+                    //is true if mol/L and false if kg/L
+                    boolean concentrationUnits = (flags & 0x03) > 0; // 0 = kg/L, 1 = mol/L
 
-
-                        }
-
+                    int offset = 1;
+                    if (timeOffsetPresent) {
+                        // Time offset is a 2-byte value
+                        int timeOffset = (glucoseValueBytes[offset] & 0xff)
+                                + ((glucoseValueBytes[offset + 1] & 0xff) << 8);
+                        offset += 2;
                     }
 
-                }**/
+                    // Glucose concentration is a 2 or 3 byte value
+                    int glucoseConcentration = (glucoseValueBytes[offset] & 0xff)
+                            + ((glucoseValueBytes[offset + 1] & 0xff) << 8);
+                    if (glucoseValueBytes.length > offset + 2) {
+                        glucoseConcentration += (glucoseValueBytes[offset + 2] & 0xff) << 16;
+                    }
+                    offset += 2;
 
+                    if (typeAndSampleLocationPresent) {
+                        int typeAndSampleLocation = glucoseValueBytes[offset] & 0xff;
+                        offset += 1;
+                    }
 
+                    if (concentrationUnits) {
+                        // concentration is in mol/L
+                    } else {
+                        // concentration is in kg/L
+                    }
 
+                    Log.d(TAG, "Glucose concentration: " + glucoseConcentration);
+                }
+
+                /*if (GLUCOSE_MEASUREMENT.equals(characteristic.getUuid())) {
+                    byte[] glucoseValue = characteristic.getValue();
+                    Log.d("CharakterValue:",Arrays.toString(glucoseValue));
+                    int offset = 0;
+
+                    // Extract the flags field
+                    int flags = glucoseValue[offset] & 0xFF;
+                    offset++;
+
+                    // Extract the sequence number
+                    int sequenceNumber = (glucoseValue[offset] & 0xFF) << 8 | (glucoseValue[offset + 1] & 0xFF);
+                    offset += 2;
+
+                    // Extract the timestamp
+                    long timestamp = ((glucoseValue[offset] & 0xFF) << 24) | ((glucoseValue[offset + 1] & 0xFF) << 16) |
+                            ((glucoseValue[offset + 2] & 0xFF) << 8) | (glucoseValue[offset + 3] & 0xFF);
+                    offset += 4;
+
+                    // Extract the glucose concentration
+                    int glucoseConcentration = (glucoseValue[offset] & 0xFF) << 8 | (glucoseValue[offset + 1] & 0xFF);
+                    offset += 2;
+
+                    // Extract the glucose concentration units
+                    int glucoseConcentrationUnits = (glucoseValue[offset] & 0xFF);
+                    offset++;
+
+                    Log.d("Glucose Measurement:", "Sequence Number: " + sequenceNumber + ", Timestamp: " + timestamp +
+                            ", Glucose Concentration: " + glucoseConcentration + " " + glucoseConcentrationUnits + " mg/dL");
+                }*/
+
+            }
+            gatt.readCharacteristic(characteristic);
+        }
     };
 
-            public double parseGlucoseValue ( byte[] glucoseValue){
+
+
+    @SuppressLint("MissingPermission")
+    private void readCharacteristics(BluetoothGattService glucoService) {
+        List<BluetoothGattCharacteristic> glucoServiceCharakters = glucoService.getCharacteristics();
+        for (BluetoothGattCharacteristic characteristic : glucoServiceCharakters) {
+            mbluetoothGatt.readCharacteristic(characteristic);
+
+        }
+    }
+
+    private void broadcastUpdate(String intentAction) {
+        final Intent intent = new Intent(intentAction);
+
+    }
+
+    public double parseGlucoseValue ( byte[] glucoseValue){
                 // extract glucose measurement flags
                 int offset = 0;
                 int flags = glucoseValue[offset] & 0xFF;
@@ -337,7 +461,6 @@ public class BluetoothHandler {
                     return mLeDevices.get(position);
                 }
             }
-
 
 
 

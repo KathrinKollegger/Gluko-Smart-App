@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -64,6 +65,18 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
             Manifest.permission.BLUETOOTH_CONNECT,
             Manifest.permission.ACCESS_FINE_LOCATION
     };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        btHandler.disconnect(btHandler.getmbluetoothGatt());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        btHandler.disconnect(btHandler.getmbluetoothGatt());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,6 +255,8 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
             public void onClick(View v) {
                 Intent intent6 = new Intent(GereateKoppelnActivity.this, Home.class);
                 startActivity(intent6);
+
+                btHandler.disconnect(btHandler.getmbluetoothGatt());
             }
         });
     }
