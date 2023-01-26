@@ -306,7 +306,7 @@ public class BluetoothHandler {
                 seqNum |= (int) (dataMeasurement[2] & 255) << 8;
 
                 //alles um Float auszugeben!
-                float glucose= characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_SFLOAT,10);
+                float glucose= characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_SFLOAT,13);
 
 
                 int year = dataMeasurement[3] & 255;
