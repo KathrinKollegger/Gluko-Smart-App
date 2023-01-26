@@ -200,33 +200,63 @@ public class BluetoothHandler {
                     Log.d("Services", "UUID: " + uuid);
                 }
 
-                //Glucose-Service discovered
+                //Get the Glucose Service
                 BluetoothGattService glucoseService =
                         gatt.getService(GLUCOSE_SERVICE_UUID);
                 if (glucoseService != null) {
-                    Log.d("GlucsoeService", "discovered");
+                    Log.d("GlucoseService", "discovered"); // er geht da rein
 
                 } else {
                     Log.d("Glucoservice", "notFound");
+                    return;
                 }
                 //CUSTOM
                 //readCharacteristics(glucoseService);
 
-                List<BluetoothGattCharacteristic> glucoCharakters;
-                glucoCharakters = glucoseService.getCharacteristics();
+                //List<BluetoothGattCharacteristic> glucoCharakters;
 
+                //Get the Glucose_Measurement and Glucose_Measurement_Context characteristics
+                BluetoothGattCharacteristic glucoCharakterMeasurement= glucoseService.getCharacteristic(GLUCOSE_MEASUREMENT);
+                BluetoothGattCharacteristic glucoCharakterContext= glucoseService.getCharacteristic(GLUCOSE_MEASUREMENT_CONTEXT);
 
-                for (BluetoothGattCharacteristic characteristic : glucoCharakters) {
-                    if (GLUCOSE_MEASUREMENT.equals(characteristic.getUuid())) {
+                //Enable notifications for the characteristics because they are only notify
+                gatt.setCharacteristicNotification(glucoCharakterMeasurement, true);
+                gatt.setCharacteristicNotification(glucoCharakterContext, true);
 
-
-                    if ((characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) != 0) {
-                        // characteristic is readable
-                        gatt.readCharacteristic(characteristic);
-                        Log.i("CharacterProps"+characteristic.getUuid(),"="+characteristic.getProperties());
-                        }
-                    }
+                //Descriptor glucoseMeasurementDescriptor
+                BluetoothGattDescriptor glucoseMeasurementDescriptor = glucoCharakterMeasurement.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
+                if(glucoseMeasurementDescriptor != null){
+                    glucoseMeasurementDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                    gatt.writeDescriptor(glucoseMeasurementDescriptor);
+                    gatt.readDescriptor(glucoseMeasurementDescriptor);
+                    Log.d("Descriptor", "Reading/Writing descriptor for characteristic: " + glucoCharakterMeasurement.getUuid());
+                }else{
+                    Log.d("Descriptor", "Descriptor not found for characteristic: " + glucoCharakterMeasurement.getUuid());
                 }
+
+                //Descriptor glucoseMeasurementContextDescriptor
+                BluetoothGattDescriptor glucoseMeasurementContextDescriptor = glucoCharakterContext.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
+                if(glucoseMeasurementContextDescriptor != null){
+                glucoseMeasurementContextDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                gatt.writeDescriptor(glucoseMeasurementContextDescriptor);
+                gatt.readDescriptor(glucoseMeasurementContextDescriptor);
+                    Log.d("Descriptor", "Reading/Writing descriptor for characteristic: " + glucoCharakterContext.getUuid());
+                }else{
+                    Log.d("Descriptor", "Descriptor not found for characteristic: " + glucoCharakterContext.getUuid());
+                }
+
+
+                //for (BluetoothGattCharacteristic characteristic : glucoCharakters) {
+                    //if (GLUCOSE_MEASUREMENT.equals(characteristic.getUuid())) {
+
+
+                    //if ((characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) != 0) {
+                        // characteristic is readable
+                        //gatt.readCharacteristic(characteristic);
+                //Log.i("CharacterProps"+characteristic.getUuid(),"="+characteristic.getProperties());
+                        //}
+                  //  }
+               // }
                   /*  String uuid = gattCharacteristic.getUuid().toString();
                     byte[] value = gattCharacteristic.getValue();
                     BluetoothGattDescriptor descriptor = gattCharacteristic.getDescriptor(gattCharacteristic.getUuid());
@@ -241,91 +271,76 @@ public class BluetoothHandler {
                     gatt.readCharacteristic(GLUCOSE_MEASUREMENT_Characteristic);*/
 
 
-
             }
+
         }
 
         @SuppressLint("MissingPermission")
         @Override
-        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic
-                characteristic, int status) {
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-                Log.d("OnCharacterRead","entered"+characteristic.getUuid().toString());
+        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic
+                characteristic) {
+            super.onCharacteristicChanged(gatt,characteristic);
 
-               /* byte [] charakterValue = characteristic.getValue();
-                Log.d("CharakterValue", "is" + Arrays.toString(charakterValue));*/
+            //check if the characteristic that has changed is the one you are interested in
+            if(characteristic.getUuid().equals(GLUCOSE_MEASUREMENT)||
+            characteristic.getUuid().equals(GLUCOSE_MEASUREMENT_CONTEXT)){
 
-                if (GLUCOSE_MEASUREMENT.equals(characteristic.getUuid())) {
-                    Log.i("GlucoMeasureTrue","entered");
-                    byte[] glucoseValueBytes = characteristic.getValue();
-                    int flags = glucoseValueBytes[0];
-                    boolean timeOffsetPresent = (flags & 0x01) > 0;
-                    boolean typeAndSampleLocationPresent = (flags & 0x02) > 0;
-                    //is true if mol/L and false if kg/L
-                    boolean concentrationUnits = (flags & 0x03) > 0; // 0 = kg/L, 1 = mol/L
+            //da geht er rein und gibt des erste log richtig aus
+            if (characteristic.getUuid().equals(GLUCOSE_MEASUREMENT)){
 
-                    int offset = 1;
-                    if (timeOffsetPresent) {
-                        // Time offset is a 2-byte value
-                        int timeOffset = (glucoseValueBytes[offset] & 0xff)
-                                + ((glucoseValueBytes[offset + 1] & 0xff) << 8);
-                        offset += 2;
-                    }
+                //TO_DO: da müssen wir nun die Daten auslesen
+                byte[] dataMeasurement =  characteristic.getValue();
+                //Print the array in thge log
+                //D/DatenMeasurement: [31, 1, 0, -23, 7, 1, 21, 18, 22, 0, 0, 0, 46, -64, 17, 0, 0]
+                Log.d("DatenMeasurement", Arrays.toString(dataMeasurement));
+                Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT has changed");
 
-                    // Glucose concentration is a 2 or 3 byte value
-                    int glucoseConcentration = (glucoseValueBytes[offset] & 0xff)
-                            + ((glucoseValueBytes[offset + 1] & 0xff) << 8);
-                    if (glucoseValueBytes.length > offset + 2) {
-                        glucoseConcentration += (glucoseValueBytes[offset + 2] & 0xff) << 16;
-                    }
-                    offset += 2;
+                //https://stackoverflow.com/questions/45568958/bluetooth-low-energy-glucose-gatt-profile-measurement-parsing-value
+                boolean timeOffsetPresent = (dataMeasurement[0]& 0x01) > 0;
+                boolean typeAndLocationPresent =(dataMeasurement[0]&0x02)>0;
+                String concentrationUnit=(dataMeasurement[0] & 0x04)>0 ? "mol/l":"kg/L";
+                boolean sensorStatusAnnunciationPresent = (dataMeasurement[0] & 0x08) > 0;
+                boolean contextInfoFollows = (dataMeasurement[0] & 0x10) > 0;
 
-                    if (typeAndSampleLocationPresent) {
-                        int typeAndSampleLocation = glucoseValueBytes[offset] & 0xff;
-                        offset += 1;
-                    }
+                int seqNum = (int) (dataMeasurement[1] & 255);
+                seqNum |= (int) (dataMeasurement[2] & 255) << 8;
 
-                    if (concentrationUnits) {
-                        // concentration is in mol/L
-                    } else {
-                        // concentration is in kg/L
-                    }
+                //alles um Float auszugeben!
+                float glucose= characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_SFLOAT,10);
 
-                    Log.d(TAG, "Glucose concentration: " + glucoseConcentration);
-                }
 
-                /*if (GLUCOSE_MEASUREMENT.equals(characteristic.getUuid())) {
-                    byte[] glucoseValue = characteristic.getValue();
-                    Log.d("CharakterValue:",Arrays.toString(glucoseValue));
-                    int offset = 0;
+                int year = dataMeasurement[3] & 255;
+                year |= (dataMeasurement[4] & 255) << 8;
+                byte month = dataMeasurement[5];
+                byte day = dataMeasurement[6];
+                byte hour = dataMeasurement[7];
+                byte min = dataMeasurement[8];
+                byte sec = dataMeasurement[9];
 
-                    // Extract the flags field
-                    int flags = glucoseValue[offset] & 0xFF;
-                    offset++;
+                //Werte die oben sind werden in log ausgegeben --> habe nur einen oben dieser wird ausgegegeben
+                //Glucose ist 0 weil es als int deklariert aber ein float ist.
+                Log.d("Werte von GLUCOSE_MEASUREMENT", " time/loaction present "+ typeAndLocationPresent +" seqNr: "+ seqNum+ " Datum: "+ year + " "+month+ " "+day+ " "+hour+ " "+min+ " "+sec + " glucose: "+ glucose + " Einheit: "+ concentrationUnit);
 
-                    // Extract the sequence number
-                    int sequenceNumber = (glucoseValue[offset] & 0xFF) << 8 | (glucoseValue[offset + 1] & 0xFF);
-                    offset += 2;
 
-                    // Extract the timestamp
-                    long timestamp = ((glucoseValue[offset] & 0xFF) << 24) | ((glucoseValue[offset + 1] & 0xFF) << 16) |
-                            ((glucoseValue[offset + 2] & 0xFF) << 8) | (glucoseValue[offset + 3] & 0xFF);
-                    offset += 4;
+            } else{
+                Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT nicht gefunden");
+            }
 
-                    // Extract the glucose concentration
-                    int glucoseConcentration = (glucoseValue[offset] & 0xFF) << 8 | (glucoseValue[offset + 1] & 0xFF);
-                    offset += 2;
 
-                    // Extract the glucose concentration units
-                    int glucoseConcentrationUnits = (glucoseValue[offset] & 0xFF);
-                    offset++;
+            //da geht er nd rein und gibt den else aus??
+            if(characteristic.getUuid().equals(GLUCOSE_MEASUREMENT_CONTEXT)){
+                byte[] dataMeasurementContext= characteristic.getValue();
+                Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT_CONTEXT has changed");
 
-                    Log.d("Glucose Measurement:", "Sequence Number: " + sequenceNumber + ", Timestamp: " + timestamp +
-                            ", Glucose Concentration: " + glucoseConcentration + " " + glucoseConcentrationUnits + " mg/dL");
-                }*/
+            }else{
+                Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT_CONTEXT nicht gefunden");
+            }
 
             }
-            gatt.readCharacteristic(characteristic);
+
+
+
+
         }
     };
 
@@ -345,46 +360,7 @@ public class BluetoothHandler {
 
     }
 
-    public double parseGlucoseValue ( byte[] glucoseValue){
-                // extract glucose measurement flags
-                int offset = 0;
-                int flags = glucoseValue[offset] & 0xFF;
-                boolean timeOffsetPresent = (flags & 0x01) > 0;
-                boolean typeAndLocationPresent = (flags & 0x02) > 0;
-                boolean sensorStatusAnnunciationPresent = (flags & 0x04) > 0;
-                boolean contextInfoFollows = (flags & 0x08) > 0;
 
-                // extract glucose concentration
-                offset++;
-                int concentration = (glucoseValue[offset] & 0xFF)
-                        | ((glucoseValue[offset + 1] & 0xFF) << 8);
-                double glucose = concentration * 0.1;
-
-                // extract glucose measurement date and time
-                offset += 2;
-                if (timeOffsetPresent) {
-                    // time offset is present, extract it
-                    int timeOffset = (glucoseValue[offset] & 0xFF)
-                            | ((glucoseValue[offset + 1] & 0xFF) << 8);
-                }
-
-                // extract type and location
-                offset += 2;
-                if (typeAndLocationPresent) {
-                    // type and location are present, extract them
-                    int typeAndLocation = glucoseValue[offset] & 0xFF;
-                }
-
-                // extract sensor status annunciation
-                offset++;
-                if (sensorStatusAnnunciationPresent) {
-                    // sensor status annunciation is present, extract it
-                    int sensorStatusAnnunciation = (glucoseValue[offset] & 0xFF)
-                            | ((glucoseValue[offset + 1] & 0xFF) << 8);
-                }
-                return glucose;
-
-            }
             public BluetoothAdapter getmBtAdapter () {
                 return mBtAdapter;
             }
