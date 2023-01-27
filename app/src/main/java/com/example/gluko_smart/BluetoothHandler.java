@@ -306,8 +306,11 @@ public class BluetoothHandler {
                 seqNum |= (int) (dataMeasurement[2] & 255) << 8;
 
                 //alles um Float auszugeben!
-                float glucose= characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_SFLOAT,13);
+                //1 mol/L = 1000 mmol/L. --> um mol/L in mmol/L umzurechnen
 
+                float glucose= characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_SFLOAT,12);
+
+                 float glucoseMMOL = glucose*1000;
 
                 int year = dataMeasurement[3] & 255;
                 year |= (dataMeasurement[4] & 255) << 8;
@@ -319,7 +322,7 @@ public class BluetoothHandler {
 
                 //Werte die oben sind werden in log ausgegeben --> habe nur einen oben dieser wird ausgegegeben
                 //Glucose ist 0 weil es als int deklariert aber ein float ist.
-                Log.d("Werte von GLUCOSE_MEASUREMENT", " time/loaction present "+ typeAndLocationPresent +" seqNr: "+ seqNum+ " Datum: "+ year + " "+month+ " "+day+ " "+hour+ " "+min+ " "+sec + " glucose: "+ glucose + " Einheit: "+ concentrationUnit);
+                Log.d("Werte von GLUCOSE_MEASUREMENT", " time/loaction present "+ typeAndLocationPresent +" seqNr: "+ seqNum+ " Datum: "+ year + " "+month+ " "+day+ " "+hour+ " "+min+ " "+sec + " glucose: "+ glucose + " Einheit: "+ concentrationUnit + " Wert in mmol/L: "+ glucoseMMOL);
 
 
             } else{
