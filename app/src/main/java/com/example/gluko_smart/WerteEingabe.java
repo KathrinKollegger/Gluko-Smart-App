@@ -77,7 +77,7 @@ public class WerteEingabe extends Activity {
 
             }else{
 
-                GlucoseValues glucoseValues = new GlucoseValues(edit_bzWert.getText().toString(), edit_infoessen.getSelectedItem().toString(), LocalDateTime.now(), user.toString());
+                GlucoseValues glucoseValues = new GlucoseValues(Float.parseFloat(edit_bzWert.getText().toString()), edit_infoessen.getSelectedItem().toString(), LocalDateTime.now(), user.toString());
                 daoGlucoseValue.add(glucoseValues).addOnSuccessListener(suc->{
                     Toast.makeText(this, "Blutzuckerwert wurde gespeichert", Toast.LENGTH_SHORT).show();
                 }).addOnFailureListener(er->{

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class GlucoseValues {
 
 
-    private String bzWert;
+    private float bzWert;
     private String vorNachMahlzeit;
     private LocalDateTime timestamp;
     private String user;
@@ -14,7 +14,7 @@ public class GlucoseValues {
     public GlucoseValues(){}
 
 
-    public GlucoseValues(String bzWert, String vorNachMahlzeit, LocalDateTime timestamp, String user) {
+    public GlucoseValues(float bzWert, String vorNachMahlzeit, LocalDateTime timestamp, String user) {
 
         this.bzWert = bzWert;
         this.vorNachMahlzeit = vorNachMahlzeit;
@@ -23,12 +23,12 @@ public class GlucoseValues {
         //this.date = date;
     }
 
-    public String getBzWert(){
+    public float getBzWert(){
 
         return bzWert;
     }
 
-    public void setBzWert(String bzWert){
+    public void setBzWert(float bzWert){
 
         this.bzWert = bzWert;
     }
@@ -59,16 +59,6 @@ public class GlucoseValues {
 
         this.user = user;
     }
-
-   /* public String getDate(){
-
-        return date;
-    }
-
-    public void setDate(String date){
-
-        this.date = date;
-    }*/
 
 
 }

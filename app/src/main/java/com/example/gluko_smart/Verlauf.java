@@ -52,8 +52,7 @@ public class Verlauf extends AppCompatActivity {
             @Override
             public void onClick(View v){
 
-               /* Intent I = new Intent(Verlauf.this, FragmentVerlaufWoche.class);
-                startActivity(I);*/
+
                 replaceFragment(new FragmentVerlaufWoche());
             }
 
@@ -64,8 +63,6 @@ public class Verlauf extends AppCompatActivity {
             @Override
             public void onClick(View v){
 
-                /*Intent I = new Intent(Verlauf.this, FragmentVerlaufTag.class);
-                startActivity(I);*/
                 replaceFragment(new FragmentVerlaufTag());
             }
         });
