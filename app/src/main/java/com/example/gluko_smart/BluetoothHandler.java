@@ -321,8 +321,10 @@ public class BluetoothHandler {
                 byte sec = dataMeasurement[9];
 
                 //Werte die oben sind werden in log ausgegeben --> habe nur einen oben dieser wird ausgegegeben
-                //Glucose ist 0 weil es als int deklariert aber ein float ist.
-                Log.d("Werte von GLUCOSE_MEASUREMENT", " time/loaction present "+ typeAndLocationPresent +" seqNr: "+ seqNum+ " Datum: "+ year + " "+month+ " "+day+ " "+hour+ " "+min+ " "+sec + " glucose: "+ glucose + " Einheit: "+ concentrationUnit + " Wert in mmol/L: "+ glucoseMMOL);
+                //Glucose ist nicht mehr 0 unf unktioniert jetzt
+                Log.d("Werte von GLUCOSE_MEASUREMENT", " time/loaction present "+ typeAndLocationPresent +" seqNr: "
+                        + seqNum+ " Datum: "+ year + " "+month+ " "+day+ " "+hour+ " "+min+ " "+sec +
+                        " glucose: "+ glucose + " Einheit: "+ concentrationUnit + " Wert in mmol/L: "+ glucoseMMOL);
 
 
             } else{
