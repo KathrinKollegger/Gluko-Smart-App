@@ -320,12 +320,15 @@ public class BluetoothHandler {
                 byte min = dataMeasurement[8];
                 byte sec = dataMeasurement[9];
 
-                //Werte die oben sind werden in log ausgegeben --> habe nur einen oben dieser wird ausgegegeben
+                //Werte die oben sind werden in log ausgegeben --> es wird nur der aktuellste Wert ausgegeben
                 //Glucose ist nicht mehr 0 unf unktioniert jetzt
                 Log.d("Werte von GLUCOSE_MEASUREMENT", " time/loaction present "+ typeAndLocationPresent +" seqNr: "
                         + seqNum+ " Datum: "+ year + " "+month+ " "+day+ " "+hour+ " "+min+ " "+sec +
                         " glucose: "+ glucose + " Einheit: "+ concentrationUnit + " Wert in mmol/L: "+ glucoseMMOL);
 
+                //Hier müsste man nun irgendwie durch jede sequenz (vlt mit Hilfe der seqNr) auslesen und so nicht nur den letzten Eintrag des Geräts auslesen und ausgeben.
+                //Dann diese Werte zwischenspeichern und dann in die Firebase schreiben; zuvor überprüfen ob die Werte vorhanden sind und wenn ja diese dann nicht
+                //in die DB schreiben
 
             } else{
                 Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT nicht gefunden");
