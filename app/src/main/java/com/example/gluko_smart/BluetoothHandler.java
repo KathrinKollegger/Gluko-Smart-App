@@ -210,10 +210,6 @@ public class BluetoothHandler {
                     Log.d("Glucoservice", "notFound");
                     return;
                 }
-                //CUSTOM
-                //readCharacteristics(glucoseService);
-
-                //List<BluetoothGattCharacteristic> glucoCharakters;
 
                 //Get the Glucose_Measurement and Glucose_Measurement_Context characteristics
                 BluetoothGattCharacteristic glucoCharakterMeasurement= glucoseService.getCharacteristic(GLUCOSE_MEASUREMENT);
@@ -245,37 +241,13 @@ public class BluetoothHandler {
                     Log.d("Descriptor", "Descriptor not found for characteristic: " + glucoCharakterContext.getUuid());
                 }
 
-
-                //for (BluetoothGattCharacteristic characteristic : glucoCharakters) {
-                    //if (GLUCOSE_MEASUREMENT.equals(characteristic.getUuid())) {
-
-
-                    //if ((characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) != 0) {
-                        // characteristic is readable
-                        //gatt.readCharacteristic(characteristic);
-                //Log.i("CharacterProps"+characteristic.getUuid(),"="+characteristic.getProperties());
-                        //}
-                  //  }
-               // }
-                  /*  String uuid = gattCharacteristic.getUuid().toString();
-                    byte[] value = gattCharacteristic.getValue();
-                    BluetoothGattDescriptor descriptor = gattCharacteristic.getDescriptor(gattCharacteristic.getUuid());
-                    Log.d("GlucoCharakters", "UUID: " + uuid);
-                    //Log.d("Descriptor", "UUID: " + descriptor);
-                    Log.d("ValueInByte",":" + Arrays.toString(value));
-                    //STOPPED HERE
-                    //Get the GLUCOSE Measurement Charactersitics
-                    BluetoothGattCharacteristic GLUCOSE_MEASUREMENT_Characteristic =
-                            gatt.getService(GLUCOSE_SERVICE_UUID).getCharacteristic(GLUCOSE_MEASUREMENT);
-
-                    gatt.readCharacteristic(GLUCOSE_MEASUREMENT_Characteristic);*/
-
-
             }
 
         }
 
-
+        //Variable ist false; wenn die onCharacteristicChanged einmal durchlaufen wurde = true
+        //Methode wird so nur 1x ausgeführt und Werte werden nur 1x empfangen und nicht mehrfach.
+        private boolean valueFound=false;
 
         @SuppressLint("MissingPermission")
         @Override
@@ -283,75 +255,31 @@ public class BluetoothHandler {
                 characteristic) {
             super.onCharacteristicChanged(gatt,characteristic);
 
+            if (valueFound) {
+                return;
+            }
+
             //check if the characteristic that has changed is the one you are interested in
-            if(characteristic.getUuid().equals(GLUCOSE_MEASUREMENT)||
-                    (characteristic.getUuid().equals(GLUCOSE_MEASUREMENT_CONTEXT))){
-
-
             //da geht er rein und gibt des erste log richtig aus
             if (characteristic.getUuid().equals(GLUCOSE_MEASUREMENT)){
 
-                //create a list to store all the glucose measurement characteristics
+                //create a list to store all the glucose measurement characteristics to show not only the latest diary entry --> doesnt work
                 List<BluetoothGattCharacteristic>glucoseMeasurementCharacteristics= new ArrayList<>();
-
                 //add the current characteristic to the list
                 glucoseMeasurementCharacteristics.add(characteristic);
 
-                //add the characteristic to the array
-                glucoseMeasurementCharacteristics.add(characteristic);
 
-                //iterate through the list and extract the data from each characteristic
+                //iterate through the list and extract the data from each characteristic --> bekomme den neuersten Eintrag im Tagebuch (nicht alle)
                 for (BluetoothGattCharacteristic glucoseMeasurementCharacteristic : glucoseMeasurementCharacteristics) {
-                    //TO_DO: da müssen wir nun die Daten auslesen
                     byte[] dataMeasurement = glucoseMeasurementCharacteristic.getValue();
-                    //Print the array in thge log
-                    //D/DatenMeasurement: [31, 1, 0, -23, 7, 1, 21, 18, 22, 0, 0, 0, 46, -64, 17, 0, 0]
-                    Log.d("DatenMeasurement", Arrays.toString(dataMeasurement));
-                    Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT has changed");
+                    //Methode processData aufrufen
+                    processData(characteristic, dataMeasurement);
 
-                    //extract the data from the characteristic
-                    //https://stackoverflow.com/questions/45568958/bluetooth-low-energy-glucose-gatt-profile-measurement-parsing-value
-                    boolean timeOffsetPresent = (dataMeasurement[0] & 0x01) > 0;
-                    boolean typeAndLocationPresent = (dataMeasurement[0] & 0x02) > 0;
-                    String concentrationUnit = (dataMeasurement[0] & 0x04) > 0 ? "mol/l" : "kg/L";
-                    boolean sensorStatusAnnunciationPresent = (dataMeasurement[0] & 0x08) > 0;
-                    boolean contextInfoFollows = (dataMeasurement[0] & 0x10) > 0;
-
-                    int seqNum = (int) (dataMeasurement[1] & 255);
-                    seqNum |= (int) (dataMeasurement[2] & 255) << 8;
-
-                    //alles um Float auszugeben!
-                    //1 mol/L = 1000 mmol/L. --> um mol/L in mmol/L umzurechnen
-
-                    float glucose = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_SFLOAT, 12);
-
-                    //wenn das Gerät in mol/liter liefert und wir in mmol/liter umrechnen diese variable verwenden
-                    float glucoseMMOL = glucose * 1000;
-                    //wenn das Gerät in kg/l liefert und wir in mg/dl umrechnen diese variable verwenden
-                    float glucoseMGDL= glucose*100000;
-
-                    int year = dataMeasurement[3] & 255;
-                    year |= (dataMeasurement[4] & 255) << 8;
-                    byte month = dataMeasurement[5];
-                    byte day = dataMeasurement[6];
-                    byte hour = dataMeasurement[7];
-                    byte min = dataMeasurement[8];
-                    byte sec = dataMeasurement[9];
-
-                    //Werte die oben sind werden in log ausgegeben --> es wird nur der aktuellste Wert ausgegeben
-                    //Glucose ist nicht mehr 0 unf unktioniert jetzt --> wird in mmol/liter ausgegeben da Gerät von meli so ausgibt
-                    //log the extracted data
-                    Log.d("Werte von GLUCOSE_MEASUREMENT", " time/loaction present " + typeAndLocationPresent + " seqNr: "
-                            + seqNum + " Datum: " + year + " " + month + " " + day + " " + hour + " " + min + " " + sec +
-                            " glucose: " + glucose + " Einheit: " + concentrationUnit + " Wert in mmol/L: " + glucoseMMOL);
-
-                    //Hier müsste man nun irgendwie durch jede sequenz (vlt mit Hilfe der seqNr) auslesen und so nicht nur den letzten Eintrag des Geräts auslesen und ausgeben.
-                    //Dann diese Werte zwischenspeichern und dann in die Firebase schreiben; zuvor überprüfen ob die Werte vorhanden sind und wenn ja diese dann nicht
-                    //in die DB schreiben
                 }
 
             } else{
                 Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT nicht gefunden");
+
             }
 
 
@@ -359,34 +287,65 @@ public class BluetoothHandler {
             if(characteristic.getUuid().equals(GLUCOSE_MEASUREMENT_CONTEXT)){
                 byte[] dataMeasurementContext= characteristic.getValue();
                 Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT_CONTEXT has changed");
+                valueFound=true;
 
             }else{
                 Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT_CONTEXT nicht gefunden");
+                valueFound=true;
             }
+            }
+            };
+
+            public void processData(BluetoothGattCharacteristic characteristic, byte[] dataMeasurement){
+                //process the data here
+                //Print the array in the log
+                //D/DatenMeasurement: [31, 1, 0, -23, 7, 1, 21, 18, 22, 0, 0, 0, 46, -64, 17, 0, 0]
+                //Log.d("DatenMeasurement", Arrays.toString(dataMeasurement));
+                //Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT has changed");
+
+                //extract the data from the characteristic
+                //https://stackoverflow.com/questions/45568958/bluetooth-low-energy-glucose-gatt-profile-measurement-parsing-value
+                boolean timeOffsetPresent = (dataMeasurement[0] & 0x01) > 0;
+                boolean typeAndLocationPresent = (dataMeasurement[0] & 0x02) > 0;
+                String concentrationUnit = (dataMeasurement[0] & 0x04) > 0 ? "mol/l" : "kg/L";
+                boolean sensorStatusAnnunciationPresent = (dataMeasurement[0] & 0x08) > 0;
+                boolean contextInfoFollows = (dataMeasurement[0] & 0x10) > 0;
+
+                //seqNumber des Eintrags im Gerätetagebuch
+                int seqNum = (int) (dataMeasurement[1] & 255);
+                seqNum |= (int) (dataMeasurement[2] & 255) << 8;
+
+                //1 mol/L = 1000 mmol/L. --> um mol/L in mmol/L umzurechnen
+                float glucose = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_SFLOAT, 12);
+
+                //wenn das Gerät in mol/liter liefert und wir in mmol/liter umrechnen diese variable verwenden
+                float glucoseMMOL = glucose * 1000;
+                //wenn das Gerät in kg/l liefert und wir in mg/dl umrechnen diese variable verwenden
+                float glucoseMGDL= glucose*100000;
+
+                int year = dataMeasurement[3] & 255;
+                year |= (dataMeasurement[4] & 255) << 8;
+                byte month = dataMeasurement[5];
+                byte day = dataMeasurement[6];
+                byte hour = dataMeasurement[7];
+                byte min = dataMeasurement[8];
+                byte sec = dataMeasurement[9];
+
+                //Werte die oben sind werden in log ausgegeben --> es wird nur der aktuellste Wert ausgegeben in mol/L
+                Log.d("Werte von GLUCOSE_MEASUREMENT", " seqNr: "
+                        + seqNum + " Datum: " + year + " " + month + " " + day + " "
+                        + hour + " " + min + " " + sec +
+                        " glucose: " + glucose + " Einheit: "
+                        + concentrationUnit + " Wert in mmol/L: " + glucoseMMOL);
+
+                //Hier müsste man nun irgendwie durch jede sequenz (vlt mit Hilfe der seqNr) auslesen und so nicht nur den letzten Eintrag des Geräts auslesen und ausgeben.
+                //Dann diese Werte zwischenspeichern und dann in die Firebase schreiben; zuvor überprüfen ob die Werte vorhanden sind und wenn ja diese dann nicht
+                //in die DB schreiben
+
+
+
 
             }
-
-
-
-
-        }
-    };
-
-
-
-    @SuppressLint("MissingPermission")
-    private void readCharacteristics(BluetoothGattService glucoService) {
-        List<BluetoothGattCharacteristic> glucoServiceCharakters = glucoService.getCharacteristics();
-        for (BluetoothGattCharacteristic characteristic : glucoServiceCharakters) {
-            mbluetoothGatt.readCharacteristic(characteristic);
-
-        }
-    }
-
-    private void broadcastUpdate(String intentAction) {
-        final Intent intent = new Intent(intentAction);
-
-    }
 
 
             public BluetoothAdapter getmBtAdapter () {
