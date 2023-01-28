@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/DarkblueBG">
+    android:background="@color/green_TVbg">
 
     <TextView
         android:id="@+id/tv_titleBTact"
@@ -20,7 +20,7 @@
         android:fontFamily="casual"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textStyle="bold"
-        android:textColor="@color/Tiara"
+        android:textColor="@color/white"
         app:circularflow_defaultRadius="@dimen/cardview_default_radius"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.489"
@@ -78,20 +78,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_statusBluetooth"
         tools:layout_editor_absoluteX="20dp"/>
 
-    <!--Nicht mehr gebraucht-->
-    <!--<Button
-        android:id="@+id/button_sync"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/Nepal"
-        android:text="@string/btText_connect"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_getBtDevices"
-        app:layout_constraintVertical_bias="0.721" />-->
 
     <TextView
         android:id="@+id/textView3"

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#C60CB56C"
+    android:background= "@drawable/home"
     tools:context=".MainActivity">
 
 
@@ -12,18 +12,31 @@
         android:id="@+id/text_startseite"
         android:layout_width="479dp"
         android:layout_height="130dp"
-        android:background="#C60CB56C"
+        android:background="#c7e8ef"
+        android:fontFamily="casual"
         android:gravity="center_horizontal"
         android:text="Home"
-        android:fontFamily="casual"
-        android:textColor="@color/black"
-        android:textSize="32sp"
+        android:textColor="#307eaa"
+        android:textColorHint="#5d99d0"
+        android:textSize="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
+
+
+    <!--<Button
+        android:id="@+id/button_persoenliches"
+        android:layout_width="325dp"
+        android:layout_height="67dp"
+        android:backgroundTint="#4C74AF"
+        android:text="Persönliche Daten"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.643" />-->
 
     <TextView
         android:id="@+id/tv_UserName"
@@ -31,13 +44,14 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:text="Name des Patienten"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.025"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.12" />
+        app:layout_constraintVertical_bias="0.133" />
 
     <Button
         android:id="@+id/button_gereateKoppeln"
@@ -45,11 +59,12 @@
         android:layout_height="67dp"
         android:backgroundTint="#4C74AF"
         android:text="Gerät koppeln"
+        android:fontFamily="casual"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.215" />
+        app:layout_constraintVertical_bias="0.326" />
 
     <Button
         android:id="@+id/button_verlauf"
@@ -57,12 +72,12 @@
         android:layout_height="67dp"
         android:backgroundTint="#4C74AF"
         android:text="Verlauf darstellen"
+        android:fontFamily="casual"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.352" />
-
+        app:layout_constraintVertical_bias="0.483" />
 
     <Button
         android:id="@+id/button_werteEinfuegen"
@@ -70,17 +85,7 @@
         android:layout_height="67dp"
         android:backgroundTint="#4C74AF"
         android:text="Werte manuell einfügen"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button_persoenliches"
-        android:layout_width="325dp"
-        android:layout_height="67dp"
-        android:backgroundTint="#4C74AF"
-        android:text="Persönliche Daten"
+        android:fontFamily="casual"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,11 +98,12 @@
         android:layout_height="67dp"
         android:backgroundTint="#4C74AF"
         android:text="User Manual"
+        android:fontFamily="casual"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.792" />
+        app:layout_constraintVertical_bias="0.787" />
 
     <Button
         android:id="@+id/button_abmelden"
@@ -115,8 +121,11 @@
         android:id="@+id/imageView2"
         android:layout_width="74dp"
         android:layout_height="94dp"
+        android:fontFamily="casual"
         app:srcCompat="@drawable/logo_ohne"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="4dp"
+        tools:layout_editor_absoluteY="-9dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

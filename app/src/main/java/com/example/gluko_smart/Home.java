@@ -30,7 +30,7 @@ public class Home extends AppCompatActivity {
         button_gereateKoppeln = (Button) findViewById(R.id.button_gereateKoppeln);
         button_verlauf = (Button) findViewById(R.id.button_verlauf);
         button_werteEinfuegen = (Button) findViewById(R.id.button_werteEinfuegen);
-        button_persoenliches = (Button) findViewById(R.id.button_persoenliches);
+        //button_persoenliches = (Button) findViewById(R.id.button_persoenliches);
         button_userManual = (Button) findViewById(R.id.button_userManual);
         button_abmelden = (Button) findViewById(R.id.button_abmelden);
         textView_userName = (TextView) findViewById(R.id.tv_UserName);
@@ -62,13 +62,13 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        button_persoenliches.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent3 = new Intent(Home.this, Persoenliches.class);
-                startActivity(intent3);
-            }
-        });
+       // button_persoenliches.setOnClickListener(new View.OnClickListener() {
+            //@Override
+           // public void onClick(View v) {
+              // Intent intent3 = new Intent(Home.this, Persoenliches.class);
+                //startActivity(intent3);
+           // }
+       // });
 
         button_userManual.setOnClickListener(new View.OnClickListener() {
             @Override
