@@ -20,7 +20,6 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.bluetooth.BluetoothGatt;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
@@ -33,7 +32,6 @@ import android.widget.Toast;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class BluetoothHandler {
@@ -62,6 +60,9 @@ public class BluetoothHandler {
             "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA =
             "com.example.bluetooth.le.EXTRA_DATA";
+
+    //um empfangenen Wert aus onCharacterisitcChanged zu speichern
+    public List<Object> dataList = new ArrayList<>();
 
     public BluetoothHandler(Context context, DeviceHandler devHandler) {
         //Initialize BTadapter of Smartphone and BLEscanner
@@ -205,6 +206,14 @@ public class BluetoothHandler {
                         gatt.getService(GLUCOSE_SERVICE_UUID);
                 if (glucoseService != null) {
                     Log.d("GlucoseService", "discovered"); // er geht da rein
+                    List<BluetoothGattCharacteristic> allCharacterisitksGluco= glucoseService.getCharacteristics();
+                    for (BluetoothGattCharacteristic characteristic : allCharacterisitksGluco) {
+                        Log.d("Characteristic", "UUID: " + characteristic.getUuid());}
+
+
+                    if (allCharacterisitksGluco.isEmpty()){
+                        Log.d("Characterisitcs", "Keine characterisitcs for this service" + GLUCOSE_SERVICE_UUID);
+                    }
 
                 } else {
                     Log.d("Glucoservice", "notFound");
@@ -249,11 +258,16 @@ public class BluetoothHandler {
         //Methode wird so nur 1x ausgeführt und Werte werden nur 1x empfangen und nicht mehrfach.
         private boolean valueFound=false;
 
+        //create a list to store all the glucose measurement characteristics to show not only the latest diary entry --> doesnt work
+        private List<BluetoothGattCharacteristic>glucoseMeasurementCharacteristics= new ArrayList<>();
+
         @SuppressLint("MissingPermission")
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic
                 characteristic) {
             super.onCharacteristicChanged(gatt,characteristic);
+            //schauen welche UUID die methode bekommt --> bekommt immer nur 1
+            Log.d("onCharacteristicChanged", " In Methode empfangende UUID: " + characteristic.getUuid().toString());
 
             if (valueFound) {
                 return;
@@ -263,8 +277,7 @@ public class BluetoothHandler {
             //da geht er rein und gibt des erste log richtig aus
             if (characteristic.getUuid().equals(GLUCOSE_MEASUREMENT)){
 
-                //create a list to store all the glucose measurement characteristics to show not only the latest diary entry --> doesnt work
-                List<BluetoothGattCharacteristic>glucoseMeasurementCharacteristics= new ArrayList<>();
+
                 //add the current characteristic to the list
                 glucoseMeasurementCharacteristics.add(characteristic);
 
@@ -273,7 +286,7 @@ public class BluetoothHandler {
                 for (BluetoothGattCharacteristic glucoseMeasurementCharacteristic : glucoseMeasurementCharacteristics) {
                     byte[] dataMeasurement = glucoseMeasurementCharacteristic.getValue();
                     //Methode processData aufrufen
-                    processData(characteristic, dataMeasurement);
+                    processData(glucoseMeasurementCharacteristic, dataMeasurement);
 
                 }
 
@@ -284,6 +297,7 @@ public class BluetoothHandler {
 
 
             //da geht er nd rein und gibt den else aus??
+            //müssen wir aber bekommen, damit Gerät OK zurückliefert
             if(characteristic.getUuid().equals(GLUCOSE_MEASUREMENT_CONTEXT)){
                 byte[] dataMeasurementContext= characteristic.getValue();
                 Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT_CONTEXT has changed");
@@ -331,6 +345,11 @@ public class BluetoothHandler {
                 byte min = dataMeasurement[8];
                 byte sec = dataMeasurement[9];
 
+
+
+                //erhaltene Werte in dataList Objekt speichern
+                dataList.add(new Object[]{seqNum, glucose, glucoseMMOL,glucoseMGDL,year,month,day,hour,min,sec});
+
                 //Werte die oben sind werden in log ausgegeben --> es wird nur der aktuellste Wert ausgegeben in mol/L
                 Log.d("Werte von GLUCOSE_MEASUREMENT", " seqNr: "
                         + seqNum + " Datum: " + year + " " + month + " " + day + " "
@@ -341,10 +360,6 @@ public class BluetoothHandler {
                 //Hier müsste man nun irgendwie durch jede sequenz (vlt mit Hilfe der seqNr) auslesen und so nicht nur den letzten Eintrag des Geräts auslesen und ausgeben.
                 //Dann diese Werte zwischenspeichern und dann in die Firebase schreiben; zuvor überprüfen ob die Werte vorhanden sind und wenn ja diese dann nicht
                 //in die DB schreiben
-
-
-
-
             }
 
 

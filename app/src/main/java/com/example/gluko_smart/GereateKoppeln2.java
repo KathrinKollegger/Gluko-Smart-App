@@ -1,9 +1,12 @@
 package com.example.gluko_smart;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 
@@ -24,8 +27,23 @@ public class GereateKoppeln2 extends AppCompatActivity {
         button_wertebekommen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent13 = new Intent(GereateKoppeln2.this, GereateKoppelnActivity.class);
-                startActivity(intent13);
+                AlertDialog.Builder builder = new AlertDialog.Builder(GereateKoppeln2.this);
+                builder.setMessage(Html.fromHtml("<b>Wichtiger Hinweis</b><br><br>" +
+                                "1.)  Klicke auf der nächsten Seite auf Scan starten.<br> <br>" +
+                                "2.)  Dann erscheint das Gerät in der Liste.<br><br> " +
+                                "3.)  Klicke auf den Gerätenamen um deinen <b>letzen</b> gemessenen Blutzuckereintrag zu bekommen!"))
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User bestätigt den Text
+                                Intent intent13 = new Intent(GereateKoppeln2.this, GereateKoppelnActivity.class);
+                                startActivity(intent13);
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+
+
             }
         });
 
