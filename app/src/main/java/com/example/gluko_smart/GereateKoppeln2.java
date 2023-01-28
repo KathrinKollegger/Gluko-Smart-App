@@ -29,11 +29,11 @@ public class GereateKoppeln2 extends AppCompatActivity {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(GereateKoppeln2.this);
                 builder.setMessage(Html.fromHtml("<b>Wichtiger Hinweis</b><br><br>" +
-                                "1.)  Klicke auf der nächsten Seite auf Scan starten.<br> <br>" +
-                                "2.)  Dann erscheint das Gerät in der Liste.<br><br> " +
-                                "3.)  Klicke auf den Gerätenamen um deinen <b>letzen</b> gemessenen Blutzuckereintrag zu bekommen!"))
+                                "1.)  Klicke auf der nächsten Seite auf <b>Scan starten</b>.<br> <br>" +
+                                "2.)  Klicke bei deinem Glucosegerät noch einmal auf den Pfeil. Das Bluetoothsymbol blinkt nun.<br><br> " +
+                                "3.)  Klicke auf den Gerätenamen wenn dieser angezeigt wird, um deinen <b>letzen</b> gemessenen Blutzuckereintrag zu bekommen!"))
                         .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Verstanden", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User bestätigt den Text
                                 Intent intent13 = new Intent(GereateKoppeln2.this, GereateKoppelnActivity.class);
