@@ -206,12 +206,13 @@ public class BluetoothHandler {
                         gatt.getService(GLUCOSE_SERVICE_UUID);
                 if (glucoseService != null) {
                     Log.d("GlucoseService", "discovered"); // er geht da rein
-                    List<BluetoothGattCharacteristic> allCharacterisitksGluco= glucoseService.getCharacteristics();
+                    List<BluetoothGattCharacteristic> allCharacterisitksGluco = glucoseService.getCharacteristics();
                     for (BluetoothGattCharacteristic characteristic : allCharacterisitksGluco) {
-                        Log.d("Characteristic", "UUID: " + characteristic.getUuid());}
+                        Log.d("Characteristic", "UUID: " + characteristic.getUuid());
+                    }
 
 
-                    if (allCharacterisitksGluco.isEmpty()){
+                    if (allCharacterisitksGluco.isEmpty()) {
                         Log.d("Characterisitcs", "Keine characterisitcs for this service" + GLUCOSE_SERVICE_UUID);
                     }
 
@@ -221,94 +222,81 @@ public class BluetoothHandler {
                 }
 
                 //Get the Glucose_Measurement and Glucose_Measurement_Context characteristics
-                BluetoothGattCharacteristic glucoCharakterMeasurement= glucoseService.getCharacteristic(GLUCOSE_MEASUREMENT);
-                BluetoothGattCharacteristic glucoCharakterContext= glucoseService.getCharacteristic(GLUCOSE_MEASUREMENT_CONTEXT);
+                BluetoothGattCharacteristic glucoCharakterMeasurement = glucoseService.getCharacteristic(GLUCOSE_MEASUREMENT);
 
                 //Enable notifications for the characteristics because they are only notify
                 gatt.setCharacteristicNotification(glucoCharakterMeasurement, true);
-                gatt.setCharacteristicNotification(glucoCharakterContext, true);
 
                 //Descriptor glucoseMeasurementDescriptor
                 BluetoothGattDescriptor glucoseMeasurementDescriptor = glucoCharakterMeasurement.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
-                if(glucoseMeasurementDescriptor != null){
+                if (glucoseMeasurementDescriptor != null) {
                     glucoseMeasurementDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                     gatt.writeDescriptor(glucoseMeasurementDescriptor);
                     gatt.readDescriptor(glucoseMeasurementDescriptor);
                     Log.d("Descriptor", "Reading/Writing descriptor for characteristic: " + glucoCharakterMeasurement.getUuid());
+
                 }else{
                     Log.d("Descriptor", "Descriptor not found for characteristic: " + glucoCharakterMeasurement.getUuid());
-                }
-
-                //Descriptor glucoseMeasurementContextDescriptor
-                BluetoothGattDescriptor glucoseMeasurementContextDescriptor = glucoCharakterContext.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
-                if(glucoseMeasurementContextDescriptor != null){
-                glucoseMeasurementContextDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                gatt.writeDescriptor(glucoseMeasurementContextDescriptor);
-                gatt.readDescriptor(glucoseMeasurementContextDescriptor);
-                    Log.d("Descriptor", "Reading/Writing descriptor for characteristic: " + glucoCharakterContext.getUuid());
-                }else{
-                    Log.d("Descriptor", "Descriptor not found for characteristic: " + glucoCharakterContext.getUuid());
                 }
 
             }
 
         }
 
-        //Variable ist false; wenn die onCharacteristicChanged einmal durchlaufen wurde = true
-        //Methode wird so nur 1x ausgeführt und Werte werden nur 1x empfangen und nicht mehrfach.
-        private boolean valueFound=false;
-
-        //create a list to store all the glucose measurement characteristics to show not only the latest diary entry --> doesnt work
-        private List<BluetoothGattCharacteristic>glucoseMeasurementCharacteristics= new ArrayList<>();
-
         @SuppressLint("MissingPermission")
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic
                 characteristic) {
-            super.onCharacteristicChanged(gatt,characteristic);
-            //schauen welche UUID die methode bekommt --> bekommt immer nur 1
-            Log.d("onCharacteristicChanged", " In Methode empfangende UUID: " + characteristic.getUuid().toString());
+            super.onCharacteristicChanged(gatt, characteristic);
 
-            if (valueFound) {
-                return;
-            }
+            //um zu schauen welche UUID die methode bekommt --> bekommt immer nur 1
+            Log.d("onCharacteristicChanged", " In Methode empfangende UUID: " + characteristic.getUuid().toString());
 
             //check if the characteristic that has changed is the one you are interested in
             //da geht er rein und gibt des erste log richtig aus
-            if (characteristic.getUuid().equals(GLUCOSE_MEASUREMENT)){
+            if (characteristic.getUuid().equals(GLUCOSE_MEASUREMENT)) {
+                byte[] dataMeasurement = characteristic.getValue();
+                //Methode processData aufrufen
+                processData(characteristic, dataMeasurement);
 
+                    //GATT Server sagen, dass ich den  ersten wert empfangen habe
+                    //Hier kann man dem GATT Server signalisieren, dass man
+                    // bereit für die nächste Characteristic ist und den Descriptior der nächsten aufrufen!
+                    BluetoothGattCharacteristic glucoCharakterContext = gatt.getService(GLUCOSE_SERVICE_UUID).
+                            getCharacteristic(GLUCOSE_MEASUREMENT_CONTEXT);
 
-                //add the current characteristic to the list
-                glucoseMeasurementCharacteristics.add(characteristic);
+                    gatt.setCharacteristicNotification(glucoCharakterContext, true);
 
+                    //Descriptor glucoseMeasurementContextDescriptor
+                    BluetoothGattDescriptor glucoseMeasurementContextDescriptor = glucoCharakterContext.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
+                    if (glucoseMeasurementContextDescriptor != null) {
+                        glucoseMeasurementContextDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                        gatt.writeDescriptor(glucoseMeasurementContextDescriptor);
+                        gatt.readDescriptor(glucoseMeasurementContextDescriptor);
 
-                //iterate through the list and extract the data from each characteristic --> bekomme den neuersten Eintrag im Tagebuch (nicht alle)
-                for (BluetoothGattCharacteristic glucoseMeasurementCharacteristic : glucoseMeasurementCharacteristics) {
-                    byte[] dataMeasurement = glucoseMeasurementCharacteristic.getValue();
-                    //Methode processData aufrufen
-                    processData(glucoseMeasurementCharacteristic, dataMeasurement);
+                        // Log.d("Descriptor", "Reading/Writing descriptor for characteristic: " + glucoCharakterContext.getUuid());
+                    } else {
+                        Log.d("Descriptor", "Descriptor not found for characteristic: " + glucoCharakterContext.getUuid());
+                    }
 
-                }
-
-            } else{
+            } else {
                 Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT nicht gefunden");
-
             }
 
-
-            //da geht er nd rein und gibt den else aus??
             //müssen wir aber bekommen, damit Gerät OK zurückliefert
-            if(characteristic.getUuid().equals(GLUCOSE_MEASUREMENT_CONTEXT)){
-                byte[] dataMeasurementContext= characteristic.getValue();
-                Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT_CONTEXT has changed");
-                valueFound=true;
+            //bekommen es müssen es aba nd auswerten --> nur wenn wir vor/nach essen wollen
+            if (characteristic.getUuid().equals(GLUCOSE_MEASUREMENT_CONTEXT)) {
 
-            }else{
+                byte[] dataMeasurementContext = characteristic.getValue();
+                Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT_CONTEXT wurde gefunden");
+
+            } else {
                 Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT_CONTEXT nicht gefunden");
-                valueFound=true;
             }
-            }
-            };
+        }
+    };
+
+
 
             public void processData(BluetoothGattCharacteristic characteristic, byte[] dataMeasurement){
                 //process the data here
