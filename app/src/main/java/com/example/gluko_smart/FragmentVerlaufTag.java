@@ -1,5 +1,6 @@
 package com.example.gluko_smart;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,13 +13,17 @@ import android.os.Bundle;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,8 +35,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
 public class FragmentVerlaufTag extends Fragment {
@@ -71,10 +78,25 @@ public class FragmentVerlaufTag extends Fragment {
                                 Log.e("FragmentVerlaufWoche", "glucoseValue is not a Double: " + glucoseValue);
                                 continue;
                             }
-                            entries.add(new Entry((long) timestamp, ((Double) glucoseValue).floatValue()));
+                            entries.add(new Entry(((Long) timestamp) / 1000f / 60f / 60f, ((Double) glucoseValue).floatValue()));
                         }
                         LineDataSet dataSet = new LineDataSet(entries, "Glucose Values");
                         LineData lineData = new LineData(dataSet);
+                        XAxis xAxis = chart.getXAxis();
+                        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                        xAxis.setLabelRotationAngle(-90);
+                        xAxis.setTextSize(12f);
+                        xAxis.setDrawGridLines(false);
+                        xAxis.setGranularity(1f);
+                        xAxis.setValueFormatter(new ValueFormatter() {
+                            @Override
+                            public String getFormattedValue(float value) {
+                                return new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date((long) (value * 1000f * 60f * 60f)));
+                            }
+                        });
+
+
+
                         chart.setData(lineData);
                         chart.invalidate();
                     }
@@ -86,3 +108,5 @@ public class FragmentVerlaufTag extends Fragment {
                 });
     }
 }
+
+
