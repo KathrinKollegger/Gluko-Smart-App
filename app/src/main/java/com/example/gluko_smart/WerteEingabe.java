@@ -27,6 +27,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -77,7 +78,7 @@ public class WerteEingabe extends Activity {
 
             }else{
 
-                GlucoseValues glucoseValues = new GlucoseValues(Float.parseFloat(edit_bzWert.getText().toString()), edit_infoessen.getSelectedItem().toString(), LocalDateTime.now(), user.toString());
+                GlucoseValues glucoseValues = new GlucoseValues(Float.parseFloat(edit_bzWert.getText().toString()), edit_infoessen.getSelectedItem().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
                 daoGlucoseValue.add(glucoseValues).addOnSuccessListener(suc->{
                     Toast.makeText(this, "Blutzuckerwert wurde gespeichert", Toast.LENGTH_SHORT).show();
                 }).addOnFailureListener(er->{

@@ -7,19 +7,17 @@ public class GlucoseValues {
 
     private float bzWert;
     private String vorNachMahlzeit;
-    private LocalDateTime timestamp;
-    private String user;
+    private long timestamp;
     //private String date;
 
     public GlucoseValues(){}
 
 
-    public GlucoseValues(float bzWert, String vorNachMahlzeit, LocalDateTime timestamp, String user) {
+    public GlucoseValues(float bzWert, String vorNachMahlzeit, long timestamp) {
 
         this.bzWert = bzWert;
         this.vorNachMahlzeit = vorNachMahlzeit;
         this.timestamp = timestamp;
-        this.user = user;
         //this.date = date;
     }
 
@@ -43,22 +41,14 @@ public class GlucoseValues {
         this.vorNachMahlzeit = vorNachMahlzeit;
     }
 
-    public LocalDateTime getTimestamp(){
+    public long getTimestamp(){
         return timestamp;
     }
 
-    public void setTimestamp(LocalDateTime timestamp){
+    public void setTimestamp(long timestamp){
         this.timestamp = timestamp;
     }
 
-    public String getUser(){
-        return user;
-    }
-
-    public void setUser(String user){
-
-        this.user = user;
-    }
 
 
 }
