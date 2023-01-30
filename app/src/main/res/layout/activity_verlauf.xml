@@ -18,10 +18,11 @@
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:backgroundTint="#4C74AF"
-        android:text="Tag"
+        android:text="Tageswerte"
         tools:ignore="MissingConstraints"
         app:layout_constraintEnd_toStartOf="@id/button_homeVerlauf"
-        app:layout_constraintBottom_toBottomOf="@id/frameLayout"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
     <Button
         android:id="@+id/fragmentWochebtn"
@@ -29,10 +30,11 @@
         android:layout_height="60dp"
         android:layout_alignParentRight="true"
         android:backgroundTint="#4C74AF"
-        android:text="Woche"
+        android:text="Wochenwerte"
         tools:ignore="MissingConstraints"
         app:layout_constraintStart_toEndOf="@id/button_homeVerlauf"
-        app:layout_constraintBottom_toBottomOf="@id/frameLayout"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
     <Button
         android:id="@+id/button_homeVerlauf"

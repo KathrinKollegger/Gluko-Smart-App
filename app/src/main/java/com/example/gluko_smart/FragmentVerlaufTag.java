@@ -2,30 +2,21 @@ package com.example.gluko_smart;
 
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Bundle;
 
-import com.github.mikephil.charting.charts.BarChart;
+import androidx.fragment.app.Fragment;
+
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.EntryXComparator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -80,21 +72,49 @@ public class FragmentVerlaufTag extends Fragment {
                             }
                             entries.add(new Entry(((Long) timestamp) / 1000f / 60f / 60f, ((Double) glucoseValue).floatValue()));
                         }
-                        LineDataSet dataSet = new LineDataSet(entries, "Glucose Values");
+                        LineDataSet dataSet = new LineDataSet(entries, "Tages-Blutzuckerwerte");
+                        dataSet.setColor(Color.BLUE);
+                        dataSet.setLineWidth(2f);
                         LineData lineData = new LineData(dataSet);
+
+                        //Design X-Achse
                         XAxis xAxis = chart.getXAxis();
+                        xAxis.setEnabled(true);
+                        xAxis.isDrawLabelsEnabled();
                         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
                         xAxis.setLabelRotationAngle(-90);
                         xAxis.setTextSize(12f);
                         xAxis.setDrawGridLines(false);
                         xAxis.setGranularity(1f);
+                        xAxis.setDrawAxisLine(true);
+                        xAxis.setAxisLineColor(Color.GRAY);
+                        xAxis.setAxisLineWidth(1f);
+                        xAxis.setAvoidFirstLastClipping(true);
+                        float xMin = Collections.min(entries, new EntryXComparator()).getX();
+                        float xMax = Collections.max(entries, new EntryXComparator()).getX();
+                        xAxis.setAxisMinimum(xMin);
+                        xAxis.setAxisMaximum(xMax);
+                        xAxis.setTextColor(Color.BLACK);
                         xAxis.setValueFormatter(new ValueFormatter() {
                             @Override
                             public String getFormattedValue(float value) {
-                                return new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date((long) (value * 1000f * 60f * 60f)));
+                                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                                return formatter.format(new Date((long)(value * 1000f * 60f * 60f)));
                             }
                         });
 
+                        //Design Y-Achse
+                        YAxis yAxis = chart.getAxisRight();
+                        yAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
+                        yAxis.setTextColor(Color.GRAY);
+                        yAxis.setDrawGridLines(true);
+                        yAxis.setGranularityEnabled(true);
+                        yAxis.setAxisMinimum(0f);
+                        yAxis.setAxisMaximum(300f);
+                        yAxis.setYOffset(-9f);
+
+                        YAxis rightAxis = chart.getAxisRight();
+                        rightAxis.setEnabled(false);
 
 
                         chart.setData(lineData);
@@ -108,5 +128,5 @@ public class FragmentVerlaufTag extends Fragment {
                 });
     }
 }
-
+ //if  max stundenzahl < 24 design x-Achse von 0 bis Max-Wert
 
