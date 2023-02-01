@@ -63,7 +63,15 @@ public class FragmentVerlaufTag extends Fragment {
                         for (DataSnapshot glucoseValuesSnapshot : dataSnapshot.getChildren()) {
                             HashMap<String, Object> map = (HashMap<String, Object>) glucoseValuesSnapshot.getValue();
                             Object timestamp = map.get("timestamp");
+                            if (!(timestamp instanceof Long)) {
+                                Log.e("FragmentVerlaufWoche", "timestamp is not a Long: " + timestamp);
+                                continue;
+                            }
                             Object glucoseValue = map.get("bzWert");
+                            if (!(glucoseValue instanceof Double)) {
+                                Log.e("FragmentVerlaufWoche", "glucoseValue is not a Double: " + glucoseValue);
+                                continue;
+                            }
 
                             long time = (long) timestamp;
                             Calendar cal = Calendar.getInstance();
