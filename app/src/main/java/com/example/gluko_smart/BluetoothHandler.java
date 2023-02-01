@@ -31,7 +31,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class BluetoothHandler {
@@ -333,10 +339,27 @@ public class BluetoothHandler {
                 byte min = dataMeasurement[8];
                 byte sec = dataMeasurement[9];
 
-
-
                 //erhaltene Werte in dataList Objekt speichern
                 dataList.add(new Object[]{seqNum, glucose, glucoseMMOL,glucoseMGDL,year,month,day,hour,min,sec});
+
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                String userId = currentUser.getUid();
+                FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
+                DatabaseReference myRef = database.getReference("users/" +userId).child(GlucoseValues.class.getSimpleName());;
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, month - 1);
+                calendar.set(Calendar.DAY_OF_MONTH, day);
+                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                calendar.set(Calendar.MINUTE, min);
+                calendar.set(Calendar.SECOND, sec);
+
+                long timestamp = calendar.getTimeInMillis();
+
+                myRef.child("bzWert").setValue(glucoseMGDL);
+                myRef.child("timestamp").setValue(timestamp);
+
 
                 //Werte die oben sind werden in log ausgegeben --> es wird nur der aktuellste Wert ausgegeben in mol/L
                 Log.d("Werte von GLUCOSE_MEASUREMENT", " seqNr: "
