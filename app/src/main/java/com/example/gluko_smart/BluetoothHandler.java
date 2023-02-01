@@ -381,7 +381,7 @@ public class BluetoothHandler {
                         + seqNum + " Datum: " + year + " " + month + " " + day + " "
                         + hour + " " + min + " " + sec +
                         " glucose: " + glucose + " Einheit: "
-                        + concentrationUnit + " Wert in mmol/L: " + glucoseMMOL);
+                        + concentrationUnit + " Wert in mg/dl: " + glucoseMGDL);
 
                 //Hier müsste man nun irgendwie durch jede sequenz (vlt mit Hilfe der seqNr) auslesen und so nicht nur den letzten Eintrag des Geräts auslesen und ausgeben.
                 //Dann diese Werte zwischenspeichern und dann in die Firebase schreiben; zuvor überprüfen ob die Werte vorhanden sind und wenn ja diese dann nicht
