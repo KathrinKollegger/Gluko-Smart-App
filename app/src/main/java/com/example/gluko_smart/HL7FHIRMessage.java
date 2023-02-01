@@ -1,6 +1,6 @@
 package com.example.gluko_smart;
 
-public class HL7v2Message {
+public class HL7FHIRMessage {
 
     private String message;
 

@@ -1,7 +1,7 @@
 package com.example.gluko_smart;
 import java.util.Map;
 
-public class FirebaseToHL7v2 {
+public class FirebaseToHL7FHIR {
 
    public static String convert(Map<String, Object>data){
        StringBuilder sb= new StringBuilder();
@@ -14,7 +14,7 @@ public class FirebaseToHL7v2 {
         //.....
 
        //HL7v2-Meldung zusammenbauen
-       //diese Meldung können wir dann durch Klasse HL7v2Message
+       //diese Meldung können wir dann durch Klasse HL7FHIRMessage
        // in ein Dateiformat exportieren
        //Komponenten HL7 müss ma schauen
 

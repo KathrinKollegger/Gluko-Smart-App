@@ -334,6 +334,8 @@ public class BluetoothHandler {
                 //wenn das Gerät in kg/l liefert und wir in mg/dl umrechnen diese variable verwenden
                 float glucoseMGDL= glucose*100000;
 
+                //glucoseMGDL in int parsen!!
+
                 int year = dataMeasurement[3] & 255;
                 year |= (dataMeasurement[4] & 255) << 8;
                 byte month = dataMeasurement[5];
