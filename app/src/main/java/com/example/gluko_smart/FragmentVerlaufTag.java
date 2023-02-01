@@ -73,6 +73,7 @@ public class FragmentVerlaufTag extends Fragment {
                                 continue;
                             }
 
+                            //
                             long time = (long) timestamp;
                             Calendar cal = Calendar.getInstance();
                             cal.setTimeInMillis(time);
