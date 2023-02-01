@@ -26,11 +26,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 
 public class FragmentVerlaufTag extends Fragment {
@@ -61,16 +63,19 @@ public class FragmentVerlaufTag extends Fragment {
                         for (DataSnapshot glucoseValuesSnapshot : dataSnapshot.getChildren()) {
                             HashMap<String, Object> map = (HashMap<String, Object>) glucoseValuesSnapshot.getValue();
                             Object timestamp = map.get("timestamp");
-                            if (!(timestamp instanceof Long)) {
-                                Log.e("FragmentVerlaufWoche", "timestamp is not a Long: " + timestamp);
-                                continue;
-                            }
                             Object glucoseValue = map.get("bzWert");
-                            if (!(glucoseValue instanceof Double)) {
-                                Log.e("FragmentVerlaufWoche", "glucoseValue is not a Double: " + glucoseValue);
-                                continue;
+
+                            long time = (long) timestamp;
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTimeInMillis(time);
+                            cal.set(Calendar.HOUR_OF_DAY, 0);
+                            cal.set(Calendar.MINUTE, 0);
+                            cal.set(Calendar.SECOND, 0);
+                            cal.set(Calendar.MILLISECOND, 0);
+                            long startOfToday = cal.getTimeInMillis();
+                            if (time >= startOfToday && time < startOfToday + 24 * 60 * 60 * 1000) {
+                                entries.add(new Entry((time - startOfToday) / 1000f / 60f / 60f, ((Double) glucoseValue).floatValue()));
                             }
-                            entries.add(new Entry(((Long) timestamp) / 1000f / 60f / 60f, ((Double) glucoseValue).floatValue()));
                         }
                         LineDataSet dataSet = new LineDataSet(entries, "Tages-Blutzuckerwerte");
                         dataSet.setColor(Color.BLUE);
@@ -79,42 +84,12 @@ public class FragmentVerlaufTag extends Fragment {
 
                         //Design X-Achse
                         XAxis xAxis = chart.getXAxis();
+                        xAxis.setValueFormatter(new HourAxisValueFormatter());
                         xAxis.setEnabled(true);
-                        xAxis.isDrawLabelsEnabled();
                         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-                        xAxis.setLabelRotationAngle(-90);
-                        xAxis.setTextSize(12f);
-                        xAxis.setDrawGridLines(false);
-                        xAxis.setGranularity(1f);
-                        xAxis.setDrawAxisLine(true);
-                        xAxis.setAxisLineColor(Color.GRAY);
-                        xAxis.setAxisLineWidth(1f);
-                        xAxis.setAvoidFirstLastClipping(true);
-                        float xMin = Collections.min(entries, new EntryXComparator()).getX();
-                        float xMax = Collections.max(entries, new EntryXComparator()).getX();
-                        xAxis.setAxisMinimum(xMin);
-                        xAxis.setAxisMaximum(xMax);
-                        xAxis.setTextColor(Color.BLACK);
-                        xAxis.setValueFormatter(new ValueFormatter() {
-                            @Override
-                            public String getFormattedValue(float value) {
-                                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
-                                return formatter.format(new Date((long)(value * 1000f * 60f * 60f)));
-                            }
-                        });
-
-                        //Design Y-Achse
-                        YAxis yAxis = chart.getAxisRight();
-                        yAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
-                        yAxis.setTextColor(Color.GRAY);
-                        yAxis.setDrawGridLines(true);
-                        yAxis.setGranularityEnabled(true);
-                        yAxis.setAxisMinimum(0f);
-                        yAxis.setAxisMaximum(300f);
-                        yAxis.setYOffset(-9f);
-
-                        YAxis rightAxis = chart.getAxisRight();
-                        rightAxis.setEnabled(false);
+                        xAxis.isDrawLabelsEnabled();
+                        xAxis.setAxisMinimum(0);
+                        xAxis.setAxisMaximum(24);
 
 
                         chart.setData(lineData);
@@ -128,5 +103,4 @@ public class FragmentVerlaufTag extends Fragment {
                 });
     }
 }
- //if  max stundenzahl < 24 design x-Achse von 0 bis Max-Wert
 
