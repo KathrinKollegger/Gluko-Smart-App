@@ -1,12 +1,16 @@
 package com.example.gluko_smart;
 
 import static android.content.Context.BLUETOOTH_SERVICE;
-
-import static com.example.gluko_smart.GlobalVariable.*;
+import static com.example.gluko_smart.GlobalVariable.CLIENT_CHARACTERISTIC_CONFIG;
+import static com.example.gluko_smart.GlobalVariable.GLUCOSE_MEASUREMENT;
+import static com.example.gluko_smart.GlobalVariable.GLUCOSE_MEASUREMENT_CONTEXT;
+import static com.example.gluko_smart.GlobalVariable.GLUCOSE_SERVICE_UUID;
+import static com.example.gluko_smart.GlobalVariable.TAG;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
@@ -18,7 +22,6 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
-import android.bluetooth.BluetoothGatt;
 import android.content.Context;
 import android.os.Handler;
 import android.os.ParcelUuid;
@@ -30,7 +33,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -40,7 +42,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class BluetoothHandler {
@@ -339,13 +340,18 @@ public class BluetoothHandler {
                 // Timestamp richtig---> Regina Kathrin
                 // Kontrollmeachnismus doppelte einträge wenn von Gerät gesendet !! --> Regina Kathrin
 
-                int year = dataMeasurement[3] & 255;
-                year |= (dataMeasurement[4] & 255) << 8;
-                byte month = dataMeasurement[5];
-                byte day = dataMeasurement[6];
-                byte hour = dataMeasurement[7];
-                byte min = dataMeasurement[8];
-                byte sec = dataMeasurement[9];
+                int year1 = dataMeasurement[3] & 255;
+                int year2 = dataMeasurement[4] & 255;
+                int year = year1 | (year2 << 8);
+                String yearStr = String.format("%04d", year);
+                String month = String.format("%02d", dataMeasurement[5]);
+                String day = String.format("%02d", dataMeasurement[6]);
+                String hour = String.format("%02d", dataMeasurement[7]);
+                String min = String.format("%02d", dataMeasurement[8]);
+                String sec = String.format("%02d", dataMeasurement[9]);
+
+                String timestamp = yearStr + "-" + month + "-" + day + "T" + hour + ":" + min + ":" + sec;
+
 
                 //erhaltene Werte in dataList Objekt speichern
                 dataList.add(new Object[]{seqNum, glucose, glucoseMMOL,glucoseMGDL,year,month,day,hour,min,sec});
@@ -355,22 +361,22 @@ public class BluetoothHandler {
                 FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
                 DatabaseReference myRef = database.getReference("users/" +userId).child(GlucoseValues.class.getSimpleName());;
 
-                Calendar calendar = Calendar.getInstance();
+                /*Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, month - 1);
                 calendar.set(Calendar.DAY_OF_MONTH, day);
                 calendar.set(Calendar.HOUR_OF_DAY, hour);
                 calendar.set(Calendar.MINUTE, min);
-                calendar.set(Calendar.SECOND, sec);
+                calendar.set(Calendar.SECOND, sec);*/
 
-                long timestamp = calendar.getTimeInMillis();
+                //Timestamp timestamp = new Timestamp(calendar.getTimeInMillis());
 
                 myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.hasChild(String.valueOf(timestamp))) {
-                            myRef.child(String.valueOf(timestamp)).child("bzWert").setValue(glucoseMGDL);
-                            myRef.child(String.valueOf(timestamp)).child("timestamp").setValue(timestamp);
+                        if (!dataSnapshot.hasChild((timestamp))) {
+                            myRef.child((timestamp)).child("bzWert").setValue(glucoseMGDL);
+                            myRef.child((timestamp)).child("timestamp").setValue(timestamp);
                         }
                     }
 
@@ -383,7 +389,7 @@ public class BluetoothHandler {
 
                 //Werte die oben sind werden in log ausgegeben --> es wird nur der aktuellste Wert ausgegeben in mol/L
                 Log.d("Werte von GLUCOSE_MEASUREMENT", " seqNr: "
-                        + seqNum + " Datum: " + year + " " + month + " " + day + " "
+                        + seqNum + " Datum: " + yearStr + " " + month + " " + day + " "
                         + hour + " " + min + " " + sec +
                         " glucose: " + glucose + " Einheit: "
                         + concentrationUnit + " Wert in mg/dl: " + glucoseMGDL);

@@ -1,10 +1,7 @@
 package com.example.gluko_smart;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 //In dieser Klasse wird eine Instanz der Firebase Datenbank erzeugt und auf den entsprechenden Datensatz zugegriffen.
 // Wenn der Datensatz verfügbar ist, wird der Glukosewert ausgelesen und in eine Instanz der Klasse BloodGlucose gesetzt.
@@ -19,13 +16,13 @@ public class FirebaseToFHIR {
 
     public static BloodGlucose convertToFhir(String time, String unit, int value) {
         BloodGlucose bloodGlucose = new BloodGlucose();
-        bloodGlucose.setEffectiveDateTime(time);
+        bloodGlucose.setDateTime(time);
         bloodGlucose.setValue(value);
         bloodGlucose.setUnit(unit);
         return bloodGlucose;
 
-        mDatabase.child(glucoseValueKey).addValueEventListener(new ValueEventListener() {
-            @Override
+        /*mDatabase.child(glucoseValueKey).addValueEventListener(new ValueEventListener() {
+        @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String glucoseValue = dataSnapshot.getValue(String.class);
                 BloodGlucose bloodGlucose = new BloodGlucose();
@@ -42,6 +39,6 @@ public class FirebaseToFHIR {
             public void onCancelled(DatabaseError databaseError) {
                 System.out.println("The read failed: " + databaseError.getCode());
             }
-        });
+        });*/
     }
 }
