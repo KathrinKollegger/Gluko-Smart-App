@@ -164,7 +164,7 @@ public class BluetoothHandler {
                 if (!leDeviceListAdapter.getDevices().contains(device)){
                     leDeviceListAdapter.addDevice(device);
                     leDeviceListAdapter.notifyDataSetChanged();
-                    leDeviceListAdapter.addDevice(device);
+                    //leDeviceListAdapter.addDevice(device);
                     Log.i(TAG,"Dev added to leDevAdapter");
                 }
                 /*//Variante ohne Klick auf Device
@@ -185,7 +185,6 @@ public class BluetoothHandler {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
 
                 gatt.discoverServices();
-
 
             }
             if (newState == BluetoothProfile.STATE_CONNECTING) {
@@ -237,12 +236,16 @@ public class BluetoothHandler {
                 //Enable notifications for the characteristics because they are only notify
                 gatt.setCharacteristicNotification(glucoCharakterMeasurement, true);
 
+                //ERROR MEDISANA MEDITOUCH 2
+                //gatt.readCharacteristic(glucoCharakterMeasurement);
+
                 //Descriptor glucoseMeasurementDescriptor
                 BluetoothGattDescriptor glucoseMeasurementDescriptor = glucoCharakterMeasurement.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
                 if (glucoseMeasurementDescriptor != null) {
                     glucoseMeasurementDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                     gatt.writeDescriptor(glucoseMeasurementDescriptor);
                     gatt.readDescriptor(glucoseMeasurementDescriptor);
+                    gatt.notify();
                     Log.d("Descriptor", "Reading/Writing descriptor for characteristic: " + glucoCharakterMeasurement.getUuid());
 
                 }else{
@@ -251,6 +254,15 @@ public class BluetoothHandler {
 
             }
 
+        }
+
+        @Override
+        public void onCharacteristicRead(BluetoothGatt gatt,
+                                         BluetoothGattCharacteristic characteristic,
+                                         int status) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.i("onCharaRead","entered");
+            }
         }
 
         @SuppressLint("MissingPermission")

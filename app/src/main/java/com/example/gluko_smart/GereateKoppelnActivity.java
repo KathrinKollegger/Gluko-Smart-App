@@ -1,20 +1,23 @@
 package com.example.gluko_smart;
 
-import static com.example.gluko_smart.GlobalVariable.*;
-import static com.example.gluko_smart.BluetoothHandler.*;
+import static com.example.gluko_smart.GlobalVariable.REQUEST_BT_PERMISSIONS;
+import static com.example.gluko_smart.GlobalVariable.REQUEST_CONNECT_BT;
+import static com.example.gluko_smart.GlobalVariable.REQUEST_ENABLE_BT;
+import static com.example.gluko_smart.GlobalVariable.REQUEST_SCAN_BT;
+import static com.example.gluko_smart.GlobalVariable.SCAN_INTERVAL;
+import static com.example.gluko_smart.GlobalVariable.TAG;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,9 +34,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.material.snackbar.Snackbar;
-
-import java.util.List;
 import java.util.Map;
 
 public class GereateKoppelnActivity extends Activity implements BluetoothAdapter.LeScanCallback {
@@ -234,7 +234,7 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
                                     public void run() {
                                         btHandler.stopScanning();
                                         //bleScanner.stopScan(bleScanCallback);
-                                        pb_BleScan.setVisibility(View.INVISIBLE);
+                                        //pb_BleScan.setVisibility(View.INVISIBLE);
 
                                     }
                                 });

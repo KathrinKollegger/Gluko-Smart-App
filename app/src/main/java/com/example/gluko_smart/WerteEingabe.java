@@ -15,23 +15,15 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatSpinner;
 
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 public class WerteEingabe extends Activity {
 
@@ -78,7 +70,11 @@ public class WerteEingabe extends Activity {
 
             }else{
 
-                GlucoseValues glucoseValues = new GlucoseValues(Float.parseFloat(edit_bzWert.getText().toString()), edit_infoessen.getSelectedItem().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+                DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+                LocalDateTime loDatetime = LocalDateTime.now();
+                String dateForDB = loDatetime.format(formatter).substring(0,19);
+
+                GlucoseValues glucoseValues = new GlucoseValues(Float.parseFloat(edit_bzWert.getText().toString()), edit_infoessen.getSelectedItem().toString(), dateForDB);
                 daoGlucoseValue.add(glucoseValues).addOnSuccessListener(suc->{
                     Toast.makeText(this, "Blutzuckerwert wurde gespeichert", Toast.LENGTH_SHORT).show();
                 }).addOnFailureListener(er->{
