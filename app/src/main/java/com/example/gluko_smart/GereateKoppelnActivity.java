@@ -234,7 +234,7 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
                                     public void run() {
                                         btHandler.stopScanning();
                                         //bleScanner.stopScan(bleScanCallback);
-                                        //pb_BleScan.setVisibility(View.INVISIBLE);
+                                        pb_BleScan.setVisibility(View.INVISIBLE);
 
                                     }
                                 });

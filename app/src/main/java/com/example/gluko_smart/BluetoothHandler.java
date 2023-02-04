@@ -192,6 +192,7 @@ public class BluetoothHandler {
             }
             if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 gatt.disconnect();
+
             }
 
         }
@@ -236,7 +237,7 @@ public class BluetoothHandler {
                 //Enable notifications for the characteristics because they are only notify
                 gatt.setCharacteristicNotification(glucoCharakterMeasurement, true);
 
-                //ERROR MEDISANA MEDITOUCH 2
+                //ERROR MEDISANA MEDITOUCH 2 von Joachim
                 //gatt.readCharacteristic(glucoCharakterMeasurement);
 
                 //Descriptor glucoseMeasurementDescriptor
@@ -245,7 +246,6 @@ public class BluetoothHandler {
                     glucoseMeasurementDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                     gatt.writeDescriptor(glucoseMeasurementDescriptor);
                     gatt.readDescriptor(glucoseMeasurementDescriptor);
-                    gatt.notify();
                     Log.d("Descriptor", "Reading/Writing descriptor for characteristic: " + glucoCharakterMeasurement.getUuid());
 
                 }else{
@@ -295,7 +295,6 @@ public class BluetoothHandler {
                         glucoseMeasurementContextDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                         gatt.writeDescriptor(glucoseMeasurementContextDescriptor);
                         gatt.readDescriptor(glucoseMeasurementContextDescriptor);
-
                         // Log.d("Descriptor", "Reading/Writing descriptor for characteristic: " + glucoCharakterContext.getUuid());
                     } else {
                         Log.d("Descriptor", "Descriptor not found for characteristic: " + glucoCharakterContext.getUuid());
@@ -311,6 +310,7 @@ public class BluetoothHandler {
 
                 byte[] dataMeasurementContext = characteristic.getValue();
                 Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT_CONTEXT wurde gefunden");
+
 
             } else {
                 Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT_CONTEXT nicht gefunden");
@@ -373,15 +373,6 @@ public class BluetoothHandler {
                 FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
                 DatabaseReference myRef = database.getReference("users/" +userId).child(GlucoseValues.class.getSimpleName());;
 
-                /*Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, month - 1);
-                calendar.set(Calendar.DAY_OF_MONTH, day);
-                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                calendar.set(Calendar.MINUTE, min);
-                calendar.set(Calendar.SECOND, sec);*/
-
-                //Timestamp timestamp = new Timestamp(calendar.getTimeInMillis());
 
                 myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -405,6 +396,7 @@ public class BluetoothHandler {
                         + hour + " " + min + " " + sec +
                         " glucose: " + glucose + " Einheit: "
                         + concentrationUnit + " Wert in mg/dl: " + glucoseMGDL);
+
 
                 //Hier müsste man nun irgendwie durch jede sequenz (vlt mit Hilfe der seqNr) auslesen und so nicht nur den letzten Eintrag des Geräts auslesen und ausgeben.
                 //Dann diese Werte zwischenspeichern und dann in die Firebase schreiben; zuvor überprüfen ob die Werte vorhanden sind und wenn ja diese dann nicht

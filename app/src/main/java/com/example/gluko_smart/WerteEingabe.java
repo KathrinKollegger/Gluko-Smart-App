@@ -46,7 +46,7 @@ public class WerteEingabe extends Activity {
         textView_date = findViewById(R.id.textView_date);
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-
+        //YYYY-MM-DDTHH:MM:SS
         Calendar calender = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE, dd. MMMM yyyy / hh:mm a" );
         String dateTime = simpleDateFormat.format(calender.getTime());
