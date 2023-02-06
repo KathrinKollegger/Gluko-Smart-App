@@ -52,7 +52,7 @@ public class BluetoothHandler {
     private BluetoothLeScanner bleScanner;
     private Handler handler;
     private DeviceHandler deviceHandler;
-    public LeDeviceListAdapter leDeviceListAdapter ;
+    public LeDeviceListAdapter leDeviceListAdapter;
     private BluetoothGatt mbluetoothGatt;
 
     private int mConnectionState = STATE_DISCONNECTED;
@@ -77,12 +77,12 @@ public class BluetoothHandler {
     public BluetoothHandler(Context context, DeviceHandler devHandler) {
         //Initialize BTadapter of Smartphone and BLEscanner
         this.context = context;
+        this.deviceHandler = devHandler;
         BluetoothManager mbtManager = (BluetoothManager) context.getSystemService(BLUETOOTH_SERVICE);
         mBtAdapter = mbtManager.getAdapter();
         bleScanner = mBtAdapter.getBluetoothLeScanner();
-        handler = new Handler();
-        this.deviceHandler = devHandler;
 
+        handler = new Handler();
     }
 
     @SuppressLint("MissingPermission")
@@ -112,12 +112,6 @@ public class BluetoothHandler {
     }
 
     @SuppressLint("MissingPermission")
-    public List<BluetoothDevice> getPairedDevices() {
-        //Return a list of paired devices
-        return (List<BluetoothDevice>) mBtAdapter.getBondedDevices();
-    }
-
-    @SuppressLint("MissingPermission")
     public void connectToDevice(BluetoothDevice device) {
         if (device == null) {
             Log.w(TAG_NOCONNECT, "Device not found.  Unable to connect.");
@@ -128,15 +122,6 @@ public class BluetoothHandler {
         mbluetoothGatt = device.connectGatt(context, false, mGattCallback);
         Log.d(TAG_CONNECTING, "Trying to create a new connection.");
         Toast.makeText(context, "Verbindung wird hergestellt", Toast.LENGTH_SHORT).show();
-
-    }
-
-    public BluetoothGattCallback getmGattCallback() {
-        return mGattCallback;
-    }
-
-    public BluetoothGatt getmbluetoothGatt() {
-        return mbluetoothGatt;
     }
 
     @SuppressLint("MissingPermission")
@@ -147,9 +132,6 @@ public class BluetoothHandler {
             mBluetoothGatt = null;
         }
     }
-
-
-
 
     private ScanCallback bleScanCallback = new ScanCallback() {
         @Override
@@ -164,15 +146,12 @@ public class BluetoothHandler {
                 if (!leDeviceListAdapter.getDevices().contains(device)){
                     leDeviceListAdapter.addDevice(device);
                     leDeviceListAdapter.notifyDataSetChanged();
-                    //leDeviceListAdapter.addDevice(device);
                     Log.i(TAG,"Dev added to leDevAdapter");
                 }
                 /*//Variante ohne Klick auf Device
                 device.connectGatt(context,true, mGattCallback);*/
             }
         }
-
-        ;
     };
 
     //Wird dann für die Connection benötigt
@@ -183,8 +162,8 @@ public class BluetoothHandler {
             super.onConnectionStateChange(gatt, status, newState);
 
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-
                 gatt.discoverServices();
+                Toast.makeText(context, "Verbindung erfolgreich",Toast.LENGTH_SHORT);
 
             }
             if (newState == BluetoothProfile.STATE_CONNECTING) {
@@ -194,7 +173,6 @@ public class BluetoothHandler {
                 gatt.disconnect();
 
             }
-
         }
 
         @SuppressLint("MissingPermission")
@@ -374,6 +352,8 @@ public class BluetoothHandler {
                 DatabaseReference myRef = database.getReference("users/" +userId).child(GlucoseValues.class.getSimpleName());;
 
 
+                //Ich glaube hier sollten wir auch ein GlucoseValues-Objekt in Firebase pushen...
+                //addOnSuccessListener hier einbauen -
                 myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -403,15 +383,7 @@ public class BluetoothHandler {
                 //in die DB schreiben
             }
 
-
-            public BluetoothAdapter getmBtAdapter () {
-                return mBtAdapter;
-            }
-
-            public LeDeviceListAdapter getLeDeviceListAdapter () {
-                return leDeviceListAdapter;
-            }
-
+            //List Adapter for found BLE Devices
             public class LeDeviceListAdapter extends BaseAdapter {
                 private ArrayList<BluetoothDevice> mLeDevices;
                 private LayoutInflater mInflator;
@@ -481,6 +453,24 @@ public class BluetoothHandler {
                 }
             }
 
+    // (un)necessary Getter
+    public BluetoothGatt getmbluetoothGatt() {
+        return mbluetoothGatt;
+    }
+    public BluetoothAdapter getmBtAdapter () {
+        return mBtAdapter;
+    }
+    public LeDeviceListAdapter getLeDeviceListAdapter () {
+        return leDeviceListAdapter;
+    }
+    public BluetoothGattCallback getmGattCallback() {
+        return mGattCallback;
+    }
+    @SuppressLint("MissingPermission")
+    public List<BluetoothDevice> getPairedDevices() {
+        //Return a list of paired devices
+        return (List<BluetoothDevice>) mBtAdapter.getBondedDevices();
+    }
 
 
     }

@@ -1,5 +1,7 @@
 package com.example.gluko_smart;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -8,18 +10,47 @@ import com.google.firebase.database.FirebaseDatabase;
 // Anschließend wird die toXml() Methode aufgerufen, um das FHIR XML Dokument zu generieren, welches dann weiter verarbeitet werden kann.
 
 public class FirebaseToFHIR {
-    private DatabaseReference mDatabase;
 
-    public FirebaseToFHIR() {
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-    }
+    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    String userId = currentUser.getUid();
+    DatabaseReference database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app").
+    getReference("users").child(userId).child("GlucoseValues");
 
-    public static BloodGlucose convertToFhir(String time, String unit, int value) {
-        BloodGlucose bloodGlucose = new BloodGlucose();
-        bloodGlucose.setDateTime(time);
-        bloodGlucose.setValue(value);
-        bloodGlucose.setUnit(unit);
-        return bloodGlucose;
+   /* database.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+
+                        // Get the values for each child node
+                        int bzWert = childSnapshot.child("bzWert").getValue(Integer.class);
+                        String timestamp = childSnapshot.child("timestamp").getValue(String.class);
+
+                        // Create a new GlucoseValues object with the retrieved values
+                        GlucoseValues glucoseValue = new GlucoseValues(bzWert, timestamp);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });*/
+
+
+
+    public static BloodGlucoseToXML convertToFhir(String time, String unit, int value) {
+
+        BloodGlucoseToXML bloodGlucoseToXML = new BloodGlucoseToXML();
+        bloodGlucoseToXML.setDateTime(time);
+        bloodGlucoseToXML.setValue(value);
+        bloodGlucoseToXML.setUnit(unit);
+
+        GlucoseValues glucoValueForFHIR = new GlucoseValues(90,"test");
+
+        return bloodGlucoseToXML;
+
+
 
         /*mDatabase.child(glucoseValueKey).addValueEventListener(new ValueEventListener() {
         @Override

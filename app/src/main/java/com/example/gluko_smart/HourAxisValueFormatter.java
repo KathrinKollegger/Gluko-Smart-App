@@ -1,7 +1,5 @@
 package com.example.gluko_smart;
 
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.text.SimpleDateFormat;
@@ -21,6 +19,7 @@ public class HourAxisValueFormatter extends ValueFormatter {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         startOfToday = cal.getTimeInMillis();
+
     }
 
     @Override

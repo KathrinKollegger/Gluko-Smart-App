@@ -3,28 +3,36 @@ package com.example.gluko_smart;
 public class GlucoseValues {
 
 
-    private float bzWert;
+    private int bzWert;
     private String vorNachMahlzeit;
     private String timestamp;
     //private String date;
 
-    public GlucoseValues(){}
+    public GlucoseValues() {
 
+    }
 
-    public GlucoseValues(float bzWert, String vorNachMahlzeit, String timestamp) {
+    //Constructor ohne vorNachMahlzeit
+    public GlucoseValues(int bzWert, String timestamp){
+
+        this.bzWert=bzWert;
+        this.timestamp=timestamp;
+    }
+
+    //Constructor mit vorNachMahlzeit
+    public GlucoseValues(int bzWert, String vorNachMahlzeit, String timestamp) {
 
         this.bzWert = bzWert;
         this.vorNachMahlzeit = vorNachMahlzeit;
         this.timestamp = timestamp;
-        //this.date = date;
     }
 
-    public float getBzWert(){
+    public int getBzWert(){
 
         return bzWert;
     }
 
-    public void setBzWert(float bzWert){
+    public void setBzWert(int bzWert){
 
         this.bzWert = bzWert;
     }

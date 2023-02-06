@@ -64,25 +64,32 @@ public class WerteEingabe extends Activity {
 
         button_speichern1.setOnClickListener(v-> {
 
-            if(edit_bzWert == null ||  edit_bzWert.getText().toString().equals("") || edit_bzWert.getText().toString().equals("0") ){
+            String bzWertInput = edit_bzWert.getText().toString();
 
-                Toast.makeText(this, "Bitte geben Sie einen gültigen Wert ein!", Toast.LENGTH_SHORT).show();
+            //Nur gültige Werte: 14 < Wert < 200
+            if(bzWertInput.length() < 2 ||
+                    bzWertInput.contains(".") ||
+               Float.parseFloat(bzWertInput) > 250 ||
+               Float.parseFloat(bzWertInput) < 15){
+
+                Toast.makeText(this, "Bitte geben Sie einen gültigen BZ Wert in der Einheit mg/dl ein!", Toast.LENGTH_SHORT).show();
 
             }else{
 
+                //Sets Timestamp in ISO-Format for DB entry
                 DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
                 LocalDateTime loDatetime = LocalDateTime.now();
                 String dateForDB = loDatetime.format(formatter).substring(0,19);
 
-                GlucoseValues glucoseValues = new GlucoseValues(Float.parseFloat(edit_bzWert.getText().toString()), edit_infoessen.getSelectedItem().toString(), dateForDB);
-                daoGlucoseValue.add(glucoseValues).addOnSuccessListener(suc->{
-                    Toast.makeText(this, "Blutzuckerwert wurde gespeichert", Toast.LENGTH_SHORT).show();
+                GlucoseValues glucoseValue = new GlucoseValues(Integer.parseInt(bzWertInput),
+                                                                edit_infoessen.getSelectedItem().toString(), dateForDB);
+                daoGlucoseValue.add(glucoseValue).addOnSuccessListener(suc->{
+                    Toast.makeText(this, "Blutzuckerwert: "+bzWertInput+" mg/dl wurde gespeichert", Toast.LENGTH_SHORT).show();
                 }).addOnFailureListener(er->{
 
                     Toast.makeText(this, ""+er.getMessage(), Toast.LENGTH_SHORT).show();
                 });
             }
-
         });
 
 

@@ -7,7 +7,7 @@ import org.simpleframework.xml.Root;
 //da gebe ich das Layout der XML Datei vor
 //value, unit und dateTime werden mithilfe von Annotationen von Simple XML-Serialization Libraryn serialisiert
 @Root(name = "BloodGlucose")
-public class BloodGlucose {
+public class BloodGlucoseToXML {
 
     @Element(name = "value")
     private float value;
@@ -18,10 +18,10 @@ public class BloodGlucose {
     @Element(name = "dateTime")
     private String dateTime;
 
-    public BloodGlucose() {
+    public BloodGlucoseToXML() {
     }
 
-    public BloodGlucose(float value, String unit, String dateTime) {
+    public BloodGlucoseToXML(float value, String unit, String dateTime) {
         this.value = value;
         this.unit = unit;
         this.dateTime = dateTime;
