@@ -1,6 +1,6 @@
 package com.example.gluko_smart;
 
-public class GlucoseValues implements Comparable<GlucoseValues>{
+public class GlucoseValues implements Comparable<GlucoseValues> {
 
 
     private int bzWert;
@@ -8,15 +8,15 @@ public class GlucoseValues implements Comparable<GlucoseValues>{
     private String timestamp;
     //private String date;
 
-    public GlucoseValues () {
+    public GlucoseValues() {
 
     }
 
     //Constructor ohne vorNachMahlzeit
-    public GlucoseValues(int bzWert, String timestamp){
+    public GlucoseValues(int bzWert, String timestamp) {
 
-        this.bzWert=bzWert;
-        this.timestamp=timestamp;
+        this.bzWert = bzWert;
+        this.timestamp = timestamp;
     }
 
     //Constructor mit vorNachMahlzeit
@@ -27,38 +27,37 @@ public class GlucoseValues implements Comparable<GlucoseValues>{
         this.timestamp = timestamp;
     }
 
-    public int getBzWert(){
+    public int getBzWert() {
 
         return bzWert;
     }
 
-    public void setBzWert(int bzWert){
+    public void setBzWert(int bzWert) {
 
         this.bzWert = bzWert;
     }
 
-    public String getVorNachMahlzeit(){
+    public String getVorNachMahlzeit() {
 
         return vorNachMahlzeit;
     }
 
-    public void setVorNachMahlzeit(String vorNachMahlzeit){
+    public void setVorNachMahlzeit(String vorNachMahlzeit) {
 
         this.vorNachMahlzeit = vorNachMahlzeit;
     }
 
-    public String getTimestamp(){
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp){
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
 
     @Override
-    public int compareTo(GlucoseValues o) {
-        return timestamp.compareTo(o.getTimestamp());
-
+    public int compareTo(GlucoseValues glucoseValues) {
+        return 0;
     }
 }
