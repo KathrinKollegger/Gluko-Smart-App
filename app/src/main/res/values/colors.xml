@@ -8,9 +8,11 @@
     <color name="TvBackgroundLightgreen">#5BCF99</color>
     <color name="buttonBlue">#4C74AF</color>
     <color name="DarkblueBG">#183142</color>
+    <color name="DarkblueBGTransp">#D5183142</color>
     <color name="green_TVbg">#335BCF99</color>
     <color name="Nepal">#518093</color>
     <color name="Tiara">#92BCD1</color>
+    <color name="lightRed">#F0A55050</color>
 
 
     <!--Switch Color-->

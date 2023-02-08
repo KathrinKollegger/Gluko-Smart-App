@@ -1,6 +1,6 @@
 package com.example.gluko_smart;
 
-public class GlucoseValues {
+public class GlucoseValues implements Comparable<GlucoseValues>{
 
 
     private int bzWert;
@@ -8,7 +8,7 @@ public class GlucoseValues {
     private String timestamp;
     //private String date;
 
-    public GlucoseValues() {
+    public GlucoseValues () {
 
     }
 
@@ -56,5 +56,9 @@ public class GlucoseValues {
     }
 
 
+    @Override
+    public int compareTo(GlucoseValues o) {
+        return timestamp.compareTo(o.getTimestamp());
 
+    }
 }

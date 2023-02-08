@@ -353,7 +353,7 @@ public class BluetoothHandler {
 
 
                 //Ich glaube hier sollten wir auch ein GlucoseValues-Objekt in Firebase pushen...
-                //addOnSuccessListener hier einbauen -
+                //addOnSuccessListener hier einbauen
                 myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {

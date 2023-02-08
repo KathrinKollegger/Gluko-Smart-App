@@ -1,55 +1,73 @@
 package com.example.gluko_smart;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
-import com.github.mikephil.charting.charts.LineChart;
+import androidx.fragment.app.Fragment;
 
-import com.github.mikephil.charting.components.XAxis;
-
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-
-import java.util.Date;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
+//Zeigt Gesamtverlauf - alle Werte von User
 public class FragmentVerlaufWoche extends Fragment {
 
-    View view;
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
+    private ListView listviewValues;
+
+    private final List<GlucoseValues> storedGlucoValues = new ArrayList<GlucoseValues>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_verlauf_woche, container, false);
-        return view;
+        View view = inflater.inflate(R.layout.fragment_verlauf_woche, container, false);
+        listviewValues = view.findViewById(R.id.listValues);
 
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app").getReference();
+
+        return view;
+    }
+
+    public void onStart() {
+        super.onStart();
+
+        String userId = mAuth.getCurrentUser().getUid();
+        mDatabase.child("users").child(userId).child("GlucoseValues")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                            for (DataSnapshot child : children) {
+
+                                //Alle Einträge werden direkt in GlucoseValue-Objekte gespeichert
+                                GlucoseValues retrivedValue = child.getValue(GlucoseValues.class);
+                                //Danach in Liste 'storedGlucoValues aufgenommen'
+                                storedGlucoValues.add(retrivedValue);
+                                //Log.i("onDataChanged", "Wert:" + retrivedValue.getBzWert());
+                            }
+                            //Liste wird nach Zeitpunkt der Messung sortiert
+                            Collections.sort(storedGlucoValues);
+                            GlucoseValueAdapter adapter = new GlucoseValueAdapter(storedGlucoValues);
+                            listviewValues.setAdapter(adapter);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // handle error
+                    }
+                });
     }
 }
