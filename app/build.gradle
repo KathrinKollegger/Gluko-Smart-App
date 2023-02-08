@@ -50,4 +50,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
     implementation 'org.simpleframework:simple-xml:2.7.1'
     implementation 'ca.uhn.hapi.fhir:hapi-fhir-base:5.3.0'
+    implementation 'org.hl7.fhir:hapi-fhir-structures-dstu3:4.2.1'
+    implementation 'org.hl7.fhir:hapi-fhir-client:4.2.1'
 }
