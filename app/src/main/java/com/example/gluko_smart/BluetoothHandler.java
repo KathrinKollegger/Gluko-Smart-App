@@ -346,27 +346,14 @@ public class BluetoothHandler {
                 //erhaltene Werte in dataList Objekt speichern
                 dataList.add(new Object[]{seqNum, glucose, glucoseMMOL,glucoseMGDL,year,month,day,hour,min,sec});
 
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                String userId = currentUser.getUid();
-                FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
-                DatabaseReference myRef = database.getReference("users/" +userId).child(GlucoseValues.class.getSimpleName());;
-
-
                 //Ich glaube hier sollten wir auch ein GlucoseValues-Objekt in Firebase pushen...
                 //addOnSuccessListener hier einbauen
-                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.hasChild((timestamp))) {
-                            myRef.child((timestamp)).child("bzWert").setValue(glucoseMGDL);
-                            myRef.child((timestamp)).child("timestamp").setValue(timestamp);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Handle errors
-                    }
+                DAOGlucoseValue daoGlucoseValue = new DAOGlucoseValue();
+                GlucoseValues Gvalue = new GlucoseValues((int)glucoseMGDL, timestamp);
+                daoGlucoseValue.add(Gvalue).addOnSuccessListener(suc->{
+                        //hier ausgabe
+                }).addOnFailureListener(er->{
+                        //hier ausgabe
                 });
 
 
