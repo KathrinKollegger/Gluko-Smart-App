@@ -6,9 +6,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -60,6 +65,28 @@ public class GlucoseValueAdapter extends BaseAdapter {
 
         Button buttonExport = convertView.findViewById(R.id.buttonExport);
         Button buttonDelete = convertView.findViewById(R.id.buttonDelete);
+
+        buttonExport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Export hier einfügen
+            }
+        });
+
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                    final int positionToDelete = position;
+                    GlucoseValues glucoseValue = storedGlucoValues.get(positionToDelete);
+                    int bzWert = glucoseValue.getBzWert();
+                    FirebaseDatabase db = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
+                    FirebaseDatabase.getInstance().getReference().child("glucose_values").child(String.valueOf(bzWert)).removeValue();
+                    storedGlucoValues.remove(positionToDelete);
+                    notifyDataSetChanged();
+                    Toast.makeText(parent.getContext(), "Blutzucker Wert wurde aus Wochenansicht, sowie aus der Datenbank gelöscht!", Toast.LENGTH_SHORT).show();
+                }
+            });
 
         return convertView;
 
