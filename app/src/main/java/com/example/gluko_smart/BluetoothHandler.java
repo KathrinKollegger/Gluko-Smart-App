@@ -346,7 +346,7 @@ public class BluetoothHandler {
                 //erhaltene Werte in dataList Objekt speichern
                 dataList.add(new Object[]{seqNum, glucose, glucoseMMOL,glucoseMGDL,year,month,day,hour,min,sec});
 
-                //Ich glaube hier sollten wir auch ein GlucoseValues-Objekt in Firebase pushen...
+                //Ich glaube hier sollten wir auch ein GlucoseValues-Objekt in Firebase pushen.
                 //addOnSuccessListener hier einbauen
                 DAOGlucoseValue daoGlucoseValue = new DAOGlucoseValue();
                 GlucoseValues Gvalue = new GlucoseValues((int)glucoseMGDL, timestamp);
