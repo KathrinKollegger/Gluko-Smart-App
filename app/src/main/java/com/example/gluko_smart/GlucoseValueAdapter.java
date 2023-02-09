@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.ParseException;
@@ -56,6 +57,9 @@ public class GlucoseValueAdapter extends BaseAdapter {
         valueTextView.setText(String.valueOf(glucoseValue.getBzWert())+" mg/dl");
         TextView timeTextView = convertView.findViewById(R.id.textTimestamp);
         timeTextView.setText(niceDate);
+
+        Button buttonExport = convertView.findViewById(R.id.buttonExport);
+        Button buttonDelete = convertView.findViewById(R.id.buttonDelete);
 
         return convertView;
 
