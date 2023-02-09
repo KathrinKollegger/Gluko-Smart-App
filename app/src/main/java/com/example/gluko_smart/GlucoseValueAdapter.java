@@ -69,12 +69,8 @@ public class GlucoseValueAdapter extends BaseAdapter {
             public void onClick(View v) {
                 // Export hier einfügen
                 FirebaseToFHIR fireToFhir = new FirebaseToFHIR();
-                try {
-                    fireToFhir.createObservation(glucoseValue);
+                fireToFhir.createObservation(glucoseValue);
 
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
             }
         });
 
