@@ -9,7 +9,6 @@ import org.hl7.fhir.dstu3.model.Quantity;
 import org.hl7.fhir.dstu3.model.Reference;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 
@@ -32,10 +31,12 @@ public class FirebaseToFHIR {
         glucoseQuantity.setUnit("mg/dL");
         observation.setValue(glucoseQuantity);
 
-        //Datum und Uhrzeit der Messung
-        String yourDate = glucoseValues.getTimestamp();
-        DateTimeDt effectiveDateTime = new DateTimeDt(yourDate);
-        //observation.setEffective(effectiveDateTime);
+        //Datum und Uhrzeit der Messung und
+        // zuvor in ein DateTimeDt objekt konvertieren
+        String dateString = glucoseValues.getTimestamp();
+       // Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse(dateString);
+      //  DateTimeDt effectiveDateTime = new DateTimeDt(date);
+       // observation.setEffective(effectiveDateTime);
 
         // Patienten-Referenz setzen (Patient, zu dem die Observation gehört)
         Reference patientReference = new Reference();
