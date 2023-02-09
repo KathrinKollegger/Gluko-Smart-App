@@ -3,22 +3,27 @@ package com.example.gluko_smart;
 
 import android.util.Log;
 
-import org.hl7.fhir.dstu3.model.CodeableConcept;
-import org.hl7.fhir.dstu3.model.Observation;
-import org.hl7.fhir.dstu3.model.Quantity;
-import org.hl7.fhir.dstu3.model.Reference;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.r4.model.Quantity;
+import org.hl7.fhir.r4.model.Reference;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 public class FirebaseToFHIR {
 
     //Instanz FhirContext
-    FhirContext ctx = FhirContext.forDstu3();
+    FhirContext ctx = FhirContext.forR4();
 
     //Methode zur Erstellung einer Observation
-    public void createObservation(GlucoseValues glucoseValues) {
+    public void createObservation(GlucoseValues glucoseValues) throws ParseException {
         //Observation-Ressoruce erstellen
         Observation observation = new Observation();
 
@@ -34,17 +39,11 @@ public class FirebaseToFHIR {
         //Datum und Uhrzeit der Messung und
         // zuvor in ein DateTimeDt objekt konvertieren
         String dateString = glucoseValues.getTimestamp();
-        //Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse(dateString);
-        //DateTimeDt effectiveDateTime = new DateTimeDt(date);
-        /*Type timeType = new Type() {
-            @Override
-            protected Type typedCopy() {
+        Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(dateString);
 
-                return null;
-            }
-        }
+        DateTimeDt effectiveDateTime = new DateTimeDt(date);
 
-        observation.setEffective(effectiveDateTime);*/
+        //observation.setEffective(effectiveDateTime);
 
 
         // Patienten-Referenz setzen (Patient, zu dem die Observation gehört)
@@ -67,7 +66,7 @@ public class FirebaseToFHIR {
         observation.setStatus(Observation.ObservationStatus.FINAL);
 
         // Observation auf dem FHIR-Server speichern
-        IGenericClient client = ctx.newRestfulGenericClient("http://hapi.fhir.org/baseDstu3");
+        IGenericClient client = ctx.newRestfulGenericClient("http://hapi.fhir.org/baseR4");
         MethodOutcome outcome = client.create().resource(observation).execute();
 
 
@@ -78,6 +77,5 @@ public class FirebaseToFHIR {
             Log.e("FHIR", "Failed to create observation");
         }
     }
-
 
 }

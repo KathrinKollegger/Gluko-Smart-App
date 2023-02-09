@@ -49,7 +49,6 @@ public class FragmentVerlaufTag extends Fragment {
     private final static int TITLE_REFRESH_INTERVAL = 1000; // 1 second
     private final Handler handler = new Handler();
 
-
     //MyVersion
     private final List<GlucoseValues> storedGlucoValues = new ArrayList<GlucoseValues>();
 
@@ -76,7 +75,6 @@ public class FragmentVerlaufTag extends Fragment {
         handler.post(updateTitleTask);
 
         return view;
-
 
     }
 
@@ -204,11 +202,11 @@ public class FragmentVerlaufTag extends Fragment {
                             xAxis.setValueFormatter(new HourAxisValueFormatter());
 
                             xAxis.setAxisMinimum(minTimestamp);
-                            //oder setAxisMinimum(0)
+                            //xAxis.setAxisMinimum(0);
 
                             xAxis.setAxisMaximum(currentTimestamp);
                             //oder xAxis.setAxisMaximum(maxTimestamp)
-                            //oder xAxis.setAxisMaximum(24);
+                            //xAxis.setAxisMaximum(24);
 
                             xAxis.setEnabled(true);
                             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -280,6 +278,7 @@ public class FragmentVerlaufTag extends Fragment {
                         }
                     }
 
+
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
@@ -289,10 +288,16 @@ public class FragmentVerlaufTag extends Fragment {
                 });
     }
 
+
+    /**
+     *
+     * @param data
+     */
     public void setValueDisplayData(String data) {
         if (getActivity() != null) {
             ((Verlauf) getActivity()).updateValueDisplay(data);
         }
     }
+
 }
 

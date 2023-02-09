@@ -107,6 +107,8 @@ public class WerteEingabe extends Activity {
         setupSpinner();
     }
 
+
+
     private void setupSpinner() {
         List<String> categories = new ArrayList<String>();
         categories.add("Vor dem Essen");

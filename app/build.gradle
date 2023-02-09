@@ -29,6 +29,12 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
+
+
 }
 
 dependencies {
@@ -49,5 +55,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
     implementation 'ca.uhn.hapi.fhir:hapi-fhir-base:5.1.0'
-    implementation 'ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:5.1.0'
+    implementation 'ca.uhn.hapi.fhir:hapi-fhir-structures-r4:5.1.0'
+    implementation 'ca.uhn.hapi.fhir:hapi-fhir-client:5.1.0'
 }
