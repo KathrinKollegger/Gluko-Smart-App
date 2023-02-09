@@ -77,10 +77,10 @@ public class GlucoseValueAdapter extends BaseAdapter {
             public void onClick(View v) {
                     final int positionToDelete = position;
                     GlucoseValues glucoseValue = storedGlucoValues.get(positionToDelete);
-                    //int bzWert = glucoseValue.getBzWert();
+
                     String time = glucoseValue.getTimestamp();
                     FirebaseDatabase db = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
-                    FirebaseDatabase.getInstance().getReference().child("glucose_values").child(time).removeValue();
+                    FirebaseDatabase.getInstance().getReference().child("GlucoseValues").child(time).removeValue();
                     storedGlucoValues.remove(positionToDelete);
                     notifyDataSetChanged();
                     Toast.makeText(parent.getContext(), "Blutzucker Wert wurde aus Wochenansicht, sowie aus der Datenbank gelöscht!", Toast.LENGTH_SHORT).show();

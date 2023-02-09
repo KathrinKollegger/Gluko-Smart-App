@@ -34,9 +34,18 @@ public class FirebaseToFHIR {
         //Datum und Uhrzeit der Messung und
         // zuvor in ein DateTimeDt objekt konvertieren
         String dateString = glucoseValues.getTimestamp();
-       // Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse(dateString);
-      //  DateTimeDt effectiveDateTime = new DateTimeDt(date);
-       // observation.setEffective(effectiveDateTime);
+        //Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse(dateString);
+        //DateTimeDt effectiveDateTime = new DateTimeDt(date);
+        /*Type timeType = new Type() {
+            @Override
+            protected Type typedCopy() {
+
+                return null;
+            }
+        }
+
+        observation.setEffective(effectiveDateTime);*/
+
 
         // Patienten-Referenz setzen (Patient, zu dem die Observation gehört)
         Reference patientReference = new Reference();

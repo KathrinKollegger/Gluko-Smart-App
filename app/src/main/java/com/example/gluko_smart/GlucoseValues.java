@@ -57,7 +57,7 @@ public class GlucoseValues implements Comparable<GlucoseValues> {
 
 
     @Override
-    public int compareTo(GlucoseValues glucoseValues) {
-        return 0;
+    public int compareTo(GlucoseValues gv) {
+        return timestamp.compareTo(gv.getTimestamp());
     }
 }
