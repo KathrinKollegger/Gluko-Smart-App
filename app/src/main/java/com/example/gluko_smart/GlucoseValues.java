@@ -6,7 +6,7 @@ public class GlucoseValues implements Comparable<GlucoseValues> {
     private int bzWert;
     private String vorNachMahlzeit;
     private String timestamp;
-    //private String date;
+    private String key;
 
     public GlucoseValues() {
 
@@ -25,6 +25,7 @@ public class GlucoseValues implements Comparable<GlucoseValues> {
         this.bzWert = bzWert;
         this.vorNachMahlzeit = vorNachMahlzeit;
         this.timestamp = timestamp;
+
     }
 
     public int getBzWert() {
@@ -53,6 +54,14 @@ public class GlucoseValues implements Comparable<GlucoseValues> {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
 

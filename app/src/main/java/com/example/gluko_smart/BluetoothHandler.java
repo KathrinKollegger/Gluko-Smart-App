@@ -358,8 +358,9 @@ public class BluetoothHandler {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.hasChild((timestamp))) {
-                            myRef.child((timestamp)).child("bzWert").setValue(glucoseMGDL);
-                            myRef.child((timestamp)).child("timestamp").setValue(timestamp);
+                            String key = myRef.push().getKey();
+                            myRef.child(key).child("bzWert").setValue(glucoseMGDL);
+                            myRef.child(key).child("timestamp").setValue(timestamp);
                         }
                     }
 

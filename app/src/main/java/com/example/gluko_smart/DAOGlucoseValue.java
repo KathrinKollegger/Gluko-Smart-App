@@ -20,7 +20,9 @@ public class DAOGlucoseValue {
 
     public Task<Void> add(GlucoseValues glucoseValues) {
 
-            return databaseReference.push().setValue(glucoseValues);
+            String key = databaseReference.push().getKey();
+            glucoseValues.setKey(key);
+            return databaseReference.child(key).setValue(glucoseValues);
     }
 
 

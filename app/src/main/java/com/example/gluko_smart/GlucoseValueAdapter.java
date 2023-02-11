@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.ParseException;
@@ -75,18 +76,20 @@ public class GlucoseValueAdapter extends BaseAdapter {
         });
 
         buttonDelete.setOnClickListener(new View.OnClickListener() {
-
             @Override
-            public void onClick(View v) {
-                    final int positionToDelete = position;
-                    GlucoseValues glucoseValue = storedGlucoValues.get(positionToDelete);
-
-                    String time = glucoseValue.getTimestamp();
-                    FirebaseDatabase db = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
-                    FirebaseDatabase.getInstance().getReference().child("GlucoseValues").child(time).removeValue();
-                    storedGlucoValues.remove(positionToDelete);
-                    notifyDataSetChanged();
-                    Toast.makeText(parent.getContext(), "Blutzucker Wert wurde aus Wochenansicht, sowie aus der Datenbank gelöscht!", Toast.LENGTH_SHORT).show();
+            public void onClick(View view) {
+                GlucoseValues glucoseValue = storedGlucoValues.get(position);
+                FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
+                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                String userId = firebaseAuth.getCurrentUser().getUid();
+                database.getReference("users")
+                        .child(userId)
+                        .child("GlucoseValues")
+                        .child(glucoseValue.getKey())
+                        .removeValue();
+                storedGlucoValues.remove(position);
+                notifyDataSetChanged();
+                    Toast.makeText(parent.getContext(), "Der Blutzuckerwert wurde gelöscht!", Toast.LENGTH_SHORT).show();
 
             }
             });
