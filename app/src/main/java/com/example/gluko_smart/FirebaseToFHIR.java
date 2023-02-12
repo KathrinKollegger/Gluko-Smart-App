@@ -15,7 +15,9 @@ import org.hl7.fhir.utilities.xhtml.XhtmlNode;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.TimeZone;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
@@ -23,6 +25,8 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.SimpleRequestHeaderInterceptor;
 
 public class FirebaseToFHIR extends AsyncTask<GlucoseValues, Void, Boolean> {
+
+    //http://hapi.fhir.org/search?serverId=home_r4&pretty=true&_summary=&resource=Observation&param.0.0=&param.0.1=7496229&param.0.name=patient&param.0.type=reference&sort_by=&sort_direction=&resource-search-limit=#
 
     //Instanz FhirContext
    FhirContext ctx = FhirContext.forR4();
@@ -45,16 +49,23 @@ public class FirebaseToFHIR extends AsyncTask<GlucoseValues, Void, Boolean> {
         //set the Narrative on the Observation
         observation.setText(narrative);
 
-
         //ID der Observation setzen mit aktueller Uhrzeit wos hochladen
         observation.setId("Blutgluckose Selbstmessung" + System.currentTimeMillis());
+
+        //Kategorie hinzufügen
+        //Activity = Observations that measure or record any bodily activity that enhances or maintains physical fitness and overall health and wellness.
+        //Not under direct supervision of practitioner such as a physical therapist. (e.g., laps swum, steps, sleep data)
+        CodeableConcept category = new CodeableConcept();
+        category.addCoding().setSystem("http://terminology.hl7.org/CodeSystem/observation-category")
+                .setCode("activity")
+                .setDisplay("Activity");
+        observation.setCategory(Collections.singletonList(category));
 
         //Werte der Observation setzen (Blutzuckerwert)
         Quantity glucoseQuantity = new Quantity();
         glucoseQuantity.setValue(glucoseValue.getBzWert());
         glucoseQuantity.setUnit("mg/dL");
         glucoseQuantity.setSystem("http://unitsofmeasure.org");
-
         observation.setValue(glucoseQuantity);
         Log.i("ObservationValue","set successfully");
 
@@ -63,12 +74,14 @@ public class FirebaseToFHIR extends AsyncTask<GlucoseValues, Void, Boolean> {
         String dateString = glucoseValue.getTimestamp();
         Date date = null;
         try {
-            date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(dateString);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            date = simpleDateFormat.parse(dateString);
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
         DateTimeType effectiveDateTime = new DateTimeType(date);
-
         observation.setEffective(effectiveDateTime);
         Log.i("ObservationDateTime","set successfully");
 
@@ -76,13 +89,9 @@ public class FirebaseToFHIR extends AsyncTask<GlucoseValues, Void, Boolean> {
         Reference patientReference = new Reference();
         patientReference.setReference("Patient/7496229").setDisplay("Maxima Muster");
         observation.setSubject(patientReference);
-
-        Log.i("ObservatioReferenz","created successfully");
+        Log.i("ObservationReferenz","created successfully");
 
         //Code hinzufügen mit loinc Basis
-        //Code: 2339-0
-        //Darstellung:
-        //mit setCode wird er dann der Observation zugewiesen
         CodeableConcept code = new CodeableConcept();
         code.addCoding()
                 .setSystem("http://loinc.org")
@@ -91,10 +100,15 @@ public class FirebaseToFHIR extends AsyncTask<GlucoseValues, Void, Boolean> {
         observation.setCode(code);
         Log.i("CodeableConcept","created successfully");
 
-
         // Observation-Status setzen
         observation.setStatus(Observation.ObservationStatus.FINAL);
         Log.i("ObservationStatus","created successfully");
+
+        //Practitioner hinzufügen
+        Reference practitionerReference = new Reference();
+        practitionerReference.setReference("Patient/7496229")
+                .setDisplay("Maxima Muster");
+        observation.addPerformer(practitionerReference);
 
         // Observation auf dem FHIR-Server speichern
         IGenericClient client = ctx.newRestfulGenericClient("https://hapi.fhir.org/baseR4");
