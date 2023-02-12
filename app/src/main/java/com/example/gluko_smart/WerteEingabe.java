@@ -2,6 +2,7 @@ package com.example.gluko_smart;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -63,32 +64,39 @@ public class WerteEingabe extends Activity {
         DAOGlucoseValue daoGlucoseValue = new DAOGlucoseValue();
 
         button_speichern1.setOnClickListener(v-> {
-
             String bzWertInput = edit_bzWert.getText().toString();
 
             //Nur gültige Werte: 14 < Wert < 200
             if(bzWertInput.length() < 2 ||
                     bzWertInput.contains(".") ||
-               Float.parseFloat(bzWertInput) > 250 ||
-               Float.parseFloat(bzWertInput) < 15){
+                    Float.parseFloat(bzWertInput) > 250 ||
+                    Float.parseFloat(bzWertInput) < 15){
 
                 Toast.makeText(this, "Bitte geben Sie einen gültigen BZ Wert in der Einheit mg/dl ein!", Toast.LENGTH_SHORT).show();
 
             }else{
 
-                //Sets Timestamp in ISO-Format for DB entry
-                DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-                LocalDateTime loDatetime = LocalDateTime.now();
-                String dateForDB = loDatetime.format(formatter).substring(0,19);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Möchten Sie den Wert "+bzWertInput+" mg/dl wirklich speichern?")
+                        .setPositiveButton("Ja", (dialog, id) -> {
+                            //Sets Timestamp in ISO-Format for DB entry
+                            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+                            LocalDateTime loDatetime = LocalDateTime.now();
+                            String dateForDB = loDatetime.format(formatter).substring(0,19);
 
-                GlucoseValues glucoseValue = new GlucoseValues(Integer.parseInt(bzWertInput),
-                                                                edit_infoessen.getSelectedItem().toString(), dateForDB);
-                daoGlucoseValue.add(glucoseValue).addOnSuccessListener(suc->{
-                    Toast.makeText(this, "Blutzuckerwert: "+bzWertInput+" mg/dl wurde gespeichert", Toast.LENGTH_SHORT).show();
-                }).addOnFailureListener(er->{
-
-                    Toast.makeText(this, ""+er.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                            GlucoseValues glucoseValue = new GlucoseValues(Integer.parseInt(bzWertInput),
+                                    edit_infoessen.getSelectedItem().toString(), dateForDB);
+                            daoGlucoseValue.add(glucoseValue).addOnSuccessListener(suc->{
+                                Toast.makeText(this, "Blutzuckerwert: "+bzWertInput+" mg/dl wurde gespeichert", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(er->{
+                                Toast.makeText(this, ""+er.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                        })
+                        .setNegativeButton("Nein", (dialog, id) -> {
+                            dialog.cancel();
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
             }
         });
 

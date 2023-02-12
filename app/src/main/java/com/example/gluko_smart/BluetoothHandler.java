@@ -349,7 +349,7 @@ public class BluetoothHandler {
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 String userId = currentUser.getUid();
                 FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
-                DatabaseReference myRef = database.getReference("users/" +userId).child(GlucoseValues.class.getSimpleName());;
+                DatabaseReference myRef = database.getReference("users/" +userId).child(GlucoseValues.class.getSimpleName());
 
 
                 //Ich glaube hier sollten wir auch ein GlucoseValues-Objekt in Firebase pushen...
