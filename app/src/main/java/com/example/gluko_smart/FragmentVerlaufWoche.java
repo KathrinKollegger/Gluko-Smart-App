@@ -1,6 +1,7 @@
 package com.example.gluko_smart;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +57,7 @@ public class FragmentVerlaufWoche extends Fragment {
                                 GlucoseValues retrivedValue = child.getValue(GlucoseValues.class);
                                 //Danach in Liste 'storedGlucoValues aufgenommen'
                                 storedGlucoValues.add(retrivedValue);
-                                //Log.i("onDataChanged", "Wert:" + retrivedValue.getBzWert());
+                                Log.i("onDataChanged", "Wert:" + retrivedValue.getBzWert()+retrivedValue.getKey());
                             }
                             //Liste wird nach Zeitpunkt der Messung sortiert
                             Collections.sort(storedGlucoValues);

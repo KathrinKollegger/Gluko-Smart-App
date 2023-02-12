@@ -116,7 +116,7 @@ public class FragmentVerlaufTag extends Fragment {
                             GlucoseValues retrivedValue = child.getValue(GlucoseValues.class);
                             //Danach in Liste 'storedGlucoValues aufgenommen'
                             storedGlucoValues.add(retrivedValue);
-                            //Log.i("onDataChanged", "Wert:" + retrivedValue.getBzWert());
+                            //Log.i("onDataChanged", "Wert:" + retrivedValue.getBzWert()+retrivedValue.getKey());
                         }
 
                         //Liste wird nach Zeitpunkt der Messung sortiert

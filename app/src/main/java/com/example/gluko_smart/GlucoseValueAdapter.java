@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.ParseException;
@@ -88,13 +89,13 @@ public class GlucoseValueAdapter extends BaseAdapter {
                                 FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
                                 FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                                 String userId = firebaseAuth.getCurrentUser().getUid();
-                                database.getReference("users")
+                                DatabaseReference refToDel = database.getReference("users")
                                         .child(userId)
                                         .child("GlucoseValues")
-                                        .child(glucoseValue.getKey())
-                                        .removeValue();
-                                storedGlucoValues.remove(position);
-                                notifyDataSetChanged();
+                                        .child(glucoseValue.getTimestamp());
+                                        refToDel.removeValue();
+
+                                storedGlucoValues.clear();
                                 Toast.makeText(parent.getContext(), "Der Blutzuckerwert wurde gelöscht!", Toast.LENGTH_SHORT).show();
                             }
                         })

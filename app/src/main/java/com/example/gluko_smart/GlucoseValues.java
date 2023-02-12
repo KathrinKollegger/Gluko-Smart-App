@@ -17,6 +17,7 @@ public class GlucoseValues implements Comparable<GlucoseValues> {
 
         this.bzWert = bzWert;
         this.timestamp = timestamp;
+
     }
 
     //Constructor mit vorNachMahlzeit

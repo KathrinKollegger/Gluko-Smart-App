@@ -22,7 +22,8 @@ public class DAOGlucoseValue {
 
             String key = databaseReference.push().getKey();
             glucoseValues.setKey(key);
-            return databaseReference.child(key).setValue(glucoseValues);
+            String timestamp = glucoseValues.getTimestamp();
+            return databaseReference.child(timestamp).setValue(glucoseValues);
     }
 
 

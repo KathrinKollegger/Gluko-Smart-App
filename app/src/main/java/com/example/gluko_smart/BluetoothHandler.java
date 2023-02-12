@@ -349,7 +349,7 @@ public class BluetoothHandler {
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 String userId = currentUser.getUid();
                 FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
-                DatabaseReference myRef = database.getReference("users/" +userId).child(GlucoseValues.class.getSimpleName());
+                DatabaseReference myRef = database.getReference("users/" +userId).child("GlucoseValues");
 
 
                 //Ich glaube hier sollten wir auch ein GlucoseValues-Objekt in Firebase pushen...
@@ -358,9 +358,9 @@ public class BluetoothHandler {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.hasChild((timestamp))) {
-                            String key = myRef.push().getKey();
-                            myRef.child(key).child("bzWert").setValue(glucoseMGDL);
-                            myRef.child(key).child("timestamp").setValue(timestamp);
+                            myRef.child(timestamp).child("bzWert").setValue(glucoseMGDL);
+                            myRef.child(timestamp).child("timestamp").setValue(timestamp);
+                            myRef.child(timestamp).child("key").setValue(myRef.push().getKey());
                         }
                     }
 
