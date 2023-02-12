@@ -251,7 +251,7 @@ public class FragmentVerlaufTag extends Fragment {
                             chart.setData(lineData);
                             chart.invalidate();
 
-
+                            if(getContext() != null){
                             CustomMarkerView mv = new CustomMarkerView(getContext(), R.layout.marker_view);
                             chart.setMarkerView(mv);
                             //chart.moveViewToX(chart.getLowestVisibleX());
@@ -276,8 +276,7 @@ public class FragmentVerlaufTag extends Fragment {
                                 }
                             });
                         }
-                    }
-
+                    }}
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -287,8 +286,6 @@ public class FragmentVerlaufTag extends Fragment {
                     }
                 });
     }
-
-
     /**
      *
      * @param data

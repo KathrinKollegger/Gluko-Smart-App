@@ -1,5 +1,7 @@
 package com.example.gluko_smart;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,20 +81,31 @@ public class GlucoseValueAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 GlucoseValues glucoseValue = storedGlucoValues.get(position);
-                FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
-                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                String userId = firebaseAuth.getCurrentUser().getUid();
-                database.getReference("users")
-                        .child(userId)
-                        .child("GlucoseValues")
-                        .child(glucoseValue.getKey())
-                        .removeValue();
-                storedGlucoValues.remove(position);
-                notifyDataSetChanged();
-                    Toast.makeText(parent.getContext(), "Der Blutzuckerwert wurde gelöscht!", Toast.LENGTH_SHORT).show();
-
+                AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
+                builder.setMessage("Sind Sie sicher, dass Sie diesen Blutzuckerwert löschen möchten?")
+                        .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
+                                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                                String userId = firebaseAuth.getCurrentUser().getUid();
+                                database.getReference("users")
+                                        .child(userId)
+                                        .child("GlucoseValues")
+                                        .child(glucoseValue.getKey())
+                                        .removeValue();
+                                storedGlucoValues.remove(position);
+                                notifyDataSetChanged();
+                                Toast.makeText(parent.getContext(), "Der Blutzuckerwert wurde gelöscht!", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
             }
-            });
+        });
 
         return convertView;
 
