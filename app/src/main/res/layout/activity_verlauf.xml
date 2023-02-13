@@ -43,7 +43,7 @@
         android:layout_height="60dp"
         android:layout_alignParentRight="true"
         android:backgroundTint="#4C74AF"
-        android:text="Wochenwerte"
+        android:text="Alle Werte anzeigen"
         tools:ignore="MissingConstraints"
         app:layout_constraintStart_toEndOf="@id/button_homeVerlauf"
         app:layout_constraintBottom_toBottomOf="parent"

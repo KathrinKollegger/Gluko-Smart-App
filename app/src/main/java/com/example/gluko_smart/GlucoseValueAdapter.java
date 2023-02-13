@@ -71,9 +71,26 @@ public class GlucoseValueAdapter extends BaseAdapter {
         buttonExport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Export hier einfügen
-                FirebaseToFHIR fireToFhir = new FirebaseToFHIR();
-                fireToFhir.execute(glucoseValue);
+                AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
+                builder.setTitle("Bestätigung KIS-Export");
+                builder.setMessage("Möchten Sie den Blutzuckerwert "+glucoseValue.getBzWert()+" mg/dl wirklich exportieren?");
+                builder.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Export hier einfügen
+                        FirebaseToFHIR fireToFhir = new FirebaseToFHIR();
+                        fireToFhir.execute(glucoseValue);
+                        Toast.makeText(parent.getContext(), "Der Blutzuckerwert "+glucoseValue.getBzWert()+" mg/dl wurde erfolgreich ins KIS exportiert.", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+                builder.setNegativeButton("Nein", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.show();
             }
 
         });
@@ -83,7 +100,8 @@ public class GlucoseValueAdapter extends BaseAdapter {
             public void onClick(View view) {
                 GlucoseValues glucoseValue = storedGlucoValues.get(position);
                 AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
-                builder.setMessage("Sind Sie sicher, dass Sie diesen Blutzuckerwert löschen möchten?")
+                builder.setTitle("Bestätigung Löschen");
+                builder.setMessage("Sind Sie sicher, dass Sie den Blutzuckerwert "+glucoseValue.getBzWert()+" mg/dl löschen möchten?")
                         .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
@@ -96,7 +114,7 @@ public class GlucoseValueAdapter extends BaseAdapter {
                                         refToDel.removeValue();
 
                                 storedGlucoValues.clear();
-                                Toast.makeText(parent.getContext(), "Der Blutzuckerwert wurde gelöscht!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(parent.getContext(), "Der Blutzuckerwert "+glucoseValue.getBzWert()+" mg/dl wurde gelöscht!", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
