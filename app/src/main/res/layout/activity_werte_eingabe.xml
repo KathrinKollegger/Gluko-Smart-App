@@ -110,7 +110,7 @@
         android:id="@+id/button_homeVerlauf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#4C74AF"
+        android:backgroundTint="#AF4C4C"
         android:text="Back Home"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
