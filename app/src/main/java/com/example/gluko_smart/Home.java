@@ -1,6 +1,7 @@
 package com.example.gluko_smart;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +24,13 @@ public class Home extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedPreferences = getSharedPreferences("login_prefs",MODE_PRIVATE);
+        textView_userName.setText(sharedPreferences.getString("username",""));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
@@ -34,7 +42,9 @@ public class Home extends AppCompatActivity {
         button_userManual = (Button) findViewById(R.id.button_userManual);
         button_abmelden = (Button) findViewById(R.id.button_abmelden);
         textView_userName = (TextView) findViewById(R.id.tv_UserName);
-        textView_userName.setText(getIntent().getStringExtra("UserName"));
+
+        SharedPreferences sharedPreferences = getSharedPreferences("login_prefs",MODE_PRIVATE);
+        textView_userName.setText(sharedPreferences.getString("username",""));
 
         mAuth= FirebaseAuth.getInstance();
 

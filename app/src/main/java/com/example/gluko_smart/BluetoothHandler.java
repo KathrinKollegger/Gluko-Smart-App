@@ -16,7 +16,6 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
@@ -54,8 +53,6 @@ public class BluetoothHandler {
     private DeviceHandler deviceHandler;
     public LeDeviceListAdapter leDeviceListAdapter;
     private BluetoothGatt mbluetoothGatt;
-
-    private int mConnectionState = STATE_DISCONNECTED;
 
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
@@ -100,17 +97,18 @@ public class BluetoothHandler {
                 .build();
 
         //bleScanner.startScan(bleScanCallback);
-        Log.i(TAG,"Scan has actually started!");
+        Log.i(TAG, "Scan has actually started!");
         leDeviceListAdapter = new LeDeviceListAdapter(context);
         bleScanner.startScan(scanFilters, scanSettings, bleScanCallback);
     }
 
+    //Stop scanning for devices
     @SuppressLint("MissingPermission")
     public void stopScanning() {
-        //Stop scanning for devices
         bleScanner.stopScan(bleScanCallback);
     }
 
+    //connect to device
     @SuppressLint("MissingPermission")
     public void connectToDevice(BluetoothDevice device) {
         if (device == null) {
@@ -118,7 +116,6 @@ public class BluetoothHandler {
             return;
         }
 
-        //connect to device
         mbluetoothGatt = device.connectGatt(context, false, mGattCallback);
         Log.d(TAG_CONNECTING, "Trying to create a new connection.");
         Toast.makeText(context, "Verbindung wird hergestellt", Toast.LENGTH_SHORT).show();
@@ -143,35 +140,32 @@ public class BluetoothHandler {
             if (!deviceHandler.getDevices().containsValue(device)) {
                 deviceHandler.addDevice(device);
 
-                if (!leDeviceListAdapter.getDevices().contains(device)){
+                if (!leDeviceListAdapter.getDevices().contains(device)) {
                     leDeviceListAdapter.addDevice(device);
                     leDeviceListAdapter.notifyDataSetChanged();
-                    Log.i(TAG,"Dev added to leDevAdapter");
+                    Log.i(TAG, "Dev added to leDevAdapter");
                 }
-                /*//Variante ohne Klick auf Device
-                device.connectGatt(context,true, mGattCallback);*/
             }
         }
     };
 
-    //Wird dann für die Connection benötigt
     private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+
         @SuppressLint("MissingPermission")
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
 
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
+            if (newState == STATE_CONNECTED) {
                 gatt.discoverServices();
-                Toast.makeText(context, "Verbindung erfolgreich",Toast.LENGTH_SHORT);
+            }
 
-            }
-            if (newState == BluetoothProfile.STATE_CONNECTING) {
+            if (newState == STATE_CONNECTING) {
                 gatt.discoverServices();
             }
-            if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+
+            if (newState == STATE_DISCONNECTED) {
                 gatt.disconnect();
-
             }
         }
 
@@ -179,9 +173,11 @@ public class BluetoothHandler {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
+
+
             if (status == BluetoothGatt.GATT_SUCCESS) {
 
-                //All Services
+                //Get all gatt-Services
                 List<BluetoothGattService> gattServices;
                 gattServices = gatt.getServices();
                 for (BluetoothGattService gattService : gattServices) {
@@ -192,15 +188,20 @@ public class BluetoothHandler {
                 //Get the Glucose Service
                 BluetoothGattService glucoseService =
                         gatt.getService(GLUCOSE_SERVICE_UUID);
+
+                //Glucose Service wird gefunden
                 if (glucoseService != null) {
-                    Log.d("GlucoseService", "discovered"); // er geht da rein
-                    List<BluetoothGattCharacteristic> allCharacterisitksGluco = glucoseService.getCharacteristics();
-                    for (BluetoothGattCharacteristic characteristic : allCharacterisitksGluco) {
+
+                    Log.d("GlucoseService", "discovered");
+
+                    List<BluetoothGattCharacteristic> allGlucoCharacteristics = glucoseService.getCharacteristics();
+
+                    //writes all Characteristic UUIDs of Glucose Service into Log
+                    for (BluetoothGattCharacteristic characteristic : allGlucoCharacteristics) {
                         Log.d("Characteristic", "UUID: " + characteristic.getUuid());
                     }
 
-
-                    if (allCharacterisitksGluco.isEmpty()) {
+                    if (allGlucoCharacteristics.isEmpty()) {
                         Log.d("Characterisitcs", "Keine characterisitcs for this service" + GLUCOSE_SERVICE_UUID);
                     }
 
@@ -210,28 +211,32 @@ public class BluetoothHandler {
                 }
 
                 //Get the Glucose_Measurement and Glucose_Measurement_Context characteristics
-                BluetoothGattCharacteristic glucoCharakterMeasurement = glucoseService.getCharacteristic(GLUCOSE_MEASUREMENT);
+                BluetoothGattCharacteristic glucoCharacterMeasurement =
+                        glucoseService.getCharacteristic(GLUCOSE_MEASUREMENT);
 
-                //Enable notifications for the characteristics because they are only notify
-                gatt.setCharacteristicNotification(glucoCharakterMeasurement, true);
-
-                //ERROR MEDISANA MEDITOUCH 2 von Joachim
-                //gatt.readCharacteristic(glucoCharakterMeasurement);
+                //Enable notification for the characteristics because they can only be accessed via notify
+                gatt.setCharacteristicNotification(glucoCharacterMeasurement, true);
 
                 //Descriptor glucoseMeasurementDescriptor
-                BluetoothGattDescriptor glucoseMeasurementDescriptor = glucoCharakterMeasurement.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
+                BluetoothGattDescriptor glucoseMeasurementDescriptor =
+                        glucoCharacterMeasurement.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
                 if (glucoseMeasurementDescriptor != null) {
                     glucoseMeasurementDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                     gatt.writeDescriptor(glucoseMeasurementDescriptor);
                     gatt.readDescriptor(glucoseMeasurementDescriptor);
-                    Log.d("Descriptor", "Reading/Writing descriptor for characteristic: " + glucoCharakterMeasurement.getUuid());
+                    Log.d("Descriptor", "Reading/Writing descriptor for characteristic: " + glucoCharacterMeasurement.getUuid());
 
-                }else{
-                    Log.d("Descriptor", "Descriptor not found for characteristic: " + glucoCharakterMeasurement.getUuid());
+                } else {
+                    Log.d("Descriptor", "Descriptor not found for characteristic: " + glucoCharacterMeasurement.getUuid());
                 }
-
             }
-
+            //Toast mit Verbindungsbestätigung
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "Verbindung erfolgreich", Toast.LENGTH_SHORT).show();
+                }
+            }, 5000);
         }
 
         @Override
@@ -239,7 +244,7 @@ public class BluetoothHandler {
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                Log.i("onCharaRead","entered");
+                Log.i("onCharaRead", "entered");
             }
         }
 
@@ -249,8 +254,8 @@ public class BluetoothHandler {
                 characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
 
-            //um zu schauen welche UUID die methode bekommt --> bekommt immer nur 1
-            Log.d("onCharacteristicChanged", " In Methode empfangende UUID: " + characteristic.getUuid().toString());
+            //checking the Character UUID received by the method --> only first CharacterUUID
+            Log.d("onCharacteristicChanged", "Characteristic UUID: " + characteristic.getUuid().toString());
 
             //check if the characteristic that has changed is the one you are interested in
             //da geht er rein und gibt des erste log richtig aus
@@ -259,24 +264,24 @@ public class BluetoothHandler {
                 //Methode processData aufrufen
                 processData(characteristic, dataMeasurement);
 
-                    //GATT Server sagen, dass ich den  ersten wert empfangen habe
-                    //Hier kann man dem GATT Server signalisieren, dass man
-                    // bereit für die nächste Characteristic ist und den Descriptior der nächsten aufrufen!
-                    BluetoothGattCharacteristic glucoCharakterContext = gatt.getService(GLUCOSE_SERVICE_UUID).
-                            getCharacteristic(GLUCOSE_MEASUREMENT_CONTEXT);
+                //GATT Server sagen, dass ich den  ersten wert empfangen habe
+                //Hier kann man dem GATT Server signalisieren, dass man
+                // bereit für die nächste Characteristic ist und den Descriptior der nächsten aufrufen!
+                BluetoothGattCharacteristic glucoCharakterContext = gatt.getService(GLUCOSE_SERVICE_UUID).
+                        getCharacteristic(GLUCOSE_MEASUREMENT_CONTEXT);
 
-                    gatt.setCharacteristicNotification(glucoCharakterContext, true);
+                gatt.setCharacteristicNotification(glucoCharakterContext, true);
 
-                    //Descriptor glucoseMeasurementContextDescriptor
-                    BluetoothGattDescriptor glucoseMeasurementContextDescriptor = glucoCharakterContext.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
-                    if (glucoseMeasurementContextDescriptor != null) {
-                        glucoseMeasurementContextDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                        gatt.writeDescriptor(glucoseMeasurementContextDescriptor);
-                        gatt.readDescriptor(glucoseMeasurementContextDescriptor);
-                        // Log.d("Descriptor", "Reading/Writing descriptor for characteristic: " + glucoCharakterContext.getUuid());
-                    } else {
-                        Log.d("Descriptor", "Descriptor not found for characteristic: " + glucoCharakterContext.getUuid());
-                    }
+                //Descriptor glucoseMeasurementContextDescriptor
+                BluetoothGattDescriptor glucoseMeasurementContextDescriptor = glucoCharakterContext.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
+                if (glucoseMeasurementContextDescriptor != null) {
+                    glucoseMeasurementContextDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                    gatt.writeDescriptor(glucoseMeasurementContextDescriptor);
+                    gatt.readDescriptor(glucoseMeasurementContextDescriptor);
+                    // Log.d("Descriptor", "Reading/Writing descriptor for characteristic: " + glucoCharakterContext.getUuid());
+                } else {
+                    Log.d("Descriptor", "Descriptor not found for characteristic: " + glucoCharakterContext.getUuid());
+                }
 
             } else {
                 Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT nicht gefunden");
@@ -297,179 +302,191 @@ public class BluetoothHandler {
     };
 
 
+    /**
+     * processes the BLE Measurement data
+     * Prints array in the log
+     * <p>
+     * Example of dataMeasurement: [31, 1, 0, -23, 7, 1, 21, 18, 22, 0, 0, 0, 46, -64, 17, 0, 0]
+     *
+     * @param characteristic  the changed BLE-Service Characteristic
+     * @param dataMeasurement the value of the changed BLE-Characteristic as byte
+     */
+    public void processData(BluetoothGattCharacteristic characteristic, byte[] dataMeasurement) {
+        //Log.d("DatenMeasurement", Arrays.toString(dataMeasurement));
+        //Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT has changed");
 
-            public void processData(BluetoothGattCharacteristic characteristic, byte[] dataMeasurement){
-                //process the data here
-                //Print the array in the log
-                //D/DatenMeasurement: [31, 1, 0, -23, 7, 1, 21, 18, 22, 0, 0, 0, 46, -64, 17, 0, 0]
-                //Log.d("DatenMeasurement", Arrays.toString(dataMeasurement));
-                //Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT has changed");
+                /*
+                extract the data from the characteristic - Source:
+                https://stackoverflow.com/questions/45568958/bluetooth-low-energy-glucose-gatt-profile-measurement-parsing-value
+                */
 
-                //extract the data from the characteristic
-                //https://stackoverflow.com/questions/45568958/bluetooth-low-energy-glucose-gatt-profile-measurement-parsing-value
-                boolean timeOffsetPresent = (dataMeasurement[0] & 0x01) > 0;
-                boolean typeAndLocationPresent = (dataMeasurement[0] & 0x02) > 0;
-                String concentrationUnit = (dataMeasurement[0] & 0x04) > 0 ? "mol/l" : "kg/L";
-                boolean sensorStatusAnnunciationPresent = (dataMeasurement[0] & 0x08) > 0;
-                boolean contextInfoFollows = (dataMeasurement[0] & 0x10) > 0;
+        boolean timeOffsetPresent = (dataMeasurement[0] & 0x01) > 0;
+        boolean typeAndLocationPresent = (dataMeasurement[0] & 0x02) > 0;
+        String concentrationUnit = (dataMeasurement[0] & 0x04) > 0 ? "mol/l" : "kg/L";
+        boolean sensorStatusAnnunciationPresent = (dataMeasurement[0] & 0x08) > 0;
+        boolean contextInfoFollows = (dataMeasurement[0] & 0x10) > 0;
 
-                //seqNumber des Eintrags im Gerätetagebuch
-                int seqNum = (int) (dataMeasurement[1] & 255);
-                seqNum |= (int) (dataMeasurement[2] & 255) << 8;
+        //seqNumber des Eintrags im Gerätetagebuch
+        int seqNum = (int) (dataMeasurement[1] & 255);
+        seqNum |= (int) (dataMeasurement[2] & 255) << 8;
 
-                //1 mol/L = 1000 mmol/L. --> um mol/L in mmol/L umzurechnen
-                float glucose = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_SFLOAT, 12);
+        //Glucose Value as float
+        //1 mol/L = 1000 mmol/L. --> um mol/L in mmol/L umzurechnen
+        float glucose = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_SFLOAT, 12);
 
-                //wenn das Gerät in mol/liter liefert und wir in mmol/liter umrechnen diese variable verwenden
-                float glucoseMMOL = glucose * 1000;
-                //wenn das Gerät in kg/l liefert und wir in mg/dl umrechnen diese variable verwenden
-                float glucoseMGDL= glucose*100000;
+        //Glucose Value in mmol/L as float
+        float glucoseMMOL = glucose * 1000;
 
-                //glucoseMGDL in int parsen!! um es übergebne zu Können --> Regina Kathrin
-                // ListView/Adapter mit Einträgen erstellen wo dann jeder einzelne exportiert werden kann und Button Erstellen--> Regina Kathrin
-                // Timestamp richtig---> Regina Kathrin
-                // Kontrollmeachnismus doppelte einträge wenn von Gerät gesendet !! --> Regina Kathrin
+        //Glucose Value in mg/dl as float
+        float glucoseMGDL = glucose * 100000;
 
-                int year1 = dataMeasurement[3] & 255;
-                int year2 = dataMeasurement[4] & 255;
-                int year = year1 | (year2 << 8);
-                String yearStr = String.format("%04d", year);
-                String month = String.format("%02d", dataMeasurement[5]);
-                String day = String.format("%02d", dataMeasurement[6]);
-                String hour = String.format("%02d", dataMeasurement[7]);
-                String min = String.format("%02d", dataMeasurement[8]);
-                String sec = String.format("%02d", dataMeasurement[9]);
+        //glucoseMGDL in int parsen!! um es übergebne zu Können --> Regina Kathrin
+        // ListView/Adapter mit Einträgen erstellen wo dann jeder einzelne exportiert werden kann und Button Erstellen--> Regina Kathrin
+        // Timestamp richtig---> Regina Kathrin
+        // Kontrollmeachnismus doppelte einträge wenn von Gerät gesendet !! --> Regina Kathrin
 
-                String timestamp = yearStr + "-" + month + "-" + day + "T" + hour + ":" + min + ":" + sec;
+        int year1 = dataMeasurement[3] & 255;
+        int year2 = dataMeasurement[4] & 255;
+        int year = year1 | (year2 << 8);
+        String yearStr = String.format("%04d", year);
+        String month = String.format("%02d", dataMeasurement[5]);
+        String day = String.format("%02d", dataMeasurement[6]);
+        String hour = String.format("%02d", dataMeasurement[7]);
+        String min = String.format("%02d", dataMeasurement[8]);
+        String sec = String.format("%02d", dataMeasurement[9]);
 
+        //Date of Measurement in ISO-Timestamp Format
+        String timestamp = yearStr + "-" + month + "-" + day + "T" + hour + ":" + min + ":" + sec;
 
-                //erhaltene Werte in dataList Objekt speichern
-                dataList.add(new Object[]{seqNum, glucose, glucoseMMOL,glucoseMGDL,year,month,day,hour,min,sec});
+        //erhaltene Werte in dataList Objekt speichern
+        dataList.add(new Object[]{seqNum, glucose, glucoseMMOL, glucoseMGDL, year, month, day, hour, min, sec});
 
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                String userId = currentUser.getUid();
-                FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
-                DatabaseReference myRef = database.getReference("users/" +userId).child("GlucoseValues");
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = currentUser.getUid();
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
+        DatabaseReference myRef = database.getReference("users/" + userId).child("GlucoseValues");
 
-
-                //Ich glaube hier sollten wir auch ein GlucoseValues-Objekt in Firebase pushen...
-                //addOnSuccessListener hier einbauen -
-                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.hasChild((timestamp))) {
-                            myRef.child(timestamp).child("bzWert").setValue(glucoseMGDL);
-                            myRef.child(timestamp).child("timestamp").setValue(timestamp);
-                            myRef.child(timestamp).child("key").setValue(myRef.push().getKey());
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Handle errors
-                    }
-                });
-                //Werte die oben sind werden in log ausgegeben --> es wird nur der aktuellste Wert ausgegeben in mol/L
-                Log.d("Werte von GLUCOSE_MEASUREMENT", " seqNr: "
-                        + seqNum + " Datum: " + yearStr + " " + month + " " + day + " "
-                        + hour + " " + min + " " + sec +
-                        " glucose: " + glucose + " Einheit: "
-                        + concentrationUnit + " Wert in mg/dl: " + glucoseMGDL);
-
-
-                //Hier müsste man nun irgendwie durch jede sequenz (vlt mit Hilfe der seqNr) auslesen und so nicht nur den letzten Eintrag des Geräts auslesen und ausgeben.
-                //Dann diese Werte zwischenspeichern und dann in die Firebase schreiben; zuvor überprüfen ob die Werte vorhanden sind und wenn ja diese dann nicht
-                //in die DB schreiben
-            }
-
-            //List Adapter for found BLE Devices
-            public class LeDeviceListAdapter extends BaseAdapter {
-                private ArrayList<BluetoothDevice> mLeDevices;
-                private LayoutInflater mInflator;
-
-                public LeDeviceListAdapter(Context context) {
-                    super();
-                    mLeDevices = new ArrayList<BluetoothDevice>();
-                    mInflator = LayoutInflater.from(context);
-                }
-
-                public void addDevice(BluetoothDevice device) {
-                    if (!mLeDevices.contains(device)) {
-                        mLeDevices.add(device);
-                    }
-                }
-
-                public ArrayList getDevices() {
-                    return mLeDevices;
-                }
-
-                public void clear() {
-                    mLeDevices.clear();
-                }
-
-                @Override
-                public int getCount() {
-                    return mLeDevices.size();
-                }
-
-                @Override
-                public Object getItem(int i) {
-                    return mLeDevices.get(i);
-                }
-
-                @Override
-                public long getItemId(int i) {
-                    return i;
-                }
-
-                @Override
-                public View getView(int i, View view, ViewGroup viewGroup) {
-                    //Inflate the layout for the listview and set the device name as the text
-                    GereateKoppelnActivity.ViewHolder viewHolder;
-                    if (view == null) {
-                        view = mInflator.inflate(R.layout.listitem_device, null);
-                        viewHolder = new GereateKoppelnActivity.ViewHolder();
-                        viewHolder.deviceName = (TextView) view.findViewById(R.id.device_name);
-                        viewHolder.deviceAddress = (TextView) view.findViewById(R.id.device_address);
-                        view.setTag(viewHolder);
-                    } else {
-                        viewHolder = (GereateKoppelnActivity.ViewHolder) view.getTag();
-                    }
-
-
-                    BluetoothDevice device = mLeDevices.get(i);
-                    @SuppressLint("MissingPermission") final String deviceName = device.getName();
-                    if (deviceName != null && deviceName.length() > 0)
-                        viewHolder.deviceName.setText(deviceName);
-                    else
-                        viewHolder.deviceName.setText("Unknown device");
-
-                    return view;
-                }
-
-                public BluetoothDevice getDevice(int position) {
-                    return mLeDevices.get(position);
+        //Create Database Entry for received Measurements
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild((timestamp))) {
+                    myRef.child(timestamp).child("bzWert").setValue(glucoseMGDL);
+                    myRef.child(timestamp).child("timestamp").setValue(timestamp);
+                    myRef.child(timestamp).child("key").setValue(myRef.push().getKey());
                 }
             }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
+
+        //CONTROL
+        //Werte die oben sind werden in log ausgegeben --> es wird nur der aktuellste Wert ausgegeben in mol/L
+        Log.d("Werte von GLUCOSE_MEASUREMENT", " seqNr: "
+                + seqNum + " Datum: " + yearStr + " " + month + " " + day + " "
+                + hour + " " + min + " " + sec +
+                " glucose: " + glucose + " Einheit: "
+                + concentrationUnit + " Wert in mg/dl: " + glucoseMGDL);
+    }
+
+    //List Adapter for found BLE Devices
+    public class LeDeviceListAdapter extends BaseAdapter {
+        private ArrayList<BluetoothDevice> mLeDevices;
+        private LayoutInflater mInflator;
+
+        public LeDeviceListAdapter(Context context) {
+            super();
+            mLeDevices = new ArrayList<BluetoothDevice>();
+            mInflator = LayoutInflater.from(context);
+        }
+
+        public void addDevice(BluetoothDevice device) {
+            if (!mLeDevices.contains(device)) {
+                mLeDevices.add(device);
+            }
+        }
+
+        public ArrayList getDevices() {
+            return mLeDevices;
+        }
+
+        public void clear() {
+            mLeDevices.clear();
+        }
+
+        @Override
+        public int getCount() {
+            return mLeDevices.size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return mLeDevices.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+
+            //Inflate the layout for the listview and set the device name as the text
+            GereateKoppelnActivity.ViewHolder viewHolder;
+
+            if (view == null) {
+                view = mInflator.inflate(R.layout.listitem_device, null);
+                viewHolder = new GereateKoppelnActivity.ViewHolder();
+                viewHolder.deviceName = (TextView) view.findViewById(R.id.device_name);
+                viewHolder.deviceAddress = (TextView) view.findViewById(R.id.device_address);
+                view.setTag(viewHolder);
+            } else {
+                viewHolder = (GereateKoppelnActivity.ViewHolder) view.getTag();
+            }
+
+
+            BluetoothDevice device = mLeDevices.get(i);
+
+            @SuppressLint("MissingPermission") final String deviceName = device.getName();
+
+            if (deviceName != null && deviceName.length() > 0) {
+                viewHolder.deviceName.setText(deviceName);
+            } else {
+                viewHolder.deviceName.setText(R.string.unknownDevice);
+            }
+
+            return view;
+        }
+
+        public BluetoothDevice getDevice(int position) {
+            return mLeDevices.get(position);
+        }
+    }
 
     // (un)necessary Getter
     public BluetoothGatt getmbluetoothGatt() {
         return mbluetoothGatt;
     }
-    public BluetoothAdapter getmBtAdapter () {
+
+    public BluetoothAdapter getmBtAdapter() {
         return mBtAdapter;
     }
-    public LeDeviceListAdapter getLeDeviceListAdapter () {
+
+    public LeDeviceListAdapter getLeDeviceListAdapter() {
         return leDeviceListAdapter;
     }
+
     public BluetoothGattCallback getmGattCallback() {
         return mGattCallback;
     }
+
     @SuppressLint("MissingPermission")
     public List<BluetoothDevice> getPairedDevices() {
         //Return a list of paired devices
         return (List<BluetoothDevice>) mBtAdapter.getBondedDevices();
     }
-
-
-    }
+}

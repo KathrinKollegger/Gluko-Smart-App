@@ -55,7 +55,6 @@ public class FragmentVerlaufTag extends Fragment {
     private Runnable updateTitleTask = new Runnable() {
         @Override
         public void run() {
-            long currentTime = System.currentTimeMillis();
             Date currentDate = new Date((long) System.currentTimeMillis());
 
             tv_graphTitle.setText("Verlauf Blutzuckerwerte " + currentDate.toLocaleString());
@@ -67,6 +66,9 @@ public class FragmentVerlaufTag extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_verlauf_tag, container, false);
         chart = view.findViewById(R.id.linechartTag);
+        chart.setBackgroundColor(getResources().getColor(R.color.white));
+        chart.setNoDataText("Für heute leider noch keine Werte...");
+        chart.setNoDataTextColor(Color.DKGRAY);
         tv_graphTitle = view.findViewById(R.id.graphTitle);
 
         mAuth = FirebaseAuth.getInstance();
@@ -276,7 +278,10 @@ public class FragmentVerlaufTag extends Fragment {
                                 }
                             });
                         }
-                    }}
+                    } else {
+                            setValueDisplayData("Füge erst einen Wert hinzu");
+                        }
+                    }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -287,8 +292,8 @@ public class FragmentVerlaufTag extends Fragment {
                 });
     }
     /**
-     *
-     * @param data
+     * sets text at bottom of Page
+     * @param data text for ValueDisplay
      */
     public void setValueDisplayData(String data) {
         if (getActivity() != null) {

@@ -35,6 +35,7 @@ public class FragmentVerlaufWoche extends Fragment {
         View view = inflater.inflate(R.layout.fragment_verlauf_woche, container, false);
         listviewValues = view.findViewById(R.id.listValues);
 
+
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app").getReference();
 
@@ -43,6 +44,8 @@ public class FragmentVerlaufWoche extends Fragment {
 
     public void onStart() {
         super.onStart();
+
+        setValueDisplayData("Exportiere oder lösche einen Messwert");
 
         String userId = mAuth.getCurrentUser().getUid();
         mDatabase.child("users").child(userId).child("GlucoseValues")
@@ -71,4 +74,11 @@ public class FragmentVerlaufWoche extends Fragment {
                     }
                 });
     }
+
+    public void setValueDisplayData(String data) {
+        if (getActivity() != null) {
+            ((Verlauf) getActivity()).updateValueDisplay(data);
+        }
+    }
+
 }

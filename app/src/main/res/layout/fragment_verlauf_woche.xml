@@ -5,9 +5,17 @@
     android:layout_height="match_parent"
     tools:context=".FragmentVerlaufWoche">
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Verlauf Woche" />
+        android:id="@+id/listTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Alle Blutzuckerwerte"
+        android:textAlignment="center"
+        android:background="@color/DarkblueBGTransp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
+        android:paddingVertical="5dp"
+        android:elevation="5dp"
+        android:layout_marginBottom="2dp"/>
 
     <ListView
         android:layout_height="match_parent"

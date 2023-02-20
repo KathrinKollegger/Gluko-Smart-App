@@ -1,6 +1,7 @@
 package com.example.gluko_smart;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -72,15 +73,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         inputPassword.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-
-            }
-
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
             public void afterTextChanged(Editable s) {
                 setProg();
@@ -89,13 +84,10 @@ public class RegisterActivity extends AppCompatActivity {
 
         inputConfirmPassword.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -116,7 +108,6 @@ public class RegisterActivity extends AppCompatActivity {
                     btnRegister.setClickable(true);
                     btnRegister.setEnabled(true);
                 }
-
             }
 
             @Override
@@ -133,22 +124,15 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-
-
+    /**
+     *This method updates the progress bar based on the user's input.
+     *It checks whether the email and password meet certain criteria and sets the progress accordingly.
+     */
     private void setProg() {
         progressBar.setProgress(5);
-        if (inputEmail.getText().toString().matches(emailPattern)) {
-            email_boolean = true;
-        } else
-            email_boolean = false;
-        if (inputPassword.getText().length()>6) {
-            pw_boolean = true;
-        } else
-            pw_boolean = false;
-        if (inputConfirmPassword.getText().length()>6) {
-            pwConf_boolean = true;
-        } else
-            pwConf_boolean = false;
+        email_boolean = inputEmail.getText().toString().matches(emailPattern);
+        pw_boolean = inputPassword.getText().length() > 6;
+        pwConf_boolean = inputConfirmPassword.getText().length() > 6;
         if (email_boolean) {
             progressBar.setProgress(30);
         }
@@ -160,6 +144,12 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     *This method validates the user input of email, password and confirm password.
+     *If they are valid, it attempts to create a new user account with Firebase Auth.
+     *A dialog is opened during the process to show the user that something is happening.
+     *If successful, the dialog is dismissed and the user is taken to the next activity. If unsuccessful, an error message is displayed.
+     */
     private void performAuth() {
         String email = inputEmail.getText().toString();
         String [] split_output = email.split("@");
@@ -191,6 +181,11 @@ public class RegisterActivity extends AppCompatActivity {
                         openDialog().dismiss();
                         Toast.makeText(RegisterActivity.this, ""+task.getException(), Toast.LENGTH_SHORT).show();
                     }
+
+                    SharedPreferences sharedPreferences = getSharedPreferences("login_prefs", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("username", userNameShort);
+                    editor.apply();
                 }
             });
         }

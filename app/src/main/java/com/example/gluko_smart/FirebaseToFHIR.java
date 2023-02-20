@@ -17,7 +17,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.TimeZone;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
@@ -75,7 +74,6 @@ public class FirebaseToFHIR extends AsyncTask<GlucoseValues, Void, Boolean> {
         Date date = null;
         try {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
             date = simpleDateFormat.parse(dateString);
 
         } catch (ParseException e) {
@@ -83,7 +81,7 @@ public class FirebaseToFHIR extends AsyncTask<GlucoseValues, Void, Boolean> {
         }
         DateTimeType effectiveDateTime = new DateTimeType(date);
         observation.setEffective(effectiveDateTime);
-        Log.i("ObservationDateTime","set successfully");
+        Log.i("ObservationDateTime:","set successfully" + effectiveDateTime);
 
         // Patienten-Referenz setzen (Patient, zu dem die Observation gehört)
         Reference patientReference = new Reference();
@@ -95,8 +93,8 @@ public class FirebaseToFHIR extends AsyncTask<GlucoseValues, Void, Boolean> {
         CodeableConcept code = new CodeableConcept();
         code.addCoding()
                 .setSystem("http://loinc.org")
-                .setCode("2339-0")
-                .setDisplay("Glucose Bld-mCnc");
+                .setCode("32016-8")
+                .setDisplay("Glucose [mg/dl] in Capillary blood");
         observation.setCode(code);
         Log.i("CodeableConcept","created successfully");
 
@@ -119,6 +117,8 @@ public class FirebaseToFHIR extends AsyncTask<GlucoseValues, Void, Boolean> {
         client.registerInterceptor(new SimpleRequestHeaderInterceptor("User-Agent", "MyCustomUserAgent"));
 
         MethodOutcome outcome = client.create().resource(observation).execute();
+
+        Log.i("FhirRessourceID","direct Link: "+outcome.getId().toString());
         return outcome.getId()!=null;
 
     }

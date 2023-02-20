@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background= "#C60CB56C"
+    android:background= "@color/Tiara"
     tools:context=".MainActivity">
 
 
@@ -14,16 +14,14 @@
         android:layout_height="130dp"
         android:background="#c7e8ef"
         android:fontFamily="casual"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:text="Home"
         android:textColor="#307eaa"
         android:textColorHint="#5d99d0"
         android:textSize="60dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <!--<Button
@@ -45,13 +43,12 @@
         android:layout_marginLeft="10dp"
         android:text="Name des Patienten"
         android:textColor="@color/black"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="22sp"
+        android:fontFamily="serif-monospace"
+        app:layout_constraintBottom_toTopOf="@+id/button_gereateKoppeln"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.133" />
+        app:layout_constraintTop_toBottomOf="@+id/text_startseite" />
 
     <Button
         android:id="@+id/button_gereateKoppeln"
@@ -122,10 +119,26 @@
         android:layout_width="74dp"
         android:layout_height="94dp"
         android:fontFamily="casual"
-        app:srcCompat="@drawable/logo_ohne"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="4dp"
-        tools:layout_editor_absoluteY="-9dp" />
+        app:flow_horizontalBias="0"
+        app:layout_constraintBottom_toBottomOf="@+id/text_startseite"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.047"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_startseite"
+        app:layout_constraintVertical_bias="0.25"
+        app:srcCompat="@drawable/logo_ohne" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="74dp"
+        android:layout_height="94dp"
+        app:layout_constraintBottom_toBottomOf="@+id/text_startseite"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.952"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_startseite"
+        app:layout_constraintVertical_bias="0.432"
+        app:srcCompat="@drawable/bluttropfen" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

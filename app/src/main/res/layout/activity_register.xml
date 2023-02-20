@@ -123,12 +123,11 @@
         android:textSize="15sp"
         android:textColor="@color/white"
         android:background="#126816"
-        android:padding="3dp"
+        android:padding="7dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bt_login"
-
         />
 
     <ProgressBar
