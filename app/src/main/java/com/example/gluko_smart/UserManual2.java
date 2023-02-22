@@ -25,7 +25,7 @@ import java.io.InputStream;
 
 public class UserManual2 extends AppCompatActivity {
 
-    private static final String FILE_NAME = "usermanual.pdf";
+    private static final String FILE_NAME = "handbuch.pdf";
     private static final int PAGE_INDEX = 0;
     Button button_homeUser;
     ImageView imageView;

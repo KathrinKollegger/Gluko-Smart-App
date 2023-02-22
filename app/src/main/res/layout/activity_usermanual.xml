@@ -38,8 +38,7 @@
         android:layout_marginBottom="168dp"
         android:gravity="center"
         android:text="Herzlich Willkommen im User-Handbuch von Gluko-Smart! \n
-        Hier bekommst du nützliche Tipps und Infos zur Handhabung dieser App. \n
-        \n Viel Spaß!"
+        Hier bekommst du nützliche Tipps und Infos zur Handhabung dieser App. Viel Spaß!"
         android:textSize="20dp"
         android:fontFamily="casual"
         android:textStyle="bold"
