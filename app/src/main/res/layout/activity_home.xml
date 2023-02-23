@@ -94,7 +94,7 @@
         android:layout_width="325dp"
         android:layout_height="67dp"
         android:backgroundTint="#4C74AF"
-        android:text="User Manual"
+        android:text="User Handbuch"
         android:fontFamily="casual"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
