@@ -248,11 +248,11 @@ public class FragmentVerlaufTag extends Fragment {
 
                             LegendEntry legEntry1 = new LegendEntry();
                             legEntry1.formColor = Color.BLUE;
-                            legEntry1.label = getString(R.string.BloodGlucoseValues);
+                            legEntry1.label = "Blutzuckerwerte";
 
                             LegendEntry legEntry2 = new LegendEntry();
                             legEntry2.formColor = Color.RED;
-                            legEntry2.label = getString(R.string.ThresholdLineLabel);
+                            legEntry2.label = "Erhöhter Bereich";
 
                             LegendEntry[] legEntries = new LegendEntry[]{legEntry1, legEntry2};
                             l.setCustom(legEntries);

@@ -7,8 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.firebase.database.FirebaseDatabase;
-
+//Pre-Information Activity for manuel value Input
 public class WerteEinfuegen extends Activity {
 
     Button button_homeWerte;
@@ -22,8 +21,9 @@ public class WerteEinfuegen extends Activity {
 
 
         button_homeWerte = (Button) findViewById(R.id.button_homeWerte);
-        button_WerteEingabe =(Button) findViewById(R.id.button_WerteEingabe);
+        button_WerteEingabe = (Button) findViewById(R.id.button_WerteEingabe);
 
+        // takes the user back to the home screen
         button_homeWerte.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -32,7 +32,8 @@ public class WerteEinfuegen extends Activity {
             }
         });
 
-        button_WerteEingabe.setOnClickListener(new View.OnClickListener(){
+        // takes the user to the WerteEingabe activity, where they can manually input glucose values
+        button_WerteEingabe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent11 = new Intent(WerteEinfuegen.this, WerteEingabe.class);
@@ -40,4 +41,5 @@ public class WerteEinfuegen extends Activity {
             }
         });
 
-    }}
+    }
+}

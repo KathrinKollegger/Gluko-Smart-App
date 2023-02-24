@@ -12,6 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * The Home activity is the main activity of the app that is displayed when the user logs in.
+ *  It contains buttons that allow the user to navigate to different parts of the app, as well as
+ *  a TextView that displays the user's name.
+ */
 public class Home extends AppCompatActivity {
 
     Button button_gereateKoppeln;
@@ -22,6 +27,7 @@ public class Home extends AppCompatActivity {
     TextView textView_userName;
     private FirebaseAuth mAuth;
 
+    //Called when the activity is resumed. Retrieves the username from SharedPreferences
     @Override
     protected void onResume() {
         super.onResume();
@@ -29,6 +35,7 @@ public class Home extends AppCompatActivity {
         textView_userName.setText(sharedPreferences.getString("username",""));
     }
 
+    //called when the activity is created. Initializes the buttons and TextView, retrieves username from SharedPreference
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +44,6 @@ public class Home extends AppCompatActivity {
         button_gereateKoppeln = (Button) findViewById(R.id.button_gereateKoppeln);
         button_verlauf = (Button) findViewById(R.id.button_verlauf);
         button_werteEinfuegen = (Button) findViewById(R.id.button_werteEinfuegen);
-        //button_persoenliches = (Button) findViewById(R.id.button_persoenliches);
         button_userManual = (Button) findViewById(R.id.button_userManual);
         button_abmelden = (Button) findViewById(R.id.button_abmelden);
         textView_userName = (TextView) findViewById(R.id.tv_UserName);
@@ -47,6 +53,7 @@ public class Home extends AppCompatActivity {
 
         mAuth= FirebaseAuth.getInstance();
 
+        //Sets onClickListener for Buttons
         button_gereateKoppeln.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,8 +93,8 @@ public class Home extends AppCompatActivity {
                 mAuth.signOut();
                Intent intent5 = new Intent(Home.this, RegisterActivity.class);
                startActivity(intent5);
-               Toast.makeText(Home.this, "Abmelden erfolreich!", Toast.LENGTH_SHORT).show();
-                //Also closes Stacktrace, so user cannot reenter via return button
+               Toast.makeText(Home.this, getString(R.string.SignOutSuccess), Toast.LENGTH_SHORT).show();
+                //Also closes Stacktrace, so user cannot re-enter via return button
                finishAffinity();
             }
         });

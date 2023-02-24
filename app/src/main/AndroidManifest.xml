@@ -70,13 +70,7 @@
             android:name=".WerteEingabe"
             android:exported="false" />
         <activity
-            android:name=".Persoenliches"
-            android:exported="false" />
-        <activity
             android:name=".UserManual"
-            android:exported="false" />
-        <activity
-            android:name=".Abmelden"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -77,7 +77,7 @@ public class GlucoseValueAdapter extends BaseAdapter {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
                 builder.setTitle(R.string.ConfirmationKISExport);
-                String exportBuilderMessage = R.string.YouWantTo + glucoseValue.getBzWert() + " mg/dl " + R.string.reallyExport;
+                String exportBuilderMessage = "Den Wert " + glucoseValue.getBzWert() + " mg/dl " + "wirklich exportierten?";
                 builder.setMessage(exportBuilderMessage);
                 builder.setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
                     @Override
@@ -85,19 +85,17 @@ public class GlucoseValueAdapter extends BaseAdapter {
                         // Execute 'FHIR Export'
                         FirebaseToFHIR fireToFhir = new FirebaseToFHIR();
                         fireToFhir.execute(glucoseValue);
-                        Toast.makeText(parent.getContext(), "Der Blutzuckerwert "+glucoseValue.getBzWert()+" mg/dl wurde erfolgreich ins KIS exportiert.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(parent.getContext(), "Der Blutzuckerwert "+glucoseValue.getBzWert()+" mg/dl wurde erfolgreich ins KIS exportiert", Toast.LENGTH_SHORT).show();
 
                     }
                 });
                 builder.setNegativeButton("Nein", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                     }
                 });
                 builder.show();
             }
-
         });
 
         buttonDelete.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +104,7 @@ public class GlucoseValueAdapter extends BaseAdapter {
                 GlucoseValues glucoseValue = storedGlucoValues.get(position);
                 AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
                 builder.setTitle(R.string.ConfirmValueDelete);
-                String exportBuilderMessage = R.string.AreYouSure+ glucoseValue.getBzWert() + " mg/dl " + R.string.reallyDelete;
+                String exportBuilderMessage = "Den Wert "+ glucoseValue.getBzWert() + " mg/dl " + "wirklich löschen?";
                 builder.setMessage(exportBuilderMessage)
                         .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -120,7 +118,7 @@ public class GlucoseValueAdapter extends BaseAdapter {
                                         refToDel.removeValue();
 
                                 storedGlucoValues.clear();
-                                Toast.makeText(parent.getContext(), R.string.TheBloodGlucoseValue + glucoseValue.getBzWert()+" mg/dl " + R.string.hasBeenDeleted, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(parent.getContext(),"Der Glucosewert " + glucoseValue.getBzWert()+" mg/dl " + "wurde gelöscht!", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {

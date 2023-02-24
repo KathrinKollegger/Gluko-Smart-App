@@ -7,6 +7,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * The class extends the ValueFormatter class from the MPAndroidChart library.
+ * The getFormattedValue() method is overridden to return the formatted time value for each x-axis point.
+ */
 public class HourAxisValueFormatter extends ValueFormatter {
 
     private final SimpleDateFormat mAxisDateFormat;
@@ -15,7 +19,6 @@ public class HourAxisValueFormatter extends ValueFormatter {
 
     public HourAxisValueFormatter() {
 
-        //MyVersion
         mAxisDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
         Calendar cal = Calendar.getInstance();

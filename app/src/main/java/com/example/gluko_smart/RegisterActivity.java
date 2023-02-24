@@ -3,7 +3,6 @@ package com.example.gluko_smart;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -23,6 +22,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * This Activity handles User Registration using Firebase Authentication.
+ * It contains UI elements such as TextViews, EditTexts, Buttons, and a ProgressBar, as well as event listeners for these elements.
+ */
 public class RegisterActivity extends AppCompatActivity {
 
     TextView alreadyHaveAccount, loginStatus;
@@ -32,8 +35,6 @@ public class RegisterActivity extends AppCompatActivity {
     boolean pw_boolean;
     boolean pwConf_boolean;
     boolean email_boolean;
-    int pb_counter = 0;
-    private Handler handler = new Handler();
     String userNameShort;
 
     String emailPattern ="[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";

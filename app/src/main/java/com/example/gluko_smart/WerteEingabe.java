@@ -26,17 +26,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * The WerteEingabe class is an Android activity that allows users to input and save glucose values along
+ * with additional information such as whether the measurement was taken before or after a meal.
+ *  It uses Firebase to store the glucose values alongside the other Values that have been received via BLE-Connection
+ */
 public class WerteEingabe extends Activity {
-
 
     Button button_homeVerlauf;
     AppCompatSpinner ed_infoessen;
     private String selectedEssen;
     TextView textView_date;
     FirebaseUser user;
-
-
-
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -52,13 +53,9 @@ public class WerteEingabe extends Activity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE, dd. MMMM yyyy / hh:mm a" );
         String dateTime = simpleDateFormat.format(calender.getTime());
         textView_date.setText(dateTime);
-        //Vielleicht sollte Datum und Zeit manuell eingegeben werden bevor Wert hinzugefügt wird
 
-
-        //final TextView textViewDate = findViewById(R.id.textView_date);
         final EditText edit_bzWert = findViewById(R.id.edit_bzWert);
         final Spinner edit_infoessen = findViewById(R.id.ed_infoessen);
-
 
         Button button_speichern1 = findViewById(R.id.button_speichern1);
         GlucoseValueDAO glucoseValueDAO = new GlucoseValueDAO();
@@ -66,19 +63,20 @@ public class WerteEingabe extends Activity {
         button_speichern1.setOnClickListener(v-> {
             String bzWertInput = edit_bzWert.getText().toString();
 
-            //Nur gültige Werte: 14 < Wert < 200
+            //Valid values must be within 15-250 mg/dl
             if(bzWertInput.length() < 2 ||
                     bzWertInput.contains(".") ||
                     Float.parseFloat(bzWertInput) > 250 ||
                     Float.parseFloat(bzWertInput) < 15){
 
-                Toast.makeText(this, "Bitte geben Sie einen gültigen BZ Wert in der Einheit mg/dl ein!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.PleaseEnterValidValue, Toast.LENGTH_SHORT).show();
 
             }else{
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("Möchten Sie den Wert "+bzWertInput+" mg/dl wirklich speichern?")
-                        .setPositiveButton("Ja", (dialog, id) -> {
+                String saveBuilderMessage = getString(R.string.YouWantTheValue)+" "+ bzWertInput +" mg/dl "+ getString(R.string.reallySaved);
+                builder.setMessage(saveBuilderMessage)
+                        .setPositiveButton(R.string.Yes, (dialog, id) -> {
                             //Sets Timestamp in ISO-Format for DB entry
                             DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
                             LocalDateTime loDatetime = LocalDateTime.now();
@@ -88,20 +86,19 @@ public class WerteEingabe extends Activity {
                                     edit_infoessen.getSelectedItem().toString(), dateForDB);
                             glucoseValueDAO.add(glucoseValue)
                                     .addOnSuccessListener(suc->{
-                                Toast.makeText(this, "Blutzuckerwert: "+bzWertInput+" mg/dl wurde gespeichert", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this,getString(R.string.TheBloodGlucoseValue) +" "+ bzWertInput +" mg/dl " + getString(R.string.hasBeenSaved), Toast.LENGTH_SHORT).show();
                             })
                                     .addOnFailureListener(er->{
                                 Toast.makeText(this, ""+er.getMessage(), Toast.LENGTH_SHORT).show();
                             });
                         })
-                        .setNegativeButton("Nein", (dialog, id) -> {
+                        .setNegativeButton(R.string.No, (dialog, id) -> {
                             dialog.cancel();
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
             }
         });
-
 
         button_homeVerlauf = (Button) findViewById(R.id.button_homeVerlauf);
         ed_infoessen = (AppCompatSpinner) findViewById(R.id.ed_infoessen);
@@ -113,16 +110,14 @@ public class WerteEingabe extends Activity {
                 startActivity(intent7);
             }
         });
-
         setupSpinner();
     }
 
-
-
+    //Dropdown Spinner to choose general pre or post Meal Measurement
     private void setupSpinner() {
-        List<String> categories = new ArrayList<String>();
-        categories.add("Vor dem Essen");
-        categories.add("Nach dem Essen");
+        List<String> categories = new ArrayList<>();
+        categories.add(getString(R.string.preMeal));
+        categories.add(getString(R.string.postMeal));
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -131,20 +126,15 @@ public class WerteEingabe extends Activity {
         ed_infoessen.setSelection(0);
         //selectedEssen="Vor dem Essen";
         ed_infoessen.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            /**
-             * Methode wenn Geschlecht gewählt wurde. Änderung des Begriffs in der View.
-             */
+
+            //method if Selection has been made
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 selectedEssen=adapterView.getItemAtPosition(position).toString();
             }
-            /**
-             * Methode wenn keine Auswahl getroffen wurde.
-             * Die View bleibt so wie sie ist.
-             */
+            //Method if no selection has been made by user -> default is Pre Meal
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
     }

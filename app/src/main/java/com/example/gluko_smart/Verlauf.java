@@ -17,6 +17,7 @@ public class Verlauf extends AppCompatActivity {
     Button button_homeVerlauf;
     Button fragmentWocheBtn;
     Button fragmentTagBtn;
+    // Text view to display dynamic content
     TextView valueDisplay;
 
     @Override
@@ -40,6 +41,7 @@ public class Verlauf extends AppCompatActivity {
             }
         });
 
+        // Switch to general view when fragmentWocheBtn button is clicked
         fragmentWocheBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,6 +51,7 @@ public class Verlauf extends AppCompatActivity {
             }
         });
 
+        // Switch to daily view when daily button is clicked
         fragmentTagBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,9 +64,10 @@ public class Verlauf extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        valueDisplay.setText("Wähle einen Verlauf");
+        valueDisplay.setText(R.string.chooseCourse);
     }
 
+    // Replace the fragment in the frame layout with the given fragment
     private void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -71,8 +75,8 @@ public class Verlauf extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    // Update the text in the value display
     public void updateValueDisplay(String data) {
-
         valueDisplay.setText(data);
     }
 

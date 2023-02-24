@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
+//Pre-Information Activity for PDF User Manual of Application
 public class UserManual extends Activity {
-
 
     Button button_homeUser;
     Button button_weiter;
@@ -24,6 +24,7 @@ public class UserManual extends Activity {
             startActivity(intent14);
         });
 
+        //Intent to open actual User Manual in PDF-Viewer Activity (UserManual2)
         button_weiter.setOnClickListener(v -> {
             Intent intent15 = new Intent(UserManual.this, UserManual2.class);
             startActivity(intent15);

@@ -28,6 +28,7 @@ public class GereateKoppeln2 extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(GereateKoppeln2.this);
+
                 //Information Dialog Message unfortunatly not possible as String ressource yet due to layout
                 builder.setMessage(Html.fromHtml("<b>Wichtiger Hinweis</b><br><br>" +
                                 "1.)  Klicke auf der nächsten Seite auf <b>Scan starten</b>.<br> <br>" +

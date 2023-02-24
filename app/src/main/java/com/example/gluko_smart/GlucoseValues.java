@@ -1,5 +1,9 @@
 package com.example.gluko_smart;
 
+/**
+ * A class representing glucose values, with a blood sugar level, timestamp, and optionally a meal time.
+ * Implements the Comparable interface to allow sorting by timestamp.
+ */
 public class GlucoseValues implements Comparable<GlucoseValues> {
 
 
@@ -8,6 +12,7 @@ public class GlucoseValues implements Comparable<GlucoseValues> {
     private String timestamp;
     private String key;
 
+    //Default constructor for GlucoseValues.
     public GlucoseValues() {
     }
 

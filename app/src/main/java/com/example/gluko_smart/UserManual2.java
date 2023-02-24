@@ -1,7 +1,5 @@
 package com.example.gluko_smart;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -12,10 +10,10 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.view.View;
 import android.widget.Button;
-
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,14 +24,14 @@ import java.io.InputStream;
 public class UserManual2 extends AppCompatActivity {
 
     private static final String FILE_NAME = "handbuch.pdf";
-    private static final int PAGE_INDEX = 0;
+    //private static final int PAGE_INDEX = 0;
     Button button_homeUser;
     ImageView imageView;
     ImageButton button_next, button_previous;
 
     private int currentPage = 0;
     private int pageCount = 0;
-    private PdfRenderer renderer;
+    //private PdfRenderer renderer;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -58,7 +56,7 @@ public class UserManual2 extends AppCompatActivity {
         if (pageCount > 0) {
             displayPdf(this, imageView, currentPage);
 
-            // OnClickListener hinzufügen, um durch PDF zu navigieren
+            // OnClickListener for previous Page Button
             button_previous.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -69,6 +67,7 @@ public class UserManual2 extends AppCompatActivity {
                 }
             });
 
+            // OnClickListener for next Page Button
             button_next.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -81,6 +80,7 @@ public class UserManual2 extends AppCompatActivity {
         }
     }
 
+    // Open PDF-File and receive PageCount
     public static int getPageCount(Context context) {
         try{
             File file = new File(context.getFilesDir(), FILE_NAME);
@@ -89,12 +89,12 @@ public class UserManual2 extends AppCompatActivity {
                 copyFileFromAssets(context, FILE_NAME, file);
             }
 
-            // PDF-Datei öffnen und Seitenzahl abrufen
+
             ParcelFileDescriptor fileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
             PdfRenderer renderer = new PdfRenderer(fileDescriptor);
             final int pageCount = renderer.getPageCount();
 
-            // Aufräumen
+            //Clean up
             renderer.close();
             fileDescriptor.close();
 
@@ -113,18 +113,19 @@ public class UserManual2 extends AppCompatActivity {
                 copyFileFromAssets(context, FILE_NAME, file);
             }
 
-            // PDF-Datei öffnen und Seitenzahl abrufen
+            // Open PDF-File and receive PageCount
             ParcelFileDescriptor fileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
             PdfRenderer renderer = new PdfRenderer(fileDescriptor);
 
-            // Bitmap erstellen und PDF-Seite rendern
+            //create Bitmap and Render Pages
             PdfRenderer.Page page = renderer.openPage(pageIndex);
             Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
             page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
-            imageView.setImageBitmap(bitmap); // Bitmap im ImageView anzeigen
+            // Show Bitmap i ImageView
+            imageView.setImageBitmap(bitmap);
             page.close();
 
-            // Aufräumen
+            // clean up
             renderer.close();
             fileDescriptor.close();
 
@@ -133,17 +134,18 @@ public class UserManual2 extends AppCompatActivity {
         }
     }
 
+    // This method copies a file from the app's assets folder to a specified file path
     private static void copyFileFromAssets(Context context, String fileName, File file) throws IOException {
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = assetManager.open(fileName);
         FileOutputStream outputStream = new FileOutputStream(file);
 
+        //A byte array buffer is used to read and write the file
         byte[] buffer = new byte[1024];
         int length;
         while ((length = inputStream.read(buffer)) > 0) {
             outputStream.write(buffer, 0, length);
         }
-
         outputStream.flush();
         outputStream.close();
         inputStream.close();
