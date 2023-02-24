@@ -9,7 +9,6 @@ public class GlucoseValues implements Comparable<GlucoseValues> {
     private String key;
 
     public GlucoseValues() {
-
     }
 
     //Constructor ohne vorNachMahlzeit
@@ -17,7 +16,6 @@ public class GlucoseValues implements Comparable<GlucoseValues> {
 
         this.bzWert = bzWert;
         this.timestamp = timestamp;
-
     }
 
     //Constructor mit vorNachMahlzeit
@@ -26,26 +24,21 @@ public class GlucoseValues implements Comparable<GlucoseValues> {
         this.bzWert = bzWert;
         this.vorNachMahlzeit = vorNachMahlzeit;
         this.timestamp = timestamp;
-
     }
 
     public int getBzWert() {
-
         return bzWert;
     }
 
     public void setBzWert(int bzWert) {
-
         this.bzWert = bzWert;
     }
 
     public String getVorNachMahlzeit() {
-
         return vorNachMahlzeit;
     }
 
     public void setVorNachMahlzeit(String vorNachMahlzeit) {
-
         this.vorNachMahlzeit = vorNachMahlzeit;
     }
 
@@ -66,6 +59,7 @@ public class GlucoseValues implements Comparable<GlucoseValues> {
     }
 
 
+    //used to compare two objects of the GlucoseValues class based on their timestamp variable.
     @Override
     public int compareTo(GlucoseValues gv) {
         return timestamp.compareTo(gv.getTimestamp());

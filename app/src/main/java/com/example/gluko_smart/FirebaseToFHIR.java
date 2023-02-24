@@ -1,5 +1,6 @@
 package com.example.gluko_smart;
 
+import static com.example.gluko_smart.GlobalVariable.*;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -23,35 +24,45 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.SimpleRequestHeaderInterceptor;
 
+/**
+ * AsyncTask responsible for converting GlucoseValues from Firebase Realtime DB
+ * into FHIR Observation Resources and saves it on a FHIR Server.
+ * The Observation contains the glucose value, date and time of the measurement,
+ * patient reference, code, and practitioner reference.
+ * <p>
+ * Link to generated FHIR Observation Resources for Test Patient Maxima Muster (Resource ID: 7496229)
+ * http://hapi.fhir.org/search?serverId=home_r4&pretty=true&_summary=&resource=Observation&param.0.0=&param.0.1=7496229&param.0.name=patient&param.0.type=reference&sort_by=&sort_direction=&resource-search-limit=#
+ */
+
 public class FirebaseToFHIR extends AsyncTask<GlucoseValues, Void, Boolean> {
 
-    //http://hapi.fhir.org/search?serverId=home_r4&pretty=true&_summary=&resource=Observation&param.0.0=&param.0.1=7496229&param.0.name=patient&param.0.type=reference&sort_by=&sort_direction=&resource-search-limit=#
+    //Instanz of FHIRContext for
+    FhirContext ctx = FhirContext.forR4();
 
-    //Instanz FhirContext
-   FhirContext ctx = FhirContext.forR4();
 
     @Override
     protected Boolean doInBackground(GlucoseValues... glucoseValues) {
-        GlucoseValues glucoseValue=glucoseValues[0];
+        GlucoseValues glucoseValue = glucoseValues[0];
 
-        //Observation-Ressoruce erstellen
+        //create Observation resource
         Observation observation = new Observation();
-        Log.i("Observation","created successfully");
+        Log.i(TAG_FHIR, "Observation created successfully");
 
         //create a Narrative object
-        //Narrative --> menschenlesbare Darstellung der Ressource
+        //Narrative --> humanreadable Sequence of Resource
         Narrative narrative = new Narrative();
         narrative.setStatus(Narrative.NarrativeStatus.GENERATED);
-        XhtmlNode htmlNode= new XhtmlNode(NodeType.Element, "div");
+        XhtmlNode htmlNode = new XhtmlNode(NodeType.Element, "div");
         htmlNode.addText("<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Dies ist eine Blutzuckermessung mittels eines mobilen Blutzuckergeräts.</p></div>");
         narrative.setDiv(htmlNode);
+
         //set the Narrative on the Observation
         observation.setText(narrative);
 
-        //ID der Observation setzen mit aktueller Uhrzeit wos hochladen
+        //Set ID of Observation, even though unique ID is provide when Resource is created
         observation.setId("Blutgluckose Selbstmessung" + System.currentTimeMillis());
 
-        //Kategorie hinzufügen
+        //Add Category
         //Activity = Observations that measure or record any bodily activity that enhances or maintains physical fitness and overall health and wellness.
         //Not under direct supervision of practitioner such as a physical therapist. (e.g., laps swum, steps, sleep data)
         CodeableConcept category = new CodeableConcept();
@@ -60,18 +71,21 @@ public class FirebaseToFHIR extends AsyncTask<GlucoseValues, Void, Boolean> {
                 .setDisplay("Activity");
         observation.setCategory(Collections.singletonList(category));
 
-        //Werte der Observation setzen (Blutzuckerwert)
+        //Set value of Observation (Blood Glucose)
         Quantity glucoseQuantity = new Quantity();
         glucoseQuantity.setValue(glucoseValue.getBzWert());
+
+        //set Unit of Observation - in App always mg/dl
         glucoseQuantity.setUnit("mg/dL");
         glucoseQuantity.setSystem("http://unitsofmeasure.org");
         observation.setValue(glucoseQuantity);
-        Log.i("ObservationValue","set successfully");
+        Log.i(TAG_FHIR, "Value set successfully");
 
-        //Datum und Uhrzeit der Messung und
-        // zuvor in ein DateTimeDt objekt konvertieren
+        //Set effectiveDateTime of Observation
         String dateString = glucoseValue.getTimestamp();
         Date date = null;
+
+        //Parse Timestamp into Date -> DateTimeType
         try {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             date = simpleDateFormat.parse(dateString);
@@ -81,58 +95,57 @@ public class FirebaseToFHIR extends AsyncTask<GlucoseValues, Void, Boolean> {
         }
         DateTimeType effectiveDateTime = new DateTimeType(date);
         observation.setEffective(effectiveDateTime);
-        Log.i("ObservationDateTime:","set successfully" + effectiveDateTime);
+        Log.i(TAG_FHIR, "EffectiveDateTime set successfully" + effectiveDateTime);
 
-        // Patienten-Referenz setzen (Patient, zu dem die Observation gehört)
+        //Set Patient Reference (Testpatient Maxima Muster)
+        //Adapt here to reference different FHIR Patient-Resources
         Reference patientReference = new Reference();
         patientReference.setReference("Patient/7496229").setDisplay("Maxima Muster");
         observation.setSubject(patientReference);
-        Log.i("ObservationReferenz","created successfully");
+        Log.i(TAG_FHIR, "PatientReferenz created successfully");
 
-        //Code hinzufügen mit loinc Basis
+        //Add Code for Observation - in Code System LOINC
         CodeableConcept code = new CodeableConcept();
         code.addCoding()
                 .setSystem("http://loinc.org")
                 .setCode("32016-8")
                 .setDisplay("Glucose [mg/dl] in Capillary blood");
         observation.setCode(code);
-        Log.i("CodeableConcept","created successfully");
+        Log.i(TAG_FHIR, "CodeableConcept created successfully");
 
-        // Observation-Status setzen
+        //Set Status for Observation
         observation.setStatus(Observation.ObservationStatus.FINAL);
-        Log.i("ObservationStatus","created successfully");
+        Log.i(TAG_FHIR, "ObservationStatus created successfully");
 
-        //Practitioner hinzufügen
+        //add Practitioner
         Reference practitionerReference = new Reference();
         practitionerReference.setReference("Patient/7496229")
                 .setDisplay("Maxima Muster");
         observation.addPerformer(practitionerReference);
 
-        // Observation auf dem FHIR-Server speichern
+        //Create RESTfulGeneric Client for used FHIR Server
         IGenericClient client = ctx.newRestfulGenericClient("https://hapi.fhir.org/baseR4");
-        Log.i("GenericClient","created successfully");
+        Log.i("GenericClient", "created successfully");
 
-        //BenutzerAgenten für Anfordeurng setzen die an Server gesendet wird
-        //HeaderValue: Http Header ; HeaderName: String der den Namen des Headers angibt
+        //create Custom User Agent Header
         client.registerInterceptor(new SimpleRequestHeaderInterceptor("User-Agent", "MyCustomUserAgent"));
 
         MethodOutcome outcome = client.create().resource(observation).execute();
 
-        Log.i("FhirRessourceID","direct Link: "+outcome.getId().toString());
-        return outcome.getId()!=null;
+        //Post Link to created FHIR Ressource into LOG
+        Log.i("FhirRessourceID", "direct Link: " + outcome.getId().toString());
 
+        return outcome.getId() != null;
     }
 
+    //checking if Creation and Transfer of Resource were successful
+    protected void onPostExecute(Boolean success) {
+        if (success) {
+            Log.d("FHIR", "Observation was successfully created");
 
-        protected void onPostExecute(Boolean success){
-        //Überprüfen ob Übertragung erfolreich war
-            if (success) {
-                Log.d("FHIR", "Observation was successfully created");
-
-            } else {
-                Log.e("FHIR", "Failed to create observation");
-            }
+        } else {
+            Log.e("FHIR", "Failed to create observation");
+        }
     }
 
-
-    }
+}

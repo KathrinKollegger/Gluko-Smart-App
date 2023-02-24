@@ -44,7 +44,7 @@ public class Verlauf extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                replaceFragment(new FragmentVerlaufWoche());
+                replaceFragment(new FragmentVerlaufGesamt());
 
             }
         });

@@ -14,7 +14,7 @@ public class CustomMarkerView extends MarkerView {
     /**
      * Constructor. Sets up the MarkerView with a custom layout resource.
      *
-     * @param context
+     * @param context context for the marker
      * @param layoutResource the layout resource to use for the MarkerView
      */
     public CustomMarkerView(Context context, int layoutResource) {
@@ -22,6 +22,7 @@ public class CustomMarkerView extends MarkerView {
         tv_dpContent = (TextView) findViewById(R.id.markerContent);
     }
 
+    //updates the content of the DataPoint popup with the selected point's X and Y values
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
         super.refreshContent(e, highlight);
@@ -29,6 +30,7 @@ public class CustomMarkerView extends MarkerView {
         tv_dpContent.setText("Zeitpunkt: " + formatter.getFormattedValue(e.getX()) +" - "+ e.getY()+" mg/dl");
     }
 
+    //sets the offset of the DataPoint popup and returns an MPPointF object with the offset values
     @Override
     public MPPointF getOffset() {
         MPPointF offset = super.getOffset();
@@ -36,6 +38,5 @@ public class CustomMarkerView extends MarkerView {
         offset.y = -(getHeight());
 
         return offset;
-
     }
 }

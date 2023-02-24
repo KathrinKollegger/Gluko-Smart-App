@@ -17,7 +17,6 @@ public class Home extends AppCompatActivity {
     Button button_gereateKoppeln;
     Button button_verlauf;
     Button button_werteEinfuegen;
-    Button button_persoenliches;
     Button button_userManual;
     Button button_abmelden;
     TextView textView_userName;
@@ -72,14 +71,6 @@ public class Home extends AppCompatActivity {
             }
         });
 
-       // button_persoenliches.setOnClickListener(new View.OnClickListener() {
-            //@Override
-           // public void onClick(View v) {
-              // Intent intent3 = new Intent(Home.this, Persoenliches.class);
-                //startActivity(intent3);
-           // }
-       // });
-
         button_userManual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,7 +79,7 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        //abmelden mit signout() Methode
+        //sign out firebase user
         button_abmelden.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,11 +87,9 @@ public class Home extends AppCompatActivity {
                Intent intent5 = new Intent(Home.this, RegisterActivity.class);
                startActivity(intent5);
                Toast.makeText(Home.this, "Abmelden erfolreich!", Toast.LENGTH_SHORT).show();
-                //finish(); nur finish() beendet nur letzte Activity; Benutzer kann mittels Pfeiltasten zurücknavigieren
-                finishAffinity(); //Beendet nun auch die im StackTrace unterhalb befindlichen Activitys und Benutzer kann nicht mehr zurück navigieren
-
+                //Also closes Stacktrace, so user cannot reenter via return button
+               finishAffinity();
             }
         });
-
     }
 }

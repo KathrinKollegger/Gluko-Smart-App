@@ -19,6 +19,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * The purpose of this adapter is to display a list of glucose values along with their timestamp and provide
+ * two buttons for each item - one to export the value to an external system and another to delete it.
+ */
 public class GlucoseValueAdapter extends BaseAdapter {
     private List<GlucoseValues> storedGlucoValues;
 
@@ -72,12 +76,13 @@ public class GlucoseValueAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
-                builder.setTitle("Bestätigung KIS-Export");
-                builder.setMessage("Möchten Sie den Blutzuckerwert "+glucoseValue.getBzWert()+" mg/dl wirklich exportieren?");
-                builder.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+                builder.setTitle(R.string.ConfirmationKISExport);
+                String exportBuilderMessage = R.string.YouWantTo + glucoseValue.getBzWert() + " mg/dl " + R.string.reallyExport;
+                builder.setMessage(exportBuilderMessage);
+                builder.setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // Export hier einfügen
+                        // Execute 'FHIR Export'
                         FirebaseToFHIR fireToFhir = new FirebaseToFHIR();
                         fireToFhir.execute(glucoseValue);
                         Toast.makeText(parent.getContext(), "Der Blutzuckerwert "+glucoseValue.getBzWert()+" mg/dl wurde erfolgreich ins KIS exportiert.", Toast.LENGTH_SHORT).show();
@@ -100,9 +105,10 @@ public class GlucoseValueAdapter extends BaseAdapter {
             public void onClick(View view) {
                 GlucoseValues glucoseValue = storedGlucoValues.get(position);
                 AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
-                builder.setTitle("Bestätigung Löschen");
-                builder.setMessage("Sind Sie sicher, dass Sie den Blutzuckerwert "+glucoseValue.getBzWert()+" mg/dl löschen möchten?")
-                        .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+                builder.setTitle(R.string.ConfirmValueDelete);
+                String exportBuilderMessage = R.string.AreYouSure+ glucoseValue.getBzWert() + " mg/dl " + R.string.reallyDelete;
+                builder.setMessage(exportBuilderMessage)
+                        .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 FirebaseDatabase database = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app");
                                 FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -114,10 +120,10 @@ public class GlucoseValueAdapter extends BaseAdapter {
                                         refToDel.removeValue();
 
                                 storedGlucoValues.clear();
-                                Toast.makeText(parent.getContext(), "Der Blutzuckerwert "+glucoseValue.getBzWert()+" mg/dl wurde gelöscht!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(parent.getContext(), R.string.TheBloodGlucoseValue + glucoseValue.getBzWert()+" mg/dl " + R.string.hasBeenDeleted, Toast.LENGTH_SHORT).show();
                             }
                         })
-                        .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                             }
                         });

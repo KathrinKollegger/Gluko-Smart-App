@@ -120,4 +120,22 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="unknownDevice">Gerät nicht erkannt</string>
     <string name="rememberMeCB">Erinnere dich an mich</string>
+    <string name="ConnectionInProgress">Verbindung wird hergestellt</string>
+    <string name="ConnectionSuccessful">Verbindung erfolgreich</string>
+    <string name="NoValuesForToday">Für heute leider noch keine Werte...</string>
+    <string name="chooseDP">Wähle einen Datenpunkt</string>
+    <string name="BloodGlucoseValues">Bluzuckerwerte</string>
+    <string name="ThresholdLineLabel">Erhöhter Blutzuckerwert</string>
+    <string name="ValueInputRequired">Füge erst einen Wert hinzu</string>
+    <string name="BtScanPermRequierd">Bluetooth Scan Berechtigung notwendig</string>
+    <string name="ConfirmationKISExport">Bestätigung KIS-Export</string>
+    <string name="YouWantTo">\"Möchten Sie den Blutzuckerwert \"</string>
+    <string name="reallyExport">\"wirklich exportieren?\"</string>
+    <string name="Yes">Ja</string>
+    <string name="ConfirmValueDelete">Bestätigung Löschen</string>
+    <string name="reallyDelete">löschen möchten?</string>
+    <string name="AreYouSure">\"Sind Sie sicher, dass Sie den Blutzuckerwert \"</string>
+    <string name="TheBloodGlucoseValue">\"Der Blutzuckerwert \"</string>
+    <string name="hasBeenDeleted">wurde gelöscht!</string>
+    <string name="No">Nein</string>
 </resources>

@@ -1,14 +1,14 @@
 package com.example.gluko_smart;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class GereateKoppeln2 extends AppCompatActivity {
 
@@ -28,7 +28,7 @@ public class GereateKoppeln2 extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(GereateKoppeln2.this);
-                //.fromHtml ist zwar eine veraltete Methode aber einzige Möglichkeit des einfach und schön auszugeben
+                //Information Dialog Message unfortunatly not possible as String ressource yet due to layout
                 builder.setMessage(Html.fromHtml("<b>Wichtiger Hinweis</b><br><br>" +
                                 "1.)  Klicke auf der nächsten Seite auf <b>Scan starten</b>.<br> <br>" +
                                 "2.)  Klicke bei deinem Glucosegerät noch einmal auf den Pfeil. Das Bluetoothsymbol blinkt nun.<br><br> " +
@@ -36,18 +36,15 @@ public class GereateKoppeln2 extends AppCompatActivity {
                         .setCancelable(false)
                         .setPositiveButton("Verstanden", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                // User bestätigt den Text
+                                // User confirms Information Dialog
                                 Intent intent13 = new Intent(GereateKoppeln2.this, GereateKoppelnActivity.class);
                                 startActivity(intent13);
                             }
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
-
-
             }
         });
-
 
         button_homeKoppeln.setOnClickListener(new View.OnClickListener() {
             @Override
