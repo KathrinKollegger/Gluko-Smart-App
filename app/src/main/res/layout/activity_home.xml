@@ -40,79 +40,106 @@
         android:id="@+id/tv_UserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
+        android:fontFamily="serif-monospace"
         android:text="Name des Patienten"
         android:textColor="@color/black"
         android:textSize="22sp"
-        android:fontFamily="serif-monospace"
-        app:layout_constraintBottom_toTopOf="@+id/button_gereateKoppeln"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_startseite" />
+        app:layout_constraintTop_toBottomOf="@+id/text_startseite"
+        android:layout_marginTop="30dp" />
+
 
     <Button
         android:id="@+id/button_gereateKoppeln"
         android:layout_width="325dp"
         android:layout_height="67dp"
+        android:paddingHorizontal="25dp"
         android:backgroundTint="#4C74AF"
+        android:fontFamily="sans-serif"
+        android:textAllCaps="false"
         android:text="Gerät koppeln"
-        android:fontFamily="casual"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_UserName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.326" />
-
-    <Button
-        android:id="@+id/button_verlauf"
-        android:layout_width="325dp"
-        android:layout_height="67dp"
-        android:backgroundTint="#4C74AF"
-        android:text="Verlauf darstellen"
-        android:fontFamily="casual"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.483" />
+        android:drawableLeft="@drawable/ic_bluetooth_trans90"
+        android:layout_marginTop="30dp"/>
 
     <Button
         android:id="@+id/button_werteEinfuegen"
         android:layout_width="325dp"
         android:layout_height="67dp"
+        android:paddingHorizontal="25dp"
         android:backgroundTint="#4C74AF"
+        android:fontFamily="sans-serif"
+        android:textAllCaps="false"
         android:text="Werte manuell einfügen"
-        android:fontFamily="casual"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.643" />
+        app:layout_constraintTop_toBottomOf="@+id/button_gereateKoppeln"
+        android:drawableLeft="@drawable/ic_maninput_trans90"
+        android:layout_marginTop="20dp"/>
+
+    <Button
+        android:id="@+id/button_verlauf"
+        android:layout_width="325dp"
+        android:layout_height="67dp"
+        android:paddingHorizontal="25dp"
+        android:backgroundTint="#4C74AF"
+        android:fontFamily="sans-serif"
+        android:textAllCaps="false"
+        android:text="Verlauf darstellen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_werteEinfuegen"
+        android:drawableLeft="@drawable/ic_trend_trans90"
+        android:layout_marginTop="20dp" />
+
+
+    <Button
+        android:id="@+id/Errinnerungsfunktion"
+        android:layout_width="325dp"
+        android:layout_height="67dp"
+        android:paddingHorizontal="25dp"
+        android:backgroundTint="#4C74AF"
+        android:fontFamily="sans-serif"
+        android:textAllCaps="false"
+        android:text="Errinnerung einstellen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_verlauf"
+        android:drawableLeft="@drawable/ic_alert_trans90"
+        android:layout_marginTop="20dp" />
 
     <Button
         android:id="@+id/button_userManual"
         android:layout_width="325dp"
         android:layout_height="67dp"
+        android:paddingHorizontal="25dp"
         android:backgroundTint="#4C74AF"
+        android:fontFamily="sans-serif"
+        android:textAllCaps="false"
         android:text="User Handbuch"
-        android:fontFamily="casual"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.787" />
+        app:layout_constraintTop_toBottomOf="@+id/Errinnerungsfunktion"
+        android:drawableLeft="@drawable/ic_handbook_trans90"
+        android:layout_marginTop="20dp" />
 
     <Button
         android:id="@+id/button_abmelden"
-        android:layout_width="325dp"
-        android:layout_height="67dp"
+        android:layout_width="200dp"
+        android:layout_height="48dp"
         android:backgroundTint="#AF4C4C"
+        android:fontFamily="sans-serif"
+        android:textAllCaps="false"
+        android:textSize="12sp"
         android:text="Gluko-Smart beenden"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.942" />
+        app:layout_constraintTop_toBottomOf="@+id/button_userManual" />
 
     <ImageView
         android:id="@+id/imageView2"

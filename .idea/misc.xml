@@ -3,12 +3,16 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/drawable/arrow_back.xml" value="0.155" />
+        <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/drawable/ic_alert_trans90.xml" value="0.194" />
         <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/drawable/ic_baseline_lock_24.xml" value="0.16" />
+        <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/drawable/ic_bluetooth_trans90.xml" value="0.155" />
         <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1535" />
+        <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/drawable/ic_maninput_trans90.xml" value="0.194" />
         <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/drawable/ic_register_password.xml" value="0.16" />
         <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/layout/activity_gereate_koppeln2.xml" value="0.2" />
         <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/layout/activity_gereatekoppeln.xml" value="0.264" />
-        <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/layout/activity_home.xml" value="0.264" />
+        <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/layout/activity_home.xml" value="0.1" />
         <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/layout/activity_login.xml" value="0.264" />
         <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/joach/AndroidStudioProjects/Gluko-Smart-App/app/src/main/res/layout/activity_register.xml" value="0.264" />
@@ -62,5 +66,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.4" />
+      </ProjectState>
+    </option>
   </component>
 </project>
