@@ -14,24 +14,33 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class Verlauf extends AppCompatActivity {
 
+    // Home button
     Button button_homeVerlauf;
-    Button fragmentWocheBtn;
+    // Buttons to switch between graph and list view
+    Button fragmentAlleWerteBtn;
     Button fragmentTagBtn;
+    //But
+
     // Text view to display dynamic content
     TextView valueDisplay;
 
+    //show daily values as default view when activity is created
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verlauf);
 
+        // Set the value display to the default text
         valueDisplay = (TextView) findViewById(R.id.tv_valueDisplayNew);
         valueDisplay.setText("Wähle einen Verlauf");
         valueDisplay.setVisibility(View.VISIBLE);
 
         button_homeVerlauf = findViewById(R.id.button_homeVerlauf);
-        fragmentWocheBtn = findViewById(R.id.fragmentWochebtn);
+        fragmentAlleWerteBtn = findViewById(R.id.fragmentAlleWertebtn);
         fragmentTagBtn = findViewById(R.id.fragmentTagbtn);
+
+        // Set the default fragment to the daily view
+        replaceFragment(new FragementVerlauf());
 
         button_homeVerlauf.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,7 +51,7 @@ public class Verlauf extends AppCompatActivity {
         });
 
         // Switch to general view when fragmentWocheBtn button is clicked
-        fragmentWocheBtn.setOnClickListener(new View.OnClickListener() {
+        fragmentAlleWerteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -56,7 +65,7 @@ public class Verlauf extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                replaceFragment(new FragmentVerlaufTag());
+                replaceFragment(new FragementVerlauf());
             }
         });
     }

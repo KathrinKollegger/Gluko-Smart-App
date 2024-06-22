@@ -10,7 +10,6 @@
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="600dp"
-        android:layout_marginTop="15dp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -38,12 +37,12 @@
         />
 
     <Button
-        android:id="@+id/fragmentWochebtn"
+        android:id="@+id/fragmentAlleWertebtn"
         android:layout_width="150dp"
         android:layout_height="60dp"
         android:layout_alignParentRight="true"
         android:backgroundTint="#4C74AF"
-        android:text="Alle Werte anzeigen"
+        android:text="Alle Werte"
         tools:ignore="MissingConstraints"
         app:layout_constraintStart_toEndOf="@id/button_homeVerlauf"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -52,14 +51,13 @@
     <Button
         android:id="@+id/button_homeVerlauf"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:paddingBottom="12dp"
         android:backgroundTint="#AF4C4C"
-        android:text="Back Home"
+        android:drawableBottom="@drawable/ic_baseline_home_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.976" />
+        android:layout_marginBottom="5dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

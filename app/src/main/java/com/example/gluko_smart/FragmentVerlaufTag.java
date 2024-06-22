@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -31,8 +32,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -43,13 +42,18 @@ public class FragmentVerlaufTag extends Fragment {
     private LineChart chart;
     private TextView tv_graphTitle;
 
+    //Button um Ansicht auf Tag, Woche, Monat wechseln (noch nicht implementiert)
+    private Button btn_day;
+    private Button btn_week;
+    private Button btn_month;
+
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
 
     private final static int TITLE_REFRESH_INTERVAL = 1000; // 1 second
     private final Handler handler = new Handler();
 
-    //ArrayList containing GlucoseValues Objects
+    //ArrayList for storing GlucoseValues Objects
     private final List<GlucoseValues> storedGlucoValues = new ArrayList<>();
 
     //Updates Date and Time in Title every second
@@ -62,7 +66,6 @@ public class FragmentVerlaufTag extends Fragment {
         }
     };
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_verlauf_tag, container, false);
@@ -72,11 +75,14 @@ public class FragmentVerlaufTag extends Fragment {
         chart.setNoDataTextColor(Color.DKGRAY);
         tv_graphTitle = view.findViewById(R.id.graphTitle);
 
+        btn_day = view.findViewById(R.id.button_viewDay);
+        btn_week = view.findViewById(R.id.button_viewWeek);
+        btn_month = view.findViewById(R.id.button_viewMonth);
+
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance("https://gluko-smart-default-rtdb.europe-west1.firebasedatabase.app").getReference();
 
         handler.post(updateTitleTask);
-
         return view;
     }
 
@@ -88,19 +94,20 @@ public class FragmentVerlaufTag extends Fragment {
         //sets text for Bottom Value Display
         setValueDisplayData(getString(R.string.chooseDP));
 
-        //Only used if x0 = start of today
+        //Get start and end of today
         Calendar calStart = Calendar.getInstance();
         calStart.set(Calendar.HOUR_OF_DAY, 0);
         calStart.set(Calendar.MINUTE, 0);
         calStart.set(Calendar.SECOND, 0);
         long startOfToday = calStart.getTimeInMillis();
 
-        //Only used if xLAST = end of today
         Calendar calEnd = Calendar.getInstance();
         calEnd.set(Calendar.HOUR_OF_DAY, 23);
         calEnd.set(Calendar.MINUTE, 59);
         calEnd.set(Calendar.SECOND, 59);
         long endOfToday = calEnd.getTimeInMillis();
+
+        //Listener for Button to switch between Day, Week, Month
 
         //Retrieve Data from Database for current User
         String userId = mAuth.getCurrentUser().getUid();
@@ -127,13 +134,15 @@ public class FragmentVerlaufTag extends Fragment {
                         //Sort List Entries with timestamps ascending
                         Collections.sort(storedGlucoValues);
 
-                        //List 'entries' for LineDataSet of LineChart for Daily Course
-                        List<Entry> entries = new ArrayList<>();
+                        //List 'entries' for LineDataSet of LineChart for Daily,Weekly,Monthly Course
+                        List<Entry> entries_daily = new ArrayList<>();
+                        List<Entry> entries_weekly = new ArrayList<>();
+                        List<Entry> entries_monthly = new ArrayList<>();
 
                         //Add GlucoseValues to LineDataSet-List 'entries'
                         for (GlucoseValues glucoValue : storedGlucoValues) {
 
-                            //Timestamp als String [z.B. "2023-02-05T07:27:53"]
+                            //Timestamp als String [z.B. "2023-01-26T23:48:00"]
                             String timestamp = glucoValue.getTimestamp();
                             Log.i("String timestamp", "=" + timestamp);
 
@@ -150,12 +159,13 @@ public class FragmentVerlaufTag extends Fragment {
                                 continue;
                             }
 
-                            //get time in Milliseconds
+                            //get time in Milliseconds since January 1, 1970, 00:00:00 GMT (z.B 1674776880000)
                             long timeInMillis = date.getTime();
                             Log.i("timeInMillis", "=" + timeInMillis);
 
-                            LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(timeInMillis, 0, ZoneOffset.UTC);
-                            Log.i("LocalDateTimeObject", "=" + localDateTime.toString());
+                            //get day information of timestamp
+                            String day = new SimpleDateFormat("yyyy-MM-dd").format(date);
+                            Log.i("Day", "=" + day);
 
                             //Filter for measurements of today
                             if (timeInMillis >= startOfToday && timeInMillis <= endOfToday) {
@@ -164,29 +174,35 @@ public class FragmentVerlaufTag extends Fragment {
                                 float minutes = (float) (Math.round((float) ((100.0 / 60.0 * date.getMinutes()))) / 100.0);
 
                                 //Entries are being added with correctly formatted x and y-values
-                                entries.add(new Entry((float) hours + minutes, glucoValue.getBzWert()));
-                                Log.i("Entries", "added: Hour=" + hours + "min=" + minutes + "Bz=" + glucoValue.getBzWert());
+                                entries_daily.add(new Entry((float) hours + minutes, glucoValue.getBzWert()));
+                                Log.i("DayEntry", "added: Hour=" + hours + "min=" + minutes + "Bz=" + glucoValue.getBzWert());
+
+                                //show exact x and y values of entries
+                                for (Entry entry : entries_daily) {
+                                    Log.i("Position", "X: " + entry.getX() + " Y: " + entry.getY());
+                                }
                             }
                         }
 
-                        // Find the minimum,maximum,current timestamp value for xAxisSetting
-                        if (!entries.isEmpty()) {
+                        // Find the minimum,maximum,current timestamp value for xAxisSetting of daily
+                        if (!entries_daily.isEmpty()) {
 
-                            long currentTimeInMs = System.currentTimeMillis();
-                            float currentTimestamp = (float) (currentTimeInMs - startOfToday) / (60 * 60 * 1000);
+                            //long currentTimeInMs = System.currentTimeMillis();
+                            //float currentTimestamp = (float) (currentTimeInMs - startOfToday) / (60 * 60 * 1000);
 
-                            float minTimestamp = entries.get(0).getX();
-                            int lastIndex = entries.size() - 1;
-                            float maxTimestamp = entries.get(lastIndex).getX();
+                            float minTimestamp = entries_daily.get(0).getX();
+                            int lastIndex = entries_daily.size() - 1;
+                            float maxTimestamp = entries_daily.get(lastIndex).getX();
+
                             //Iterates through entries and looks for smallest timestamp (First Measurement of Today)
-                            for (Entry entry : entries) {
+                            for (Entry entry : entries_daily) {
                                 if (entry.getX() < minTimestamp) {
                                     minTimestamp = entry.getX();
                                 }
                             }
 
                             //create dataSet with entries and label
-                            LineDataSet dataSet = new LineDataSet(entries, "Tages-Blutzuckerwerte");
+                            LineDataSet dataSet = new LineDataSet(entries_daily, "Tages-Blutzuckerwerte");
                             dataSet.setColor(Color.BLUE);
 
                             //textSize > 0 if DataPoint Labels required
@@ -200,41 +216,38 @@ public class FragmentVerlaufTag extends Fragment {
                             //Create LineDate Object for LineGraph
                             LineData lineData = new LineData(dataSet);
 
-                           /*
-                            //Changes Format of DataPoint-Labels from Float to Int [133.00 -> 133]
-                            //only requiered if Labels are visible
-                            lineData.setValueFormatter(new ValueFormatter() {
-                                @Override
-                                public String getFormattedValue(float value) {
-                                    return String.valueOf((int) value);
-                                }
-                            });
-                            */
-
                             //Design X-Achse
                             XAxis xAxis = chart.getXAxis();
                             xAxis.setValueFormatter(new HourAxisValueFormatter());
 
                             xAxis.setAxisMinimum(minTimestamp);
-                            xAxis.setAxisMaximum(currentTimestamp);
+                                //xAxis.setAxisMaximum(currentTimestamp);
 
-                            //Alternative LineChart Axis Layout
-                            //xAxis.setAxisMinimum(0);
-                            //xAxis.setAxisMaximum(maxTimestamp)
-                            //xAxis.setAxisMaximum(24);
+                                //Alternative LineChart Axis Layout
+                                //xAxis.setAxisMinimum(startOfToday);
+                                xAxis.setAxisMaximum(maxTimestamp);
+                                //xAxis.setAxisMaximum(endOfToday);
 
                             xAxis.setEnabled(true);
                             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
                             xAxis.setLabelCount(8);
 
-                            LimitLine ref_untergrenze = new LimitLine(130);
+                            //Design Y-Achse
+                            YAxis yAxis = chart.getAxisLeft();
+                            yAxis.setAxisMinimum(70);
+                            yAxis.setAxisMaximum(160);
+
+                            LimitLine ref_obergrenze = new LimitLine(130);
+                            ref_obergrenze.setLineWidth(2f);
+                            ref_obergrenze.setLineColor(Color.RED);
+
+                            LimitLine ref_untergrenze = new LimitLine(70);
                             ref_untergrenze.setLineWidth(2f);
                             ref_untergrenze.setLineColor(Color.RED);
-                            ref_untergrenze.setTextSize(12f);
-                            ref_untergrenze.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
 
                             // Add the limit line to the y-axis of the chart
                             YAxis leftAxis = chart.getAxisLeft();
+                            leftAxis.addLimitLine(ref_obergrenze);
                             leftAxis.addLimitLine(ref_untergrenze);
 
                             //Adapt Custom Chart Legend
@@ -248,11 +261,11 @@ public class FragmentVerlaufTag extends Fragment {
 
                             LegendEntry legEntry1 = new LegendEntry();
                             legEntry1.formColor = Color.BLUE;
-                            legEntry1.label = "Blutzuckerwerte";
+                            legEntry1.label = "Blutzuckerwerte in mg/dl";
 
                             LegendEntry legEntry2 = new LegendEntry();
                             legEntry2.formColor = Color.RED;
-                            legEntry2.label = "Erhöhter Bereich";
+                            legEntry2.label = "Normalbereich";
 
                             LegendEntry[] legEntries = new LegendEntry[]{legEntry1, legEntry2};
                             l.setCustom(legEntries);
@@ -298,6 +311,7 @@ public class FragmentVerlaufTag extends Fragment {
 
                 });
     }
+
 
     /**
      * sets text at bottom of Page

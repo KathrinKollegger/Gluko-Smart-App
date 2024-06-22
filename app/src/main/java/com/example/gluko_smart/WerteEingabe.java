@@ -77,7 +77,7 @@ public class WerteEingabe extends Activity {
                 String saveBuilderMessage = getString(R.string.YouWantTheValue)+" "+ bzWertInput +" mg/dl "+ getString(R.string.reallySaved);
                 builder.setMessage(saveBuilderMessage)
                         .setPositiveButton(R.string.Yes, (dialog, id) -> {
-                            //Sets Timestamp in ISO-Format for DB entry
+                            //Sets current Timestamp in ISO-Format for DB entry
                             DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
                             LocalDateTime loDatetime = LocalDateTime.now();
                             String dateForDB = loDatetime.format(formatter).substring(0,19);

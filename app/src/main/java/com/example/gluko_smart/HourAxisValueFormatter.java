@@ -1,5 +1,7 @@
 package com.example.gluko_smart;
 
+import android.util.Log;
+
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.text.SimpleDateFormat;
@@ -32,10 +34,10 @@ public class HourAxisValueFormatter extends ValueFormatter {
 
     @Override
     public String getFormattedValue(float value) {
-
-        long millis = (long) (value *60*60*1000) +startOfToday;
+        long millis = (long) (value * 60 * 60 * 1000) + startOfToday;
         Date nDate = new Date(millis);
-
-        return mAxisDateFormat.format(nDate);
+        String formattedDate = mAxisDateFormat.format(nDate);
+        Log.d("HourAxisValueFormatter", "Value: " + value + ", Date: " + formattedDate);
+        return formattedDate;
     }
 }
