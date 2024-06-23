@@ -125,7 +125,7 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
             switch_Bt.setText("OFF");
         }
 
-        //Bluetooth-Switch Listener (FINISHED)
+        //Bluetooth-Switch Listener to turn on/off Bluetooth
         switch_Bt.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -196,7 +196,7 @@ public class GereateKoppelnActivity extends Activity implements BluetoothAdapter
                                     sb.append("\n");
                                 }
                                 tv_pairedDev.setAdapter(btHandler.getLeDeviceListAdapter());
-                                handler.postDelayed(this, 1000);
+                                handler.postDelayed(this, 3000);
                             }
                         };
 

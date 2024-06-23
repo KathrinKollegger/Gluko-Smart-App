@@ -1,7 +1,15 @@
 package com.example.gluko_smart;
 
 import static android.content.Context.BLUETOOTH_SERVICE;
-import static com.example.gluko_smart.GlobalVariable.*;
+import static com.example.gluko_smart.GlobalVariable.CLIENT_CHARACTERISTIC_CONFIG;
+import static com.example.gluko_smart.GlobalVariable.FIREBASE_DB_INSTANCE;
+import static com.example.gluko_smart.GlobalVariable.GLUCOSE_MEASUREMENT;
+import static com.example.gluko_smart.GlobalVariable.GLUCOSE_MEASUREMENT_CONTEXT;
+import static com.example.gluko_smart.GlobalVariable.GLUCOSE_SERVICE_UUID;
+import static com.example.gluko_smart.GlobalVariable.TAG_BLE;
+import static com.example.gluko_smart.GlobalVariable.TAG_FIREBASE;
+import static com.example.gluko_smart.GlobalVariable.TAG_GATT_SERVICES;
+import static com.example.gluko_smart.GlobalVariable.TAG_GLUCOSE_SERVICE;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
@@ -37,6 +45,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BluetoothHandler {
@@ -48,8 +57,10 @@ public class BluetoothHandler {
     private Handler handler;
     private DeviceHandler deviceHandler;
     public LeDeviceListAdapter leDeviceListAdapter;
+
     //public API for Bluetooth GATT-Profile
     private BluetoothGatt mbluetoothGatt;
+    private BluetoothGattService glucoseService;
 
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
@@ -79,13 +90,16 @@ public class BluetoothHandler {
                 .build();
         scanFilters.add(scanFilter1);
 
+        //ScanSettings Implementation - set ScanMode to Low Latency
         ScanSettings scanSettings = new ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                 .build();
 
+        //Adapter for List of BLE Devices
         leDeviceListAdapter = new LeDeviceListAdapter(context);
 
         Log.i(TAG_BLE, "Scanning for Devices");
+
         //starts actual BLE-Scan for nearby devices
         bleScanner.startScan(scanFilters, scanSettings, bleScanCallback);
     }
@@ -103,8 +117,8 @@ public class BluetoothHandler {
             Log.w(TAG_BLE, "Device not found.  Unable to connect.");
             return;
         }
-        mbluetoothGatt = device.connectGatt(context, false, mGattCallback);
         Log.i(TAG_BLE, "Trying to create a new connection.");
+        mbluetoothGatt = device.connectGatt(context, false, mGattCallback);
 
         Toast.makeText(context, R.string.ConnectionInProgress, Toast.LENGTH_SHORT).show();
     }
@@ -165,14 +179,15 @@ public class BluetoothHandler {
                 //Get all gatt-Services
                 List<BluetoothGattService> gattServices;
                 gattServices = gatt.getServices();
+
                 //Create Log message for each GATT-Service
                 for (BluetoothGattService gattService : gattServices) {
                     String uuid = gattService.getUuid().toString();
-                    Log.i(TAG_GATT_SERVICES , "Service UUID: " + uuid);
+                    Log.i(TAG_GATT_SERVICES, "Service UUID: " + uuid);
                 }
 
                 //Get the Glucose Service
-                BluetoothGattService glucoseService =
+                glucoseService =
                         gatt.getService(GLUCOSE_SERVICE_UUID);
 
                 //Glucose Service found
@@ -186,6 +201,7 @@ public class BluetoothHandler {
                     //writes all Characteristic UUIDs of Glucose Service into Log
                     for (BluetoothGattCharacteristic characteristic : allGlucoCharacteristics) {
                         Log.d(TAG_GLUCOSE_SERVICE, "Characteristic UUID: " + characteristic.getUuid());
+                        Log.d(TAG_GLUCOSE_SERVICE, "Characteristic Properties: " + characteristic.getProperties());
                     }
 
                     if (allGlucoCharacteristics.isEmpty()) {
@@ -197,12 +213,20 @@ public class BluetoothHandler {
                     return;
                 }
 
+                //Deal with Characteristics of Glucose Service
+
                 //Get the Glucose_Measurement characteristic
                 BluetoothGattCharacteristic glucoCharacterMeasurement =
                         glucoseService.getCharacteristic(GLUCOSE_MEASUREMENT);
 
+                // Get the Glucose_Measurement_Context characteristic
+                BluetoothGattCharacteristic glucoCharacterContext =
+                        glucoseService.getCharacteristic(GLUCOSE_MEASUREMENT_CONTEXT);
+
+
                 //Enable notification for the characteristic because it is being read via notify -> triggers onCharacteristicChanged
                 gatt.setCharacteristicNotification(glucoCharacterMeasurement, true);
+                gatt.setCharacteristicNotification(glucoCharacterContext, true);
 
                 //Descriptor glucoseMeasurementDescriptor
                 BluetoothGattDescriptor glucoseMeasurementDescriptor =
@@ -217,10 +241,13 @@ public class BluetoothHandler {
                 } else {
                     Log.d(TAG_GLUCOSE_SERVICE, "Descriptor not found for characteristic: " + glucoCharacterMeasurement.getUuid());
                 }
-            }
+                //Descriptor glucoseMeasurementContextDescriptor
+                BluetoothGattDescriptor measurementContextDescriptor =
+                        glucoCharacterContext.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
 
-            //Toast to confirm successful Connection
-            handler.postDelayed(() -> Toast.makeText(context, R.string.ConnectionSuccessful, Toast.LENGTH_SHORT).show(), 5000);
+                //Toast to confirm successful Connection
+                handler.postDelayed(() -> Toast.makeText(context, R.string.ConnectionSuccessful, Toast.LENGTH_SHORT).show(), 5000);
+            }
         }
 
         @Override
@@ -230,6 +257,34 @@ public class BluetoothHandler {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.i(TAG_GLUCOSE_SERVICE, "onCharaRead entered");
             }
+        }
+
+        @SuppressLint("MissingPermission")
+        @Override
+        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+            super.onDescriptorWrite(gatt, descriptor, status);
+
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.d(TAG_GLUCOSE_SERVICE, "Descriptor write successful for " + descriptor.getCharacteristic().getUuid());
+                if (descriptor.getCharacteristic().getUuid().equals(GLUCOSE_MEASUREMENT)) {
+                    // Now write the descriptor for the next characteristic
+                    BluetoothGattCharacteristic glucoCharacterContext =
+                            glucoseService.getCharacteristic(GLUCOSE_MEASUREMENT_CONTEXT);
+                    BluetoothGattDescriptor measurementContextDescriptor =
+                            glucoCharacterContext.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
+                    if (measurementContextDescriptor != null) {
+                        measurementContextDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                        if (!gatt.writeDescriptor(measurementContextDescriptor)) {
+                            Log.e(TAG_GLUCOSE_SERVICE, "Failed to write descriptor for Glucose Measurement Context");
+                        } else {
+                            Log.d(TAG_GLUCOSE_SERVICE, "Writing descriptor for Glucose Measurement Context: " + glucoCharacterContext.getUuid());
+                        }
+                    }
+                }
+            } else {
+                Log.e(TAG_GLUCOSE_SERVICE, "Failed to write descriptor for " + descriptor.getCharacteristic().getUuid());
+            }
+
         }
 
 
@@ -243,42 +298,31 @@ public class BluetoothHandler {
 
             //check if the characteristic that has changed is Glucose Measurement
             if (characteristic.getUuid().equals(GLUCOSE_MEASUREMENT)) {
+
                 //store value of Characteristic onto Byte
                 byte[] dataMeasurement = characteristic.getValue();
+                Log.d("CharacteristicChanged", "Data Measurement: " + Arrays.toString(dataMeasurement));
                 processData(characteristic, dataMeasurement);
 
-                //continue with next Characteristic (Measurement Context) of Glucose Service
-                BluetoothGattCharacteristic glucoCharacterContext = gatt.getService(GLUCOSE_SERVICE_UUID).
-                        getCharacteristic(GLUCOSE_MEASUREMENT_CONTEXT);
-                gatt.setCharacteristicNotification(glucoCharacterContext, true);
-
-                //Descriptor glucoseMeasurementContextDescriptor
-                BluetoothGattDescriptor glucoseMeasurementContextDescriptor = glucoCharacterContext.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
-                if (glucoseMeasurementContextDescriptor != null) {
-                    glucoseMeasurementContextDescriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                    gatt.writeDescriptor(glucoseMeasurementContextDescriptor);
-                    gatt.readDescriptor(glucoseMeasurementContextDescriptor);
-                    Log.d(TAG_GLUCOSE_SERVICE, "Reading/Writing descriptor for characteristic: " + glucoCharacterContext.getUuid());
-
-                } else {
-                    Log.d(TAG_GLUCOSE_SERVICE, "Descriptor not found for characteristic: " + glucoCharacterContext.getUuid());
-                }
+                //client must receive this Characteristic for Confirmation of Data transfer on Glucose Meter
+                //pre and post food intake would be handled in Glucose Measurement Context
 
             } else {
                 Log.d(TAG_GATT_SERVICES, "GLUCOSE_MEASUREMENT nicht gefunden");
             }
 
-            //client must receive this Characteristic for Confirmation of Data transfer on Glucose Meter
-            //pre and post food intake would be handled in Glucose Measurement Context
+
             if (characteristic.getUuid().equals(GLUCOSE_MEASUREMENT_CONTEXT)) {
 
                 byte[] dataMeasurementContext = characteristic.getValue();
                 Log.d("CharacteristicChanged", "Characteristic UUID" + characteristic.getUuid().toString());
+                Log.d("CharacteristicChanged", "Data Measurement Context: " + Arrays.toString(dataMeasurementContext));
 
             } else {
                 Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT_CONTEXT not found");
             }
         }
+
     };
 
     /**
@@ -298,9 +342,15 @@ public class BluetoothHandler {
 
         /*boolean timeOffsetPresent = (dataMeasurement[0] & 0x01) > 0;
         boolean typeAndLocationPresent = (dataMeasurement[0] & 0x02) > 0;
-        boolean sensorStatusAnnunciationPresent = (dataMeasurement[0] & 0x08) > 0;
-        boolean contextInfoFollows = (dataMeasurement[0] & 0x10) > 0;*/
+        boolean sensorStatusAnnunciationPresent = (dataMeasurement[0] & 0x08) > 0;*/
+        boolean contextInfoFollows = (dataMeasurement[0] & 0x10) == 0x10;
         String concentrationUnit = (dataMeasurement[0] & 0x04) > 0 ? "mol/l" : "kg/L";
+
+        if (contextInfoFollows) {
+            Log.i("BLE", "Context information will follow this measurement.");
+        } else {
+            Log.i("BLE", "No context information follows this measurement.");
+        }
 
         //seqNumber of Entry in Device Diary
         int seqNum = (int) (dataMeasurement[1] & 255);
@@ -458,4 +508,6 @@ public class BluetoothHandler {
         //Return a list of paired devices
         return (List<BluetoothDevice>) mBtAdapter.getBondedDevices();
     }
+
+
 }
