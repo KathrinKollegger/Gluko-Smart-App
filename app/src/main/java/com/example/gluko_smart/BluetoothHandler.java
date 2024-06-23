@@ -2,12 +2,10 @@ package com.example.gluko_smart;
 
 import static android.content.Context.BLUETOOTH_SERVICE;
 import static com.example.gluko_smart.GlobalVariable.CLIENT_CHARACTERISTIC_CONFIG;
-import static com.example.gluko_smart.GlobalVariable.FIREBASE_DB_INSTANCE;
 import static com.example.gluko_smart.GlobalVariable.GLUCOSE_MEASUREMENT;
 import static com.example.gluko_smart.GlobalVariable.GLUCOSE_MEASUREMENT_CONTEXT;
 import static com.example.gluko_smart.GlobalVariable.GLUCOSE_SERVICE_UUID;
 import static com.example.gluko_smart.GlobalVariable.TAG_BLE;
-import static com.example.gluko_smart.GlobalVariable.TAG_FIREBASE;
 import static com.example.gluko_smart.GlobalVariable.TAG_GATT_SERVICES;
 import static com.example.gluko_smart.GlobalVariable.TAG_GLUCOSE_SERVICE;
 
@@ -36,17 +34,11 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BluetoothHandler {
     //Handles the BLE Connection with Glucose-Meter
@@ -66,6 +58,11 @@ public class BluetoothHandler {
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
 
+    GlucoseValueDAO glucoseValueDAO;
+
+    // Store the parsed data temporarily
+    private Map<Integer, GlucoseValues> glucoseValuesMap = new HashMap<>();
+
     //saves received values from onCharacteristicChanged
     public List<Object> dataList = new ArrayList<>();
 
@@ -77,6 +74,7 @@ public class BluetoothHandler {
         mBtAdapter = mbtManager.getAdapter();
         bleScanner = mBtAdapter.getBluetoothLeScanner();
         handler = new Handler();
+        glucoseValueDAO = new GlucoseValueDAO();
     }
 
     //Start scanning for devices
@@ -241,9 +239,6 @@ public class BluetoothHandler {
                 } else {
                     Log.d(TAG_GLUCOSE_SERVICE, "Descriptor not found for characteristic: " + glucoCharacterMeasurement.getUuid());
                 }
-                //Descriptor glucoseMeasurementContextDescriptor
-                BluetoothGattDescriptor measurementContextDescriptor =
-                        glucoCharacterContext.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG);
 
                 //Toast to confirm successful Connection
                 handler.postDelayed(() -> Toast.makeText(context, R.string.ConnectionSuccessful, Toast.LENGTH_SHORT).show(), 5000);
@@ -267,6 +262,7 @@ public class BluetoothHandler {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.d(TAG_GLUCOSE_SERVICE, "Descriptor write successful for " + descriptor.getCharacteristic().getUuid());
                 if (descriptor.getCharacteristic().getUuid().equals(GLUCOSE_MEASUREMENT)) {
+
                     // Now write the descriptor for the next characteristic
                     BluetoothGattCharacteristic glucoCharacterContext =
                             glucoseService.getCharacteristic(GLUCOSE_MEASUREMENT_CONTEXT);
@@ -317,6 +313,7 @@ public class BluetoothHandler {
                 byte[] dataMeasurementContext = characteristic.getValue();
                 Log.d("CharacteristicChanged", "Characteristic UUID" + characteristic.getUuid().toString());
                 Log.d("CharacteristicChanged", "Data Measurement Context: " + Arrays.toString(dataMeasurementContext));
+                processContextData(characteristic, dataMeasurementContext);
 
             } else {
                 Log.d("onCharacteristicChanged", "GLUCOSE_MEASUREMENT_CONTEXT not found");
@@ -362,7 +359,6 @@ public class BluetoothHandler {
 
         //Glucose Value in mmol/L as float
         float glucoseMMOL = glucose * 1000;
-
         //Glucose Value in mg/dl as float
         float glucoseMGDL = glucose * 100000;
 
@@ -381,9 +377,15 @@ public class BluetoothHandler {
         //Date of Measurement in ISO-Timestamp Format
         String timestamp = yearStr + "-" + month + "-" + day + "T" + hour + ":" + min + ":" + sec;
 
+        GlucoseValues glucoseValues = new GlucoseValues((int)glucoseMGDL, timestamp);
+        glucoseValuesMap.put(seqNum, glucoseValues);
+
+        Log.d("1.Values of GLUCOSE_MEASUREMENT", " seqNr: " + seqNum + " Datum: " + timestamp + " glucose: " + glucose + " Wert in mg/dl: " + glucoseMGDL);
+
         //store received Entries in dataList Object
         dataList.add(new Object[]{seqNum, glucose, glucoseMMOL, glucoseMGDL, year, month, day, hour, min, sec});
 
+        /*
         //get Firebase Instance of current User
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String userId = currentUser.getUid();
@@ -406,13 +408,46 @@ public class BluetoothHandler {
                 Log.i(TAG_FIREBASE,"ListenerFSVE failed: " + databaseError.toString());
             }
         });
+        */
 
         //CONTROL
         //Latest Measurement Values are being wrote into Log Message
-        Log.d("Values of GLUCOSE_MEASUREMENT", " seqNr: "
+        Log.d("VALUES of GLUCOSE_MEASUREMENT", " seqNr: "
                 + seqNum + " Datum: " + timestamp +
                 " glucose: " + glucose + " Einheit: "
                 + concentrationUnit + " Wert in mg/dl: " + glucoseMGDL);
+
+        checkAndSendToDB(seqNum);
+    }
+
+    private void processContextData(BluetoothGattCharacteristic characteristic, byte[] data) {
+        int seqNum = data[1] & 0xFF;
+        boolean foodIntake = data[3] == 1;
+        String vorNachMahlzeit = foodIntake ? "Vor dem Essen" : "Nach dem Essen";
+
+        GlucoseValues glucoseValues = glucoseValuesMap.get(seqNum);
+        if (glucoseValues != null) {
+            glucoseValues.setVorNachMahlzeit(vorNachMahlzeit);
+            checkAndSendToDB(seqNum);
+        }
+
+        Log.i("BLE", "Context data: " + seqNum + " " + vorNachMahlzeit);
+    }
+
+    private void checkAndSendToDB(int seqNum) {
+        GlucoseValues glucoseValues = glucoseValuesMap.get(seqNum);
+
+        if (glucoseValues != null && glucoseValues.getVorNachMahlzeit() != null) {
+            glucoseValueDAO.add(glucoseValues).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.i("BLE", "Data sent to database: " + glucoseValues.getTimestamp() + " " + glucoseValues.getVorNachMahlzeit());
+                    glucoseValuesMap.remove(seqNum);
+                } else {
+                    Log.e("BLE", "Failed to send data to database: " + task.getException());
+                }
+            });
+        }
+
     }
 
     //Inner Class for List Adapter for found BLE Devices
