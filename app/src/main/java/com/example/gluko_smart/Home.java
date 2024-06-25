@@ -22,6 +22,7 @@ public class Home extends AppCompatActivity {
     Button button_gereateKoppeln;
     Button button_verlauf;
     Button button_werteEinfuegen;
+    Button button_reminder;
     Button button_userManual;
     Button button_abmelden;
     TextView textView_userName;
@@ -45,6 +46,7 @@ public class Home extends AppCompatActivity {
         button_verlauf = (Button) findViewById(R.id.button_verlauf);
         button_werteEinfuegen = (Button) findViewById(R.id.button_werteEinfuegen);
         button_userManual = (Button) findViewById(R.id.button_userManual);
+        button_reminder = (Button) findViewById(R.id.button_reminderFunction);
         button_abmelden = (Button) findViewById(R.id.button_abmelden);
         textView_userName = (TextView) findViewById(R.id.tv_UserName);
 
@@ -75,6 +77,14 @@ public class Home extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent2 = new Intent(Home.this, WerteEinfuegen.class);
                 startActivity(intent2);
+            }
+        });
+
+        button_reminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent3 = new Intent(Home.this, ReminderActivity.class);
+                startActivity(intent3);
             }
         });
 

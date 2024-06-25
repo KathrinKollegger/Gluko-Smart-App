@@ -423,7 +423,7 @@ public class BluetoothHandler {
     private void processContextData(BluetoothGattCharacteristic characteristic, byte[] data) {
         int seqNum = data[1] & 0xFF;
         boolean foodIntake = data[3] == 1;
-        String vorNachMahlzeit = foodIntake ? "Vor dem Essen" : "Nach dem Essen";
+        String vorNachMahlzeit = foodIntake ? "Nach dem Essen" : "Vor dem Essen";
 
         GlucoseValues glucoseValues = glucoseValuesMap.get(seqNum);
         if (glucoseValues != null) {

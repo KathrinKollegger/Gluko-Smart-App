@@ -60,7 +60,7 @@ public class Verlauf extends AppCompatActivity {
             }
         });
 
-        // Switch to daily view when daily button is clicked
+        // Switch to linceChart view when daily button is clicked
         fragmentTagBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -107,8 +107,6 @@ public class FragmentVerlaufTag extends Fragment {
         calEnd.set(Calendar.SECOND, 59);
         long endOfToday = calEnd.getTimeInMillis();
 
-        //Listener for Button to switch between Day, Week, Month
-
         //Retrieve Data from Database for current User
         String userId = mAuth.getCurrentUser().getUid();
         mDatabase.child("users").child(userId).child("GlucoseValues")
@@ -136,8 +134,6 @@ public class FragmentVerlaufTag extends Fragment {
 
                         //List 'entries' for LineDataSet of LineChart for Daily,Weekly,Monthly Course
                         List<Entry> entries_daily = new ArrayList<>();
-                        List<Entry> entries_weekly = new ArrayList<>();
-                        List<Entry> entries_monthly = new ArrayList<>();
 
                         //Add GlucoseValues to LineDataSet-List 'entries'
                         for (GlucoseValues glucoValue : storedGlucoValues) {
