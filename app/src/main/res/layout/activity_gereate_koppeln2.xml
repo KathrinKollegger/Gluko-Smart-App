@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#3CB882">
+    android:background="@color/Nepal">
 
     <Button
         android:id="@+id/button_homeKoppeln"
@@ -21,21 +21,16 @@
         android:id="@+id/geraeteinrichten"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="15dp"
-        android:paddingVertical="5dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="32dp"
-        android:background="#5BCF99"
-        android:fontFamily="casual"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp"
+        android:layout_marginTop="30dp"
+        android:background="@color/Tiara"
+        android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:text="Geräteeinrichtung"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textStyle="bold"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
@@ -43,17 +38,16 @@
 
     <TextView
         android:id="@+id/anleitung1"
-        android:layout_width="338dp"
-        android:layout_height="183dp"
-        android:layout_marginStart="83dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="83dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
         android:gravity="center"
         android:text="Führe jetzt wie immer eine Messung durch. \n\n Nimm einen Teststreifen aus dem Teststreifen-Container und führe ihn in das Gerät ein. \n\n Verwende die Stechhilfe um einen Blutstropfen zu erzeugen und trage das Blut vorsichtig auf die Teststreifen auf und warte bis der Wert gespeichert ist."
-        android:textSize="15dp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/imageglukogeraet"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/geraeteinrichten"
         app:layout_constraintVertical_bias="0.059" />
@@ -61,15 +55,14 @@
     <TextView
         android:id="@+id/anleitung2"
         android:layout_width="302dp"
-        android:layout_height="90dp"
-        android:layout_marginStart="55dp"
-        android:layout_marginEnd="55dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
         android:gravity="center"
-        android:text="Klicke dann einmal auf den Pfeil rechts unten am Gerät, bis das Bluetooth-Symbol erscheint.\n\n Klicke nun auf WERTE ERHALTEN."
-        android:textSize="15dp"
+        android:text="Nach erfolgreicher Messung, erscheint ein Bluetooth-Symbol am Messgerät.\n\n Klicke nun auf WERTE ERHALTEN."
+        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/button_wertebekommen"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageglukogeraet" />
 
@@ -80,12 +73,11 @@
         android:layout_marginStart="72dp"
         android:layout_marginEnd="72dp"
         android:src="@drawable/glukogeraet"
-        app:layout_constraintBaseline_toBottomOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.556"
+        app:layout_constraintTop_toBottomOf="@+id/anleitung1"
+        app:layout_constraintBottom_toTopOf="@id/anleitung2"
         app:srcCompat="@drawable/glukogeraet" />
 
     <ImageView
@@ -106,14 +98,12 @@
         android:layout_marginStart="107dp"
         android:layout_marginTop="11dp"
         android:layout_marginEnd="108dp"
-        android:backgroundTint="#4C74AF"
+        android:backgroundTint="@color/buttonBlue"
         android:text="Werte erhalten"
         app:layout_constraintBottom_toTopOf="@+id/button_homeKoppeln"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/anleitung2"
-        app:layout_constraintVertical_bias="0.981" />
+        app:layout_constraintTop_toBottomOf="@id/anleitung2"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

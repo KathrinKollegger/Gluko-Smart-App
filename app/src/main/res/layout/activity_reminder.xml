@@ -3,45 +3,59 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/Tiara">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_notifications_symbol_50dp"
+            android:contentDescription="Info Icon"
+            android:padding="8dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
+            android:text="Hier kannst du Erinnerungen für deine Blutzuckermessungen setzen. \nDu kannst jede Erinnerung individuell benennen."
+            android:textColor="@android:color/white"
+            android:padding="8dp"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/reminderName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Blutzucker messen, Insulingabe, etc."/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Erinnerung 1"
+        android:text="Uhrzeit wählen"
         android:textSize="18sp"
+        android:textColor="@color/gray"
         android:layout_marginTop="10dp"/>
 
     <TimePicker
-        android:id="@+id/timePicker1"
+        android:id="@+id/reminder_timePicker"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:timePickerMode="spinner"/>
+        android:timePickerMode="spinner"
+        android:numbersTextColor="@color/gray"
+        android:numbersSelectorColor="@color/gray"
+        android:layout_gravity="center"/>
 
     <Button
-        android:id="@+id/btnSetReminder1"
+        android:id="@+id/btnSetReminder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Erinnerung 1 setzen"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Erinnerung 2"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp"/>
-
-    <TimePicker
-        android:id="@+id/timePicker2"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:timePickerMode="spinner"/>
-
-    <Button
-        android:id="@+id/btnSetReminder2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Erinnerung 2 setzen"/>
+        android:text="Erinnerung setzen"/>
 
     <TextView
         android:id="@+id/tvReminderList"
@@ -51,11 +65,19 @@
         android:textSize="18sp"
         android:layout_marginTop="16dp"/>
 
-    <LinearLayout
+    <ListView
         android:id="@+id/reminderList"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:orientation="vertical">
-    </LinearLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@color/black"
+        android:orientation="vertical"
+        android:background="@color/Nepal"
+        android:paddingLeft="10dp"
+        android:paddingVertical="5dp"
+        android:layout_marginTop="10dp">
+    </ListView>
+
+
 
 </LinearLayout>

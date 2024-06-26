@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.LimitLine;
@@ -63,6 +64,11 @@ public class FragementVerlauf extends Fragment {
             setupXAxis("day");
             loadData("day");
             setupReferenceLines();
+
+            Description ds = new Description();
+            ds.setText("Datum");
+            chart.setDescription(ds);
+
         } else {
             setValueDisplayData(getString(R.string.ValueInputRequired));
         }
@@ -112,9 +118,18 @@ public class FragementVerlauf extends Fragment {
     }
 
     private void setupButtonListeners() {
-        btn_day.setOnClickListener(v -> loadData("day"));
-        btn_week.setOnClickListener(v -> loadData("week"));
-        btn_month.setOnClickListener(v -> loadData("month"));
+        btn_day.setOnClickListener(v -> {
+            loadData("day");
+            setSelectedButton(btn_day);
+        });
+        btn_week.setOnClickListener(v -> {
+            loadData("week");
+            setSelectedButton(btn_week);
+        });
+        btn_month.setOnClickListener(v -> {
+            loadData("month");
+            setSelectedButton(btn_month);
+        });
     }
 
     private void loadData(String viewMode) {
@@ -133,7 +148,10 @@ public class FragementVerlauf extends Fragment {
         chart.clear(); // Chart leeren, um neue Daten zu setzen
 
         LineDataSet dataSet = new LineDataSet(entries, "Glucose Levels");
-        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+
+        // Linie als Kurve darstellen
+        dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+
         dataSet.setColor(Color.BLUE);
         dataSet.setLineWidth(2f);
 
@@ -241,13 +259,16 @@ public class FragementVerlauf extends Fragment {
         String displayText;
         switch (viewMode) {
             case "day":
-                displayText = "Tagesansicht: Glukosewerte für den ausgewählten Tag";
+                displayText = "Messwerte für den heutigen Tag";
+                tv_graphTitle.setText("Tagesansicht");
                 break;
             case "week":
-                displayText = "Wochenansicht: Durchschnittliche Glukosewerte pro Halbtag";
+                displayText = "Durchschnittliche Glukosewerte pro Halbtag";
+                tv_graphTitle.setText("Wochenansicht");
                 break;
             case "month":
-                displayText = "Monatsansicht: Durchschnittliche Glukosewerte pro Tag";
+                displayText = "Durchschnittliche Glukosewerte pro Tag";
+                tv_graphTitle.setText("Monatsansicht");
                 break;
             default:
                 displayText = "";
@@ -255,5 +276,14 @@ public class FragementVerlauf extends Fragment {
         }
         setValueDisplayData(displayText);
     }
+
+    private void setSelectedButton(Button selectedButton) {
+
+            btn_day.setBackgroundColor(getResources().getColor(R.color.velaufbutton_unselected));
+            btn_week.setBackgroundColor(getResources().getColor(R.color.velaufbutton_unselected));
+            btn_month.setBackgroundColor(getResources().getColor(R.color.velaufbutton_unselected));
+
+            selectedButton.setBackgroundColor(getResources().getColor(R.color.velaufbutton_selected));
+        }
 
 }

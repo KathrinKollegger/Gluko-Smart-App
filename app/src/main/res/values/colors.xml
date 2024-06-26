@@ -4,17 +4,21 @@
     <color name="white">#FFFFFF</color>
     <color name="gray">#2C2C2C</color>
     <color name="red">#852B2B</color>
+    <color name="Nepal">#518093</color>
+    <color name="Tiara">#92BCD1</color>
+    <color name="lightRed">#F0A55050</color>
     <color name="backgroundGreen">#3CB882</color>
     <color name="TvBackgroundLightgreen">#5BCF99</color>
     <color name="buttonBlue">#4C74AF</color>
     <color name="DarkblueBG">#183142</color>
     <color name="DarkblueBGTransp">#D5183142</color>
     <color name="green_TVbg">#335BCF99</color>
-    <color name="Nepal">#518093</color>
-    <color name="Tiara">#92BCD1</color>
-    <color name="lightRed">#F0A55050</color>
     <color name="greenHomeBG">#C60CB56C</color>
     <color name="greenMainBG">#C60CB56C</color>
+    <color name="homeMenuButton_blue">#4C74AF</color>
+
+    <color name="velaufbutton_selected">#26373E</color>
+    <color name="velaufbutton_unselected">#415259</color>
 
 
     <!--Switch Color-->
