@@ -35,7 +35,7 @@ public class FragmentVerlaufGesamt extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_verlauf_woche, container, false);
+        View view = inflater.inflate(R.layout.fragment_verlauf_gesamt, container, false);
         listviewValues = view.findViewById(R.id.listValues);
 
         //Get an instance of the FirebaseAuth and the FirebaseDatabase

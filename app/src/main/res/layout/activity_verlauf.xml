@@ -14,7 +14,7 @@
 
     <TextView
         android:id="@+id/tv_valueDisplayNew"
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:padding="4dp"
         android:text="Wert auswählen"
@@ -22,6 +22,7 @@
         android:textColor="@color/black"
         android:textSize="18dp"
         app:layout_constraintBottom_toTopOf="@+id/button_homeVerlauf"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
 
     <Button
@@ -35,6 +36,16 @@
         app:layout_constraintEnd_toStartOf="@id/button_homeVerlauf"
         app:layout_constraintBottom_toBottomOf="parent"
         />
+
+    <Button
+        android:id="@+id/button_exportPdf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PDF Export"
+        app:layout_constraintBottom_toTopOf="@+id/fragmentAlleWertebtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="2dp"/>
 
     <Button
         android:id="@+id/fragmentAlleWertebtn"

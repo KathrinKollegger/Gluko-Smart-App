@@ -280,7 +280,6 @@ public class BluetoothHandler {
             } else {
                 Log.e(TAG_GLUCOSE_SERVICE, "Failed to write descriptor for " + descriptor.getCharacteristic().getUuid());
             }
-
         }
 
 

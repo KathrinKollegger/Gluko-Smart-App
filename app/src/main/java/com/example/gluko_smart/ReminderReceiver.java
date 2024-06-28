@@ -43,12 +43,12 @@ public class ReminderReceiver extends BroadcastReceiver {
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, reminderId, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
-        String reminderText = "Errinnerung an " + reminderName;
+        String reminderText = "Erinnerung an " + reminderName;
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_alert_trans90)
                 .setContentTitle(reminderText)
-                .setContentText("Ich soll dich an etwas errinnern!")
+                .setContentText("Ich soll dich an etwas erinnern!")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);

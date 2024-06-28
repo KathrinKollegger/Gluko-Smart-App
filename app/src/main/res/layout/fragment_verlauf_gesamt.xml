@@ -23,7 +23,7 @@
         android:id="@+id/listValues"
         android:divider="@color/white"
         android:dividerHeight="1dp"
-        android:background="@color/backgroundGreen"
+        android:background="@color/Nepal"
         android:layout_marginTop="55px"/>
 
 </FrameLayout>

@@ -150,7 +150,6 @@ public class ReminderActivity extends AppCompatActivity {
 
             // Set the alarm once at the specified time
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),pendingIntent);
-
             //alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
         }
 
@@ -169,6 +168,7 @@ public class ReminderActivity extends AppCompatActivity {
 
         // Clear the EditText
         reminderName.setText("");
+
     }
 
 }
