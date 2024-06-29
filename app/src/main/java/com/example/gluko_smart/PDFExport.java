@@ -149,8 +149,6 @@ public class PDFExport {
 
                 }
 
-
-
         // Dokumenten-Verzeichnis laden
         File documentsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
         Log.d("PDFExport", "Dokumentenverzeichnis: " + documentsDir.getAbsolutePath());
@@ -195,7 +193,6 @@ public class PDFExport {
         } else {
             Log.e("PDFExport", "File does not exist or is not readable: " + file.getAbsolutePath());
         }
-        openPdf(file);
     }
 
     private void openPdf(File file) {
@@ -205,13 +202,14 @@ public class PDFExport {
             Uri uri = myFileProvider.getUriForFile(context, "com.example.gluko_smart.provider", file);
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(uri, "application/pdf");
-            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_ACTIVITY_NO_HISTORY);
 
             Log.d("PDFExport", "File path: " + file.getAbsolutePath());
             Log.d("PDFExport", "Uri: " + uri.toString());
             Log.d("PDFExport", "Intent: " + intent.getAction());
 
-            //context.startActivity(intent);
+                // Use this for testing the PDF Chooser
+                //context.startActivity(intent);
 
             PackageManager pm = context.getPackageManager();
             Log.d("PDFExport", "PackageManager: " + pm.toString());
@@ -222,6 +220,7 @@ public class PDFExport {
             boolean isIntentSafe = activities.size() > 0;
 
             if (isIntentSafe) {
+                Log.d("PDFExport", "Intent is safe to open the PDF file.");
                 context.startActivity(intent);
             } else {
                 Log.e("PDFExport", "No suitable app found to open the PDF file.");
