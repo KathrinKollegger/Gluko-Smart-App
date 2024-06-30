@@ -2,8 +2,6 @@ package com.example.gluko_smart;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -208,23 +206,17 @@ public class PDFExport {
             Log.d("PDFExport", "Uri: " + uri.toString());
             Log.d("PDFExport", "Intent: " + intent.getAction());
 
-                // Use this for testing the PDF Chooser
-                //context.startActivity(intent);
+            // Use this for testing the PDF Chooser
+            // context.startActivity(intent);
 
-            PackageManager pm = context.getPackageManager();
-            Log.d("PDFExport", "PackageManager: " + pm.toString());
-            List<ResolveInfo> activities = pm.queryIntentActivities(intent, 0);
-            for (ResolveInfo activity : activities) {
-                Log.d("PDFExport", "Activity: " + activity.activityInfo.name);
-            }
-            boolean isIntentSafe = activities.size() > 0;
-
-            if (isIntentSafe) {
-                Log.d("PDFExport", "Intent is safe to open the PDF file.");
+            if(intent.resolveActivity(context.getPackageManager()) != null) {
+                Log.d("PDFExport", "Activity: " + intent.resolveActivity(context.getPackageManager()).toString());
+                Log.d("PDFExport", "PackageManager: " + context.getPackageManager().toString());
                 context.startActivity(intent);
             } else {
                 Log.e("PDFExport", "No suitable app found to open the PDF file.");
             }
+
         } catch (IllegalArgumentException e) {
             Log.e("PDFExport", "Error getting URI for file: " + e.getMessage());
             // You might want to show a user-friendly error message here

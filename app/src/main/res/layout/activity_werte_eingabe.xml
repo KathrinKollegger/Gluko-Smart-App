@@ -4,31 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#3CB882">
+    android:background="@color/Nepal">
 
     <TextView
         android:id="@+id/manuelleEingabe2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="10dp"
+        android:paddingHorizontal="15dp"
         android:paddingVertical="15dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="561dp"
-        android:background="#5BCF99"
+        android:background="@color/DarkblueBGTransp"
         android:gravity="center"
-        android:text="Manuelle Dateneingabe"
-        android:fontFamily="casual"
+        android:shadowColor="@color/black"
+        android:text="@string/manuelle_dateneingabe"
+        android:fontFamily="sans-serif-medium"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textStyle="bold"
-        android:textSize="25dp"
+        android:textSize="30sp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
@@ -40,8 +37,8 @@
         android:layout_marginEnd="55dp"
         android:fontFamily="casual"
         android:gravity="center"
-        android:text="Gib unten deinen gemessenen Wert ein"
-        android:textSize="20dp"
+        android:text="@string/gib_unten_deinen_gemessenen_wert_ein"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,35 +54,31 @@
         android:layout_margin="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="9dp"
-        android:background="#5BCF99"
-        android:hint="Blutzuckerwert"
+        android:background="@color/DarkblueBGTransp"
+        android:hint="@string/blutzuckerwert"
         android:inputType="number"
         android:minHeight="48dp"
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.448"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6" />
+        app:layout_constraintVertical_bias="0.6"
+        android:autofillHints="Blutzuckerwert" />
 
     <TextView
         android:id="@+id/einheit"
         android:layout_width="79dp"
         android:layout_height="52dp"
-        android:layout_marginStart="54dp"
-        android:layout_marginTop="72dp"
         android:layout_marginEnd="55dp"
-        android:fontFamily="casual"
+        android:fontFamily="sans-serif-medium"
         android:gravity="center"
-        android:text="mg/dl"
-        android:textSize="20dp"
+        android:text="@string/einheit_mg_dl"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.965"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/manuelleEingabe2"
-        app:layout_constraintVertical_bias="0.463" />
+        app:layout_constraintStart_toEndOf="@+id/edit_bzWert"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.6"/>
 
     <androidx.appcompat.widget.AppCompatSpinner
         android:id="@+id/ed_infoessen"
@@ -96,9 +89,9 @@
         android:layout_marginTop="55dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="168dp"
-        android:background="#5BCF99"
+        android:background="@color/DarkblueBGTransp"
         android:gravity="center"
-        android:hint="Vor- oder nach dem Essen gemessen?"
+        android:hint="@string/vor_oder_nach_dem_essen_gemessen"
         android:padding="10dp"
         app:layout_constraintBottom_toTopOf="@+id/button_homeVerlauf"
         app:layout_constraintEnd_toEndOf="parent"
@@ -106,14 +99,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_bzWert"
         app:layout_constraintVertical_bias="0.842"
-        tools:ignore="SpeakableTextPresentCheck" />
+        tools:ignore="SpeakableTextPresentCheck"
+        android:dropDownSelector="@color/DarkblueBGTransp"/>
 
     <Button
         android:id="@+id/button_homeVerlauf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#AF4C4C"
-        android:text="Back Home"
+        android:text="@string/back_home"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.12"
@@ -134,7 +128,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textEingabe1"
         app:srcCompat="@drawable/bluttropfen"
-        android:src ="@drawable/bluttropfen"/>
+        android:src ="@drawable/bluttropfen"
+        android:contentDescription="@string/icon_eines_bluttropfens" />
 
     <ImageView
         android:id="@+id/imageView_mahlzeit"
@@ -149,14 +144,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_bzWert"
         app:srcCompat="@drawable/mahlzeit"
-        android:src="@drawable/mahlzeit"/>
+        android:src="@drawable/mahlzeit"
+        android:contentDescription="@string/icon_mahlzeiten" />
 
     <Button
         android:id="@+id/button_speichern1"
         android:layout_width="162dp"
         android:layout_height="51dp"
         android:backgroundTint="#4C74AF"
-        android:text="Speichern"
+        android:text="@string/speichern"
         android:onClick="sendWerte"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -168,10 +164,12 @@
 
     <TextView
         android:id="@+id/textView_date"
-        android:layout_width="309dp"
-        android:layout_height="27dp"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
-        android:text="Datum"
+        android:text="@string/datum"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

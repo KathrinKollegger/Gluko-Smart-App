@@ -66,4 +66,14 @@
     <string name="hasBeenSaved">wurde gespeichert!</string>
     <string name="preMeal">Vor dem Essen</string>
     <string name="postMeal">Nach dem Essen</string>
+    <string name="manuelle_dateneingabe">Manuelle Dateneingabe</string>
+    <string name="gib_unten_deinen_gemessenen_wert_ein">Gib unten deinen gemessenen Wert ein</string>
+    <string name="blutzuckerwert">Blutzuckerwert</string>
+    <string name="einheit_mg_dl">mg/dl</string>
+    <string name="vor_oder_nach_dem_essen_gemessen">Vor- oder nach dem Essen gemessen?</string>
+    <string name="back_home">Back Home</string>
+    <string name="icon_eines_bluttropfens">Icon eines Bluttropfens</string>
+    <string name="icon_mahlzeiten">Icon Mahlzeiten</string>
+    <string name="speichern">Speichern</string>
+    <string name="datum">Datum</string>
 </resources>
